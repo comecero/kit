@@ -1,0 +1,136 @@
+﻿<div ng-controller="PaymentController">
+
+    <!-- Global Header -->
+    <nav class="navbar navbar-default">
+        <span class="navbar-brand">{{settings.app.company_name}}</span>
+    </nav>
+
+    <form name="form" customer-fields options="data.sale.options" items="data.sale.items" shipping-is-billing="true" novalidate>
+
+        <div class="page-header">
+            <h1 translate>Review Your Order</h1>
+            <small>{{data.payment.date_created | date:'short'}}</small>
+        </div>
+
+        <div class="alert alert-danger" ng-if="data.error">
+            {{data.error.message}}
+        </div>
+
+        <!-- For certain payment error types, present an option to retry the payment -->
+        <div class="alert alert-info" ng-show="data.error.meta.payment.payment_method.type == 'paypal'">
+            <i class="fa fa-external-link"></i> <a ng-href="{{data.error.meta.payment.response_data.redirect_url}}"><strong translate>Return to PayPal to try your payment again.</strong></a>
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-12 col-md-6 spacer-t20">
+                <span><strong translate>Billing Address</strong><br /></span>
+                <span ng-if="data.sale.customer.company_name">{{data.sale.customer.company_name}}<br /></span>
+                <span ng-if="data.sale.customer.name">{{data.sale.customer.name}}<br /></span>
+                <span ng-if="data.sale.customer.billing_address.address_1">{{data.sale.customer.billing_address.address_1}}<br /></span>
+                <span ng-if="data.sale.customer.billing_address.address_2">{{data.sale.customer.billing_address.address_2}}<br /></span>
+                <span ng-if="data.sale.customer.billing_address.city || data.sale.customer.billing_address.state_prov || data.sale.customer.billing_address.postal_code">{{data.sale.customer.billing_address.city}} {{data.sale.customer.billing_address.state_prov}} {{data.sale.customer.billing_address.postal_code}}<br /></span>
+                <span ng-if="data.sale.customer.billing_address.country">{{data.sale.customer.billing_address.formatted.country}}<br /></span>
+                <span ng-if="data.sale.customer.email">{{data.sale.customer.email}}<br /></span>
+            </div>
+
+            <div class="col-xs-12 col-md-6 spacer-t20" ng-if="data.sale.customer.shipping_address.address_1">
+                <span><strong translate>Shipping Address</strong><br /></span>
+                <span ng-if="data.sale.customer.shipping_address.name">{{data.sale.customer.shipping_address.name}}<br /></span>
+                <span ng-if="data.sale.customer.shipping_address.address_1">{{data.sale.customer.shipping_address.address_1}}<br /></span>
+                <span ng-if="data.sale.customer.shipping_address.address_2">{{data.sale.customer.shipping_address.address_2}}<br /></span>
+                <span ng-if="data.sale.customer.shipping_address.city || data.sale.customer.shipping_address.state_prov || data.sale.customer.shipping_address.postal_code">{{data.sale.customer.shipping_address.city}} {{data.sale.customer.shipping_address.state_prov}} {{data.sale.customer.shipping_address.postal_code}}<br /></span>
+                <span ng-if="data.sale.customer.shipping_address.country">{{data.sale.customer.shipping_address.formatted.country}}<br /></span>
+            </div>
+
+        </div>
+
+        <div class="row spacer-t20">
+
+            <!-- Collect any data that might be required that we don't have -->
+            <div class="col-xs-12 col-md-6" ng-show="options.showCompanyName">
+                <div class="form-group" show-errors="data.sale.options">
+                    <label class="control-label" for="company_name" translate>Company Name</label>
+                    <input class="form-control" name="company_name" type="text" ng-model="data.sale.customer.company_name" ng-required="helpers.isRequiredCustomerField('company_name', data.sale.options)">
+                    <p class="error-block hidden" translate>Please provide a company name</p>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-md-6" ng-show="options.showPhone">
+                <div class="form-group" show-errors="data.sale.options">
+                    <label class="control-label" for="phone" translate>Phone</label>
+                    <input class="form-control" name="phone" type="phone" ng-model="data.sale.customer.phone" ng-required="helpers.isRequiredCustomerField('phone', data.sale.options)" ng-minlength="7">
+                    <p class="error-block hidden" translate>Please provide a valid phone number</p>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-md-6" ng-show="geoService.isEu(data.sale.customer.shipping_address.country) || geoService.isEu(data.sale.customer.billing_address.country)">
+                <div class="form-group">
+                    <label class="control-label" for="tax_number" translate>VAT Number</label>
+                    <div class="form-inline">
+                        <input class="form-control" name="tax_number" type="text" placeholder="{{'Optional' | translate}}" ng-model="data.sale.customer.tax_number">
+                        <button type="button" ng-if="data.sale.object == 'cart'" class="btn btn-info right" update-cart="data.sale" error="data.error" params="data.params" translate>Apply</button>
+                        <button type="button" ng-if="data.sale.object == 'invoice'" class="btn btn-info right" update-invoice="data.sale" error="data.error" params="data.params" translate>Apply</button>
+                    </div>
+                    <p class="help-block" translate>If this order is for a business, please provide your VAT Number.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!--Spacer-->
+        <div class="row">&nbsp;</div>
+
+        <!-- Custom fields -->
+        <fields fieldlist="settings.app.fields" sale="data.sale"></fields>
+
+        <!--Spacer-->
+        <div class="row">&nbsp;</div>
+
+        <div class="row">
+            <div class="col-xs-3"><strong translate>Quantity</strong></strong></div>
+            <div class="col-xs-5"><strong translate>Name</strong></div>
+            <div class="col-xs-4 text-right"><strong translate>Subtotal</strong> ({{data.sale.currency}})</div>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row" ng-repeat="item in data.sale.items">
+            <ng-form name="items">
+                <div class="col-xs-3 form-group-sm">{{item.quantity}}</div>
+                <div class="col-xs-5">{{item.name}}</div>
+                <div class="col-xs-4 text-right">{{item.formatted.subtotal}}</div>
+            </ng-form>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row" ng-if="data.sale.options.shipping_quotes.length > 1">
+            <div class="col-xs-8"><select class="form-control" style="width:auto" shipping-select sale="data.sale" sale-type="{{data.sale.object}}" shipping-quotes="data.sale.options.shipping_quotes" error="data.error" params="data.saleParams"></select></div>
+            <div class="col-xs-4 text-right"><span ng-show="data.sale.shipping_item.price_original > data.sale.shipping_item.price"><del class="text-danger">{{data.sale.shipping_item.formatted.subtotal_original}}</del>&nbsp;</span>{{data.sale.shipping_item.formatted.subtotal}}</div>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-8" translate>Tax</div>
+            <div class="col-xs-4 text-right">{{data.sale.formatted.tax}}</div>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-8"><h3 translate>Total</h3></div>
+            <div class="col-xs-4 text-right"><h3>{{data.sale.formatted.total}}</h3></div>
+        </div>
+
+        <div class="row">
+            &nbsp;
+        </div>
+
+        <div class="row text-right">
+            <button type="button" class="btn btn-default right" validate-on-submit capture-payment="data.payment_id" sale="data.sale" sale-type="{{data.sale.object}}" on-success="onPaymentSuccess" error="data.error">Complete Order</button>
+        </div>
+
+        <!--Spacer-->
+        <div class="row spacer-b30">&nbsp;</div>
+
+    </form>
+
+</div>

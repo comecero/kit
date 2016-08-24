@@ -1,0 +1,257 @@
+﻿.error-block {
+    margin-top: 5px;
+    background: #f2dede;
+    border-color: #ebccd1;
+    border-radius: 4px;
+    color: #b94a48;
+    background-size: 20px 20px;
+    padding: 10px 5px 10px 5px;
+}
+
+img.product {
+    -webkit-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.17);
+    -moz-box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.17);
+    box-shadow: 1px 1px 5px 1px rgba(0,0,0,0.17);
+}
+
+.required:after {
+    color: #e32;
+    content: " *";
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.credit-card-image img {
+    max-width: 40px;
+}
+
+button.image {
+    border: 0;
+    padding: 0;
+    background-color: none;
+}
+
+/* Radios and checkboxes */
+.radio-group-label,
+.checkbox-group-label {
+  clear: both;
+  margin-bottom: 10px;
+}
+.checkbox,
+.radio {
+  opacity: 0;
+  position: absolute;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.radio-group label,
+.checkbox-group label {
+  margin-right: 15px;
+  cursor: pointer;
+  display: block;
+  font-weight: normal;
+}
+
+.radio-group label.strong,
+.checkbox-group label.strong {
+  font-weight: 700;
+}
+
+.radio-group.inline label,
+.checkbox-group.inline label {
+  display: inline;
+}
+/* Remove inline display on small screens */
+@media (max-width: $screen-xs-min) {
+  .radio-group.inline label,
+  .checkbox-group.inline label {
+    display: block;
+  }
+}
+.checkbox-label.inline,
+.radio-label.inline {
+  position: relative;
+  display: inline;
+}
+.checkbox + .checkbox-label:before,
+.radio + .radio-label:before {
+  content: '';
+  background: #fff;
+  border: 2px solid #b9b8b8;
+  display: inline-block;
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  margin-right: 5px;
+  text-align: center;
+}
+.checkbox[disabled] + .checkbox-label:before,
+.radio[disabled] + .radio-label:before {
+  border: 2px solid #f1f0f0;
+  cursor: not-allowed;
+}
+.checkbox:checked + .checkbox-label:before {
+  background: #3498db;
+  box-shadow: inset 0px 0px 0px 4px #fff;
+}
+.radio + label:before {
+  border-radius: 50%;
+}
+.radio:checked + label:before {
+  background: #3498db;
+  box-shadow: inset 0px 0px 0px 4px #fff;
+}
+.radio-group-label,
+.checkbox-group-label {
+  clear: both;
+  display: block;
+}
+.checkbox:focus + .checkbox-label,
+.radio:focus + label {
+  outline: none;
+  /* focus style */
+}
+
+/* Spacers */
+.spacer-t5 {
+    margin-top:5px;
+}
+
+.spacer-b5 {
+    margin-bottom:5px;
+}
+
+.spacer-r5 {
+    margin-right:5px;
+}
+
+.spacer-l5 {
+    margin-left:5px;
+}
+
+.spacer-5 {
+    margin:5px;
+}
+
+.spacer-t10 {
+    margin-top:10px;
+}
+
+.spacer-b10 {
+    margin-bottom:10px;
+}
+
+.spacer-r10 {
+    margin-right:10px;
+}
+
+.spacer-l10 {
+    margin-left:10px;
+}
+
+.spacer-10 {
+    margin:10px;
+}
+
+.spacer-t20 {
+    margin-top:20px;
+}
+
+.spacer-b20 {
+    margin-bottom:20px;
+}
+
+.spacer-r20 {
+    margin-right:20px;
+}
+
+.spacer-l20 {
+    margin-left:20px;
+}
+
+.spacer-20 {
+    margin:20px;
+}
+
+.spacer-t30 {
+    margin-top:30px;
+}
+
+.spacer-b30 {
+    margin-bottom:30px;
+}
+
+.spacer-r30 {
+    margin-right:30px;
+}
+
+.spacer-l30 {
+    margin-left:30px;
+}
+
+.spacer-30 {
+    margin:30px;
+}
+
+.spacer-t40 {
+    margin-top:40px;
+}
+
+.spacer-b40 {
+    margin-bottom:40px;
+}
+
+.spacer-r40 {
+    margin-right:40px;
+}
+
+.spacer-l40 {
+    margin-left:40px;
+}
+
+.spacer-40 {
+    margin:40px;
+}
+
+.spacer-t50 {
+    margin-top:50px;
+}
+
+.spacer-b50 {
+    margin-bottom:50px;
+}
+
+.spacer-r50 {
+    margin-right:50px;
+}
+
+.spacer-l50 {
+    margin-left:50px;
+}
+
+.spacer-50 {
+    margin:50px;
+}
+
+.spacer-t100 {
+    margin-top:100px;
+}
+
+.spacer-b100 {
+    margin-bottom:100px;
+}
+
+.spacer-r100 {
+    margin-right:100px;
+}
+
+.spacer-l100 {
+    margin-left:100px;
+}
+
+.spacer-100 {
+    margin:100px;
+}

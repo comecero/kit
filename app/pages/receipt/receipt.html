@@ -1,0 +1,85 @@
+﻿<div ng-controller="ReceiptController">
+
+    <!-- Global Header -->
+    <nav class="navbar navbar-default">
+        <span class="navbar-brand">{{settings.app.company_name}}</span>
+    </nav>
+
+    <div class="page-header">
+        <h1 translate>Receipt</h1>
+        <small>{{data.payment.date_created | date:'short'}}</small>
+    </div>
+
+    <div class="alert alert-danger" ng-if="data.error">
+        {{data.error.message}}
+    </div>
+
+    <div ng-if="data.payment.order" class="spacer-b20"><strong translate>Thank you! Your order is complete.</strong></div>
+
+    <div ng-if="data.payment && !data.payment.order" class="alert alert-info">
+        Thank you! Your order has been submitted for processing. You will receive an email soon with additional information regarding your order status.
+    </div>
+
+    <div class="row">
+
+        <div class="col-xs-12 col-md-6" style="min-height:125px">
+            <span ng-if="data.payment.cart.customer.name">{{data.payment.cart.customer.name}}<br /></span>
+            <span ng-if="data.payment.cart.customer.billing_address.address_1">{{data.payment.cart.customer.billing_address.address_1}}<br /></span>
+            <span ng-if="data.payment.cart.customer.billing_address.address_2">{{data.payment.cart.customer.billing_address.address_2}}<br /></span>
+            <span ng-if="data.payment.cart.customer.billing_address.city || data.payment.cart.customer.billing_address.state_prov || data.payment.cart.customer.billing_address.postal_code">{{data.payment.cart.customer.billing_address.city}} {{data.payment.cart.customer.billing_address.state_prov}} {{data.payment.cart.customer.billing_address.postal_code}}<br /></span>
+            <span ng-if="data.payment.cart.customer.billing_address.country">{{data.payment.cart.customer.billing_address.formatted.country}}<br /></span>
+        </div>
+
+        <div class="col-xs-12 col-md-6" style="min-height:125px">
+            <span translate>Payment Method</span><br />
+            <div ng-if="data.payment.payment_method.type == 'credit_card'">
+                {{data.payment.payment_method.data.type}} {{data.payment.payment_method.data.mask}}<br />
+                <span translate>Expires</span>: {{data.payment.payment_method.data.exp_month}}/{{data.payment.payment_method.data.exp_year}}
+            </div>
+            <div ng-if="data.payment.payment_method.type == 'paypal'">
+                PayPal
+            </div>
+        </div>
+
+    </div>
+
+    <!--Spacer-->
+    <div class="row">&nbsp;</div>
+
+        <div class="row">
+            <div class="col-xs-3"><strong translate>Quantity</strong></strong></div>
+            <div class="col-xs-5"><strong translate>Name</strong></div>
+            <div class="col-xs-4 text-right"><strong translate>Subtotal</strong> ({{data.payment.cart.currency}})</div>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row" ng-repeat="item in data.payment.cart.items">
+            <ng-form name="items">
+                <div class="col-xs-3 form-group-sm">{{item.quantity}}</div>
+                <div class="col-xs-5">{{item.name}}</div>
+                <div class="col-xs-4 text-right">{{item.formatted.subtotal}}</div>
+            </ng-form>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row" ng-if="data.payment.cart.shipping_item">
+            <div class="col-xs-8">{{data.payment.cart.shipping_item.name}}</div>
+            <div class="col-xs-4 text-right">{{data.payment.cart.shipping_item.formatted.subtotal}}</div>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-8" translate>Tax</div>
+            <div class="col-xs-4 text-right">{{data.payment.cart.formatted.tax}}</div>
+            <div class="col-xs-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-8"><h3 translate>Total</h3></div>
+            <div class="col-xs-4 text-right"><h3>{{data.payment.cart.formatted.total}}</h3></div>
+        </div>
+
+    <!-- Analytics -->
+    <script type="text/javascript" conversion="{{data.payment.cart.order_id}}"></script>
+
+</div>

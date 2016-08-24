@@ -1,0 +1,38 @@
+﻿<div ng-controller="ProductsController">
+
+    <!-- Global Header -->
+    <nav class="navbar navbar-default">
+        <span class="navbar-brand">{{settings.app.company_name}}</span>
+    </nav>
+
+    <form name="form" novalidate>
+        <div class="row form-group form-group-sm">
+            <label for="currency" class="col-sm-9 text-right">Currency</label>
+            <div class="col-sm-3">
+                <select name="currency" class="form-control" currency-select products="data.products" params="data.params" error="data.error"></select>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <h1 translate>Products</h1>
+        </div>
+
+        <div class="alert alert-danger" ng-if="data.error">
+            {{data.error.message}}
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 text-center spacer-b50" ng-repeat="product in data.products.data">
+                <div class="spacer-b20"><img class="product" ng-src="{{product.images[0].link_square}}" /></div>
+                <div class="spacer-b10">{{product.name}}</div>
+                <div class="spacer-b10">{{product.formatted.price}}</div>
+                <div class="spacer-b10" ng-bind-html="product.description"></div>
+                <button type="button" class="btn btn-default" add-to-cart="product" quantity="product.quantity" currency="data.currency" error="data.error" params="data.cartParams" on-success="onAddToCart" translate>Buy Now</button>
+            </div>
+        </div>
+
+        <!--Spacer-->
+        <div class="row">&nbsp;</div>
+
+    </form>
+
+</div>

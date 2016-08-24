@@ -1,0 +1,2585 @@
+﻿app.directive('updateCart', ['CartService', function (CartService) {
+        
+        // Shared scope:
+        // updateCart: The updated cart to save. If an existing cart does not exist, one will be created and returned.
+        // error: The error object to communicate errors.
+        // onSubmit: A function that will be called from scope when a cart update is submitted.
+        // onSuccess: A function that will be called from scope when the cart is successfully updated. Will include the response cart object as a parameter.
+        // onFailure: A function that will be called from scope when the update fails. Will include the error object as a parameter.
+        
+        // Attributes
+        // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+        
+        return {
+            restrict: 'A',
+            require: '^form',
+            scope: {
+                cart: '=updateCart',
+                params: '=?',
+                error: '=?',
+                onSubmit: '=?',
+                onSuccess: '=?',
+                onError: '=?'
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                elem.bind("click", function () {
+                    
+                    // Fire the submit event
+                    if (scope.onSubmit) {
+                        scope.onSubmit();
+                    }
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    CartService.update(scope.cart, scope.params).then(function (cart) {
+                        scope.cart = cart;
+                        // Fire the success event
+                        if (scope.onSuccess) {
+                            scope.onSuccess(cart);
+                        }
+                    }, function (error) {
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
+
+                });
+
+            }
+        };
+    }]);
+
+app.directive('updateInvoice', ['InvoiceService', function (InvoiceService) {
+        
+        // Shared scope:
+        // updateCart: The updated invoice to save. If an existing invoice does not exist, one will be created and returned.
+        // error: The error object to communicate errors.
+        // onSubmit: A function that will be called from scope when a invoice update is submitted.
+        // onSuccess: A function that will be called from scope when the invoice is successfully updated. Will include the response invoice object as a parameter.
+        // onFailure: A function that will be called from scope when the update fails. Will include the error object as a parameter.
+        
+        // Attributes
+        // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+        
+        return {
+            restrict: 'A',
+            require: '^form',
+            scope: {
+                invoice: '=updateInvoice',
+                params: '=?',
+                error: '=?',
+                onSubmit: '=?',
+                onSuccess: '=?',
+                onError: '=?'
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                elem.bind("click", function () {
+                    
+                    // Fire the submit event
+                    if (scope.onSubmit) {
+                        scope.onSubmit();
+                    }
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    InvoiceService.update(scope.invoice, scope.params).then(function (invoice) {
+                        scope.invoice = invoice;
+                        // Fire the success event
+                        if (scope.onSuccess) {
+                            scope.onSuccess(invoice);
+                        }
+                    }, function (error) {
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
+
+                });
+
+            }
+        };
+    }]);
+
+app.directive('addToCart', ['CartService', 'gettextCatalog', function (CartService, gettextCatalog) {
+        
+        // Shared scope:
+        // addToCart: The product to add to the cart. Must include the product_id.
+        // error: The error object to communicate errors.
+        // onSubmit: A function that will be called from scope when the function is triggered.
+        // onSuccess: A function that will be called from scope when the item is successfully added. Will include the response item object as a parameter.
+        // onError: A function that will be called from scope when the function fails. Will include the error object as a parameter.
+        
+        // Attributes
+        // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+        
+        return {
+            restrict: 'A',
+            require: '^form',
+            scope: {
+                product: '=addToCart',
+                params: '=?',
+                quantity: '=?',
+                error: '=?',
+                onSubmit: '=?',
+                onSuccess: '=?',
+                onError: '=?'
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                elem.bind("click", function () {
+                    
+                    // Fire the submit event
+                    if (scope.onSubmit) {
+                        scope.onSubmit();
+                    }
+                    
+                    if (ctrl.$invalid == true) {
+                        scope.$apply(function () {
+                            scope.error = { type: "bad_request", reference: "AWu1twY", code: "invalid_input", message: gettextCatalog.getString("There was a problem with some of the information you supplied. Please review for errors and try again."), status: 400 };
+                        })
+                        return;
+                    }
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Build the item
+                    var item = { product_id: scope.product.product_id };
+                    
+                    // Set the quantity
+                    if (scope.quantity) {
+                        item.quantity = scope.quantity;
+                    }
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    CartService.addItem(item, scope.params).then(function (item) {
+                        scope.item = item;
+                        // Fire the success event
+                        if (scope.onSuccess) {
+                            scope.onSuccess(item);
+                        }
+                    }, function (error) {
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
+
+                });
+
+            }
+        };
+    }]);
+
+app.directive('submitPayment', ['CartService', 'InvoiceService', 'gettextCatalog', function (CartService, InvoiceService, gettextCatalog) {
+        
+        // Shared scope:
+        // submitPayment: Provide the payment_method to be used for payment. Should include, at a minimum, the following properties: payment_type, data (data includes payment method-specific fields such as credit card number).
+        // cart: Provide the cart that will be paid for. The cart will automatically be updated (or created if not yet created) through the API before the payment for the payment is submitted. Cart or invoice can be supplied, but not both.
+        // invoice: Provide the invoice that will be paid for. The invoice will automatically be updated through the API before the payment for the payment is submitted (i.e. a currency change). Cart or invoice can be supplied, but not both.
+        // error: The error object to communicate errors.
+        // onSubmit: A function that will be called from scope when a payment is submitted.
+        // onSuccess: A function that will be called from scope when the payment is successfully completed. Will include the response payment object as a parameter.
+        // onError: A function that will be called from scope when the payment fails. Will include the (failed) response payment object as a parameter.
+        // shippingIsBilling: A flag to indicate if the billing address and shipping address are the same. If so, the shipping address will be removed.
+        
+        // Attributes
+        // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+        
+        return {
+            restrict: 'A',
+            require: '^form',
+            scope: {
+                paymentMethod: '=submitPayment',
+                cart: '=?',
+                invoice: '=?',
+                params: '=?',
+                error: '=?',
+                onSubmit: '=?',
+                onSuccess: '=?',
+                onError: '=?',
+                shippingIsBilling: '=?',
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                elem.bind("click", function () {
+                    
+                    // Fire the submit event
+                    if (scope.onSubmit) {
+                        scope.onSubmit();
+                    }
+                    
+                    // Data is not validated with PayPal since the customer data will come from the response.
+                    if (ctrl.$invalid == true && scope.paymentMethod.type != "paypal") {
+                        
+                        scope.$apply(function () {
+                            scope.error = { type: "bad_request", reference: "kI1ETNz", code: "invalid_input", message: gettextCatalog.getString("There was a problem with some of the information you supplied. Please review for errors and try again."), status: 400 };
+                        });
+                        
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                        
+                        return;
+                    }
+                    
+                    // Disable the clicked element
+                    elem.prop("disabled", true);
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "order");
+                    
+                    if (scope.cart) {
+                        
+                        // If billing is shipping, remove the shipping address
+                        if (scope.shippingIsBilling) {
+                            delete scope.cart.customer.shipping_address;
+                        }
+                        
+                        CartService.pay(scope.cart, scope.paymentMethod, params).then(function (payment) {
+                            
+                            // Fire the success event
+                            if (scope.onSuccess) {
+                                scope.onSuccess(payment);
+                            }
+                            
+                            // Remove the disabled attribute
+                            elem.prop("disabled", null);
+
+                        }, function (error) {
+                            
+                            scope.error = error;
+                            
+                            // Fire the error event
+                            if (scope.onError) {
+                                scope.onError(error);
+                            }
+                            
+                            // Remove the disabled attribute
+                            elem.prop("disabled", null);
+
+                        });
+                    }
+                    
+                    if (scope.invoice) {
+                        
+                        InvoiceService.pay(scope.invoice, scope.paymentMethod, params).then(function (payment) {
+                            
+                            // Fire the success event
+                            if (scope.onSuccess) {
+                                scope.onSuccess(payment);
+                            }
+                            
+                            // Remove the disabled attribute
+                            elem.prop("disabled", null);
+
+                        }, function (error) {
+                            
+                            scope.error = error;
+                            
+                            // Fire the error event
+                            if (scope.onError) {
+                                scope.onError(error);
+                            }
+                            
+                            // Remove the disabled attribute
+                            elem.prop("disabled", null);
+
+                        });
+                    }
+
+                });
+
+            }
+        };
+    }]);
+
+app.directive('capturePayment', ['CartService', 'InvoiceService', 'PaymentService', 'gettextCatalog', function (CartService, InvoiceService, PaymentService, gettextCatalog) {
+        
+        // This is used for payment methods such as PayPal that need to be tiggered for completion or "capture" after they have been reviewed by the customer. Payments made by credit card that are not captured (i.e. pending) cannot be captured by limited tokens.    
+        
+        // Shared scope:
+        // capturePayment: Provide the payment_id of the payment that will be captured.
+        // sale: If a the payment is associated with a cart or invoice, you can supply the it here. If you supply a cart, any changes to the cart (such as customer data changes) will be saved before the capture is attempted.
+        // error: The error object to communicate errors.
+        // onSubmit: A function that will be called from scope when a payment is submitted.
+        // onSuccess: A function that will be called from scope when the payment is successfully completed. Will include the response payment object as a parameter.
+        // onError: A function that will be called from scope when the payment fails. Will include the (failed) response payment object as a parameter.
+        
+        // Attributes
+        // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+        // saleType: "cart" or "invoice" - a string that indicates what is being passed in through the sale shared scope.
+        
+        return {
+            restrict: 'A',
+            require: '^form',
+            scope: {
+                paymentId: '=capturePayment',
+                paymentMethod: '=?',
+                sale: '=?',
+                invoice: '=?',
+                params: '=?',
+                error: '=?',
+                onSubmit: '=?',
+                onSuccess: '=?',
+                onError: '=?',
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                elem.bind("click", function () {
+                    
+                    // Fire the submit event
+                    if (scope.onSubmit) {
+                        scope.onSubmit();
+                    }
+                    
+                    // Data is not validated with PayPal since the customer data will come from the response.
+                    if (ctrl.$invalid == true) {
+                        
+                        scope.$apply(function () {
+                            scope.error = { type: "bad_request", reference: "eS9G9MA", code: "invalid_input", message: gettextCatalog.getString("There was a problem with some of the information you supplied. Please review for errors and try again."), status: 400 };
+                        });
+                        
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                        
+                        return;
+                    }
+                    
+                    // Disable the clicked element
+                    elem.prop("disabled", true);
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "order");
+                    
+                    // Define the capture function.
+                    var capture = function (payment_id, payment_method, params) {
+                        
+                        PaymentService.capture(payment_id, payment_method, params).then(function (payment) {
+                            
+                            // Fire the success event
+                            if (scope.onSuccess) {
+                                scope.onSuccess(payment);
+                            }
+                            
+                            // Remove the disabled attribute
+                            elem.prop("disabled", null);
+
+                        }, function (error) {
+                            
+                            scope.error = error;
+                            
+                            // Fire the error event
+                            if (scope.onError) {
+                                scope.onError(error);
+                            }
+                            
+                            // Remove the disabled attribute
+                            elem.prop("disabled", null);
+
+                        });
+                    }
+                    
+                    // Perform the capture. If a cart, update the cart before running the payment.
+                    if (attrs.saleType == "cart") {
+                        
+                        CartService.update(scope.sale).then(function (cart) {
+                            capture(scope.paymentId, scope.paymentMethod, params);
+                        }, function (error) {
+                            
+                            scope.error = error;
+                            
+                            // Fire the error event
+                            if (scope.onError) {
+                                scope.onError(error);
+                            }
+                            
+                            // Remove the disabled attribute
+                            elem.prop("disabled", null);
+
+                        });
+
+                    } else {
+                        // An invoice, which isn't updated by the customer. Just run the capture.
+                        capture(scope.paymentId, scope.paymentMethod, params);
+                    }
+
+                });
+
+            }
+        };
+    }]);
+
+app.directive('currencySelect', ['CurrencyService', 'CartService', 'InvoiceService', 'ProductService', 'SettingsService', '$timeout', '$rootScope', function (CurrencyService, CartService, InvoiceService, ProductService, SettingsService, $timeout, $rootScope) {
+        
+        return {
+            restrict: 'A',
+            scope: {
+                currency: '=selectCurrency',
+                cart: '=?',
+                invoice: '=?',
+                products: '=?',
+                params: '=?',
+                onSuccess: '=?',
+                onError: '=?',
+                error: '=?',
+            },
+            link: function (scope, elem, attrs) {
+                
+                // Shared scope:
+                // currency: The new currency
+                // cart: If running on a page with an cart, pass the cart object in and it will be updated with the pricing in the new currency
+                // invoice: If running on a page with an invoice, pass the invoice object in and it will be updated with the pricing in the new currency
+                // product: If running on a page with a single product, pass the product in and it will be updated with the pricing in the new currency
+                // products: If running on a page with a list of products, pass the products list in and it will be updated with the pricing in the new currency
+                // error: The error object to communicate errors.
+                // onSuccess: A function that will be called from scope when the currency is successfully changed. Will include the newly set currency as a parameter.
+                // onError: A function that will be called from scope when the currency change fails. Will include an error object as a parameter.
+                
+                // Attributes
+                // params: Any parameters you want to pass to the update function (i.e. expand, show, etc.)
+                // asDropdown: If specified, a Bootstrap dropdown will be output. Otherwise, a HTML select intput will be output.
+                
+                // Get the settings
+                var settings = SettingsService.get();
+                
+                if (utils.hasProperty(attrs, "asDropdown")) {
+                    
+                    var elemNg = angular.element(elem[0]);
+                    _.each(settings.account.currencies, function (item) {
+                        
+                        var option = '<li><a class="pointer">' + item.name + '</a></li>';
+                        optionNg = angular.element(option);
+                        
+                        elemNg.append(optionNg);
+                        
+                        optionNg.bind("click", function (event) {
+                            
+                            // Clear previous errors
+                            scope.error = null;
+                            
+                            // Placed within a timeout otherwise the update was happening before the change to the model occured.
+                            $timeout(function () {
+                                setCurrency(scope, item.code, attrs);
+                            });
+                        });
+
+                    });
+                    
+                    // Set the current value for display
+                    var elems = angular.element(elem.parent().children());
+                    var label = elems.find("span");
+                    if (label) {
+                        label.text(CurrencyService.getCurrencyName());
+                    }
+                    
+                    // Listen for a change
+                    $rootScope.$on("currencyChanged", function (event, currency) {
+                        var elems = angular.element(elem.parent().children());
+                        var label = elems.find("span");
+                        if (label) {
+                            label.text(CurrencyService.getCurrencyName());
+                        }
+                    });
+
+                } else {
+                    
+                    var elemNg = angular.element(elem[0]);
+                    _.each(settings.account.currencies, function (item) {
+                        
+                        var option = '<option value="' + item.code + '"';
+                        if (item.code == CurrencyService.getCurrency()) {
+                            option += " selected";
+                        }
+                        option += '>' + item.name + '</option>';
+                        elemNg.append(option);
+
+                    });
+                    
+                    elem.bind("change", function (event) {
+                        
+                        // Clear previous errors
+                        scope.error = null;
+                        
+                        var selectedCurrency = angular.element(elem[0]).val();
+                        
+                        // Placed within a timeout otherwise the update was happening before the change to the model occured.
+                        $timeout(function () {
+                            setCurrency(scope, selectedCurrency, attrs);
+                        });
+
+                    });
+                    
+                    // Listen for a change
+                    $rootScope.$on("currencyChanged", function (event, currency) {
+                        elemNg[0].value = currency;
+                    });
+                }
+                
+                var setCurrency = function (scope, selectedCurrency, attrs) {
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    CurrencyService.setCurrency(selectedCurrency, scope.params).then(function (result) {
+                        
+                        // If a cart or invoice was updated as a result, it will be returned.
+                        if (result.cart) {
+                            
+                            // We don't want to remove unsaved customer values from the view.
+                            var customer = null;
+                            if (scope.cart) {
+                                customer = scope.cart.customer;
+                            }
+                            scope.cart = result.cart;
+                            
+                            if (customer) {
+                                // Restore the original customer data.
+                                scope.cart.customer = customer;
+                            }
+
+                        }
+                        
+                        if (result.invoice) {
+                            
+                            // We don't want to remove unsaved customer values from the view.
+                            var customer = null;
+                            if (scope.invoice) {
+                                customer = scope.invoice.customer;
+                            }
+                            scope.invoice = result.invoice;
+                            
+                            if (customer) {
+                                // Restore the original customer data.
+                                scope.invoice.customer = customer;
+                            }
+
+                        }
+                        
+                        // If products were supplied, refresh
+                        if (scope.products) {
+                            
+                            // Pass through the current parameters from products (such as pagination)
+                            var pageParams = utils.getQueryParameters(scope.products.current_page_url);
+                            
+                            // Set the new currency
+                            params.currency = selectedCurrency;
+                            
+                            ProductService.getList(scope.params).then(function (products) {
+                                scope.products = products;
+                            }, function (error) {
+                                scope.error = error;
+                                if (scope.onError) {
+                                    scope.onError(error);
+                                }
+                            });
+                        }
+                        
+                        if (scope.product) {
+                            
+                            // Pass through the current parameters from product (such as pagination)
+                            var pageParams = utils.getQueryParameters(scope.product.url);
+                            
+                            // Set the new currency
+                            scope.params.currency = selectedCurrency;
+                            
+                            ProductService.get(scope.product.product_id, scope.params).then(function (product) {
+                                scope.product = product;
+                            }, function (error) {
+                                scope.error = error;
+                                if (scope.onError) {
+                                    scope.onError(error);
+                                }
+                            });
+                        }
+                        
+                        if (scope.onSuccess) {
+                            scope.onSuccess(selectedCurrency);
+                        }
+
+                    }, function (error) {
+                        scope.error = error;
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
+                }
+            }
+        };
+    }]);
+
+app.directive('languageSelect', ['LanguageService', '$timeout', '$rootScope', function (LanguageService, $timeout, $rootScope) {
+        
+        return {
+            restrict: 'A',
+            link: function (scope, elem, attrs) {
+                
+                // Get the languages
+                var languages = LanguageService.getLanguages();
+                
+                if (utils.hasProperty(attrs, "asDropdown")) {
+                    
+                    var elemNg = angular.element(elem[0]);
+
+                    _.each(languages, function (language) {
+                        var option = '<li><a class="pointer">' + language.name + '</a></li>';
+                        optionNg = angular.element(option);
+                        elemNg.append(optionNg);
+                        
+                        optionNg.bind("click", function (event) {
+                            
+                            // Placed within a timeout otherwise the update was happening before the change to the model occured.
+                            $timeout(function () {
+                                LanguageService.setLanguage(language.code);
+                            });
+
+                        });
+                    });
+                    
+                    // Set the current value for display
+                    var elems = angular.element(elem.parent().children());
+                    var label = elems.find("span");
+                    if (label) {
+                        label.text(LanguageService.getSelectedLanguage().name);
+                    }
+                    
+                    // Listen for a change
+                    $rootScope.$on("languageChanged", function (event, currency) {
+                        var elems = angular.element(elem.parent().children());
+                        var label = elems.find("span");
+                        if (label) {
+                            label.text(LanguageService.getSelectedLanguage().name);
+                        }
+                    });
+
+                } else {
+                    
+                    var elemNg = angular.element(elem[0]);
+                    _.each(languages, function (language) {
+                        
+                        var option = '<option value="' + language.code + '"';
+                        if (language.code == LanguageService.getSelectedLanguage().code) {
+                            option += " selected";
+                        }
+                        option += '>' + language.name + '</option>';
+                        elemNg.append(option);
+
+                    });
+                    
+                    elem.bind("change", function (event) {
+                        
+                        var selectedLanguage = angular.element(elem[0]).val();
+                        
+                        // Placed within a timeout otherwise the update was happening before the change to the model occured.
+                        $timeout(function () {
+                            LanguageService.setLanguage(selectedLanguage);
+                        });
+
+                    });
+                    
+                    // Listen for a change
+                    $rootScope.$on("languageChanged", function (event, language) {
+                        elemNg[0].value = language;
+                    });
+                }
+            }
+        };
+    }]);
+
+app.directive('shippingSelect', ['CartService', 'InvoiceService', '$timeout', function (CartService, InvoiceService, $timeout) {
+        
+        return {
+            restrict: 'A',
+            scope: {
+                sale: '=?',
+                shippingQuotes: '=?',
+                params: '=?',
+                onSuccess: '=?',
+                onError: '=?',
+                error: '=?',
+            },
+            link: function (scope, elem, attrs) {
+                
+                // Shared scope:
+                // sale: The cart or invoice that is on the current page.
+                // error: The error object to communicate errors.
+                // onSuccess: A function that will be called from scope when the currency is successfully changed. Will include the newly set currency as a parameter.
+                // onError: A function that will be called from scope when the currency change fails. Will include an error object as a parameter.
+                
+                // Attributes
+                // params: Any parameters you want to pass to the update function (i.e. expand, show, etc.)
+                // saleType: "cart" or "invoice" - a string that indicates what is being passed in through the sale shared scope.
+                
+                scope.$watch("shippingQuotes", function (newValue, oldValue) {
+                    
+                    if (newValue) {
+                        
+                        var method_id = null;
+                        if (scope.sale.shipping_item) {
+                            method_id = scope.sale.shipping_item.item_id;
+                        }
+                        
+                        var elemNg = angular.element(elem[0]);
+                        
+                        // Clear any previous options
+                        elemNg.html("");
+                        
+                        _.each(scope.shippingQuotes, function (item) {
+                            
+                            var option = '<option value="' + item.method_id + '"';
+                            if (item.method_id == method_id) {
+                                option += " selected";
+                            }
+                            option += '>' + item.description + ' (' + item.formatted.price + ')</option>';
+                            elemNg.append(option);
+
+                        });
+                        
+                    }
+                });
+                
+                elem.bind("change", function (event) {
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    var selectedMethod = angular.element(elem[0]).val();
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    // Placed within a timeout otherwise the update was happening before the change to the model occured.
+                    $timeout(function () {
+                        
+                        var data = { shipping_method_id: selectedMethod };
+                        
+                        if (attrs.saleType == "cart") {
+                            CartService.update(data, scope.params).then(function (cart) {
+                                
+                                // In the event that there were changes to the view between the time the call was sent and returned, we don't want to overwrite them. As a result, we won't sync the server customer values with the model.
+                                cart.customer = scope.sale.customer;
+                                
+                                // Sync the scope to the response.
+                                scope.sale = cart;
+                                
+                                if (scope.onSuccess) {
+                                    scope.onSuccess(selectedCurrency);
+                                }
+
+                            }, function (error) {
+                                scope.error = error;
+                                if (scope.onError) {
+                                    scope.onError(error);
+                                }
+                            });
+                        }
+                        
+                        if (attrs.saleType == "invoice") {
+                            InvoiceService.update(data, scope.params).then(function (invoice) {
+                                
+                                // In the event that there were changes to the view between the time the call was sent and returned, we don't want to overwrite them. As a result, we won't sync the server customer values with the model.
+                                invoice.customer = scope.sale.customer;
+                                
+                                // Sync the scope to the response.
+                                scope.sale = invoice;
+                                
+                                if (scope.onSuccess) {
+                                    scope.onSuccess(selectedCurrency);
+                                }
+
+                            }, function (error) {
+                                scope.error = error;
+                                if (scope.onError) {
+                                    scope.onError(error);
+                                }
+                            });
+                        }
+
+                    });
+                });
+            }
+        };
+    }]);
+
+app.directive('shippingRadio', ['CartService', 'InvoiceService', '$timeout', function (CartService, InvoiceService, $timeout) {
+        
+        return {
+            restrict: 'A',
+            scope: {
+                sale: '=?',
+                shippingQuotes: '=?',
+                params: '=?',
+                onSuccess: '=?',
+                onError: '=?',
+                error: '=?',
+            },
+            link: function (scope, elem, attrs) {
+                
+                // Shared scope:
+                // sale: The cart or invoice that is on the current page.
+                // error: The error object to communicate errors.
+                // onSuccess: A function that will be called from scope when the currency is successfully changed. Will include the newly set currency as a parameter.
+                // onError: A function that will be called from scope when the currency change fails. Will include an error object as a parameter.
+                
+                // Attributes
+                // params: Any parameters you want to pass to the update function (i.e. expand, show, etc.)
+                // saleType: "cart" or "invoice" - a string that indicates what is being passed in through the sale shared scope.
+                
+                elem.bind("change", function (event) {
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    var selectedMethod = attrs.shippingRadio;
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    // Placed within a timeout otherwise the update was happening before the change to the model occured.
+                    $timeout(function () {
+                        var data = { shipping_method_id: selectedMethod };
+                        
+                        if (attrs.saleType == "cart") {
+                            CartService.update(data, scope.params).then(function (cart) {
+                                
+                                // In the event that there were changes to the view between the time the call was sent and returned, we don't want to overwrite them. As a result, we won't sync the server customer values with the model.
+                                if (scope.sale) {
+                                    cart.customer = scope.sale.customer;
+                                }
+                                
+                                // Sync the scope to the response.
+                                scope.sale = cart;
+                                
+                                if (scope.onSuccess) {
+                                    scope.onSuccess(selectedCurrency);
+                                }
+
+                            }, function (error) {
+                                scope.error = error;
+                                if (scope.onError) {
+                                    scope.onError(error);
+                                }
+                            });
+                        }
+                        
+                        if (attrs.saleType == "invoice") {
+                            InvoiceService.update(data, scope.params).then(function (invoice) {
+                                
+                                // In the event that there were changes to the view between the time the call was sent and returned, we don't want to overwrite them. As a result, we won't sync the server customer values with the model.
+                                if (scope.sale) {
+                                    invoice.customer = scope.sale.customer;
+                                }
+                                
+                                // Sync the scope to the response.
+                                scope.sale = invoice;
+                                
+                                if (scope.onSuccess) {
+                                    scope.onSuccess(selectedCurrency);
+                                }
+
+                            }, function (error) {
+                                scope.error = error;
+                                if (scope.onError) {
+                                    scope.onError(error);
+                                }
+                            });
+                        }
+
+                    });
+                });
+            }
+        };
+    }]);
+
+app.directive('customerCountries', ['GeoService', '$timeout', function (GeoService, $timeout) {
+        
+        return {
+            restrict: 'A',
+            require: "ngModel",
+            link: function (scope, elem, attrs, ctrl) {
+                
+                // Attributes
+                // customerCountries: A list of allowed customer countries
+                
+                scope.$watch(attrs.customerCountries, function (customerCountries, oldValue) {
+                    
+                    if (customerCountries) {
+                        
+                        var elemNg = angular.element(elem[0]);
+                        
+                        // Clear any previous options
+                        elemNg.html("");
+                        
+                        // Get the entire list of countries
+                        var countries = GeoService.getData().countries;
+                        
+                        countries = _.filter(countries, function (country) { return customerCountries.indexOf(country.code) > -1 });
+                        
+                        // Insert a blank at the top
+                        elemNg.append("<option></option>");
+                        
+                        // Get the value
+                        var value = ctrl.$viewValue || ctrl.$modelValue;
+                        
+                        // Set a flag to indicate if you found a match of current country
+                        var match = false;
+                        
+                        _.each(countries, function (item) {
+                            
+                            var option = '<option value="' + item.code + '"';
+                            if (item.code == value) {
+                                option += " selected";
+                                match = true;
+                            }
+                            option += '>' + item.name + '</option>';
+                            elemNg.append(option);
+
+                        });
+                        
+                        // If no match, remove the value of the current control
+                        if (match == false) {
+                            ctrl.$setViewValue(null);
+                        }
+                        
+                    }
+                });
+                
+            }
+        };
+    }]);
+
+app.directive('showErrors', ['$timeout', 'SettingsService', function ($timeout, SettingsService) {
+        return {
+            restrict: 'A',
+            require: '^form',
+            link: function (scope, elem, attrs, ctrl) {
+                
+                // Find the input element and error block elements
+                var load = function () {
+                    $timeout(function () {
+                        
+                        var inputEl = elem[0].querySelector("[name]");
+                        var labelEl = elem[0].querySelector("label");
+                        var errorEl = angular.element(elem[0].querySelector(".error-block"));
+                        
+                        // Convert the native angular elements
+                        var inputNgEl = angular.element(inputEl);
+                        var labelNgEl = angular.element(labelEl);
+                        var errorNgEl = angular.element(errorEl);
+                        
+                        // Remove errors, by default
+                        elem.removeClass("has-error");
+                        errorNgEl.addClass("hidden");
+                        
+                        // Get the name of the text box
+                        var inputName = inputNgEl.attr("name");
+                        
+                        // If required, add a required class to the label, if supplied
+                        scope.$watch(attrs.showErrors, function (newValue, oldValue) {
+                            if (newValue && inputEl) {
+                                if (inputEl.required) {
+                                    if (labelNgEl) {
+                                        labelNgEl.addClass("required");
+                                    }
+                                } else {
+                                    labelNgEl.removeClass("required");
+                                }
+                            }
+                        });
+                        
+                        // Define the action upon which we re-validate
+                        var action = "blur";
+                        
+                        // We don't do select elements on change because it can get cause a huge performance hit if a user navigates up and down a select list with a keyboard, causing many requests per second.
+                        if (inputEl) {
+                            if (inputEl.type == "checkbox" || inputEl.type == "radio") {
+                                action = "change";
+                            }
+                        }
+                        
+                        // Apply and remove has-error and hidden on blur
+                        inputNgEl.bind(action, function () {
+                            
+                            var settings = SettingsService.get();
+                            var errorLevel = settings.app.error_notifications || "moderate";
+                            
+                            // Define how aggressive error messaging is on blur: mild, moderate, aggressive
+                            if (errorLevel == "moderate") {
+                                elem.toggleClass("has-error", ctrl[inputName].$invalid);
+                            }
+                            
+                            if (errorLevel == "aggressive") {
+                                elem.toggleClass("has-error", ctrl[inputName].$invalid);
+                                errorNgEl.toggleClass("hidden", !ctrl[inputName].$invalid);
+                            }
+                            
+                            // We only show on form submit, so on blur we only hide.
+                            if (ctrl[inputName].$invalid == false) {
+                                errorNgEl.toggleClass("hidden", true);
+                            }
+
+                        });
+                        
+                        // Listen for the form submit and show any errors (plus error text)
+                        scope.$on("show-errors-check-validity", function () {
+                            if (ctrl[inputName]) {
+                                elem.toggleClass("has-error", ctrl[inputName].$invalid);
+                                errorNgEl.toggleClass("hidden", !ctrl[inputName].$invalid);
+                            }
+                        });
+
+                    });
+                }
+                
+                // Set the initial listener
+                load();
+                
+                // Watch for a trigger to reload the listener
+                if (attrs.refreshOnChange) {
+                    scope.$watch(attrs.refreshOnChange, function (newValue, oldValue) {
+                        load();
+                    });
+                }
+            }
+        }
+    }]);
+
+app.directive('conversion', ['SettingsService', 'StorageService', function (SettingsService, StorageService) {
+        
+        // Attributes:
+        // orderId: The order_id from the order, if null we don't record the conversion, which helps prevent false positives.
+        
+        return {
+            restrict: 'A',
+            scope: {
+                conversion: '@',
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                // Define your observe function
+                var setTracking = function () {
+                    attrs.$observe("conversion", function (order_id) {
+                        if (utils.isNullOrEmpty(order_id) == false) {
+                            // Check if we've already recorded the conversion.
+                            var conv = StorageService.get("conv");
+                            if (conv != order_id) {
+                                
+                                var head = document.getElementsByTagName("head")[0];
+                                var js = document.createElement("script");
+                                js.id = "app_conversionload";
+                                js.type = "text/javascript";
+                                js.src = "analytics/conversion.js";
+                                js.setAttribute("data-order-id", order_id);
+                                
+                                // Remove any existing
+                                if (document.getElementById("app_conversionload") != null) {
+                                    head.removeChild(document.getElementById("app_conversionload"));
+                                }
+                                
+                                // Add again to force reload.
+                                head.appendChild(js);
+                                
+                                StorageService.set("conv", order_id, 60 * 60 * 24 * 10);
+                            }
+                        }
+                    });
+                }
+                
+                // Get the settings
+                var settings = SettingsService.get();
+                if (settings.config.development != true) {
+                    // Your are not in a development environment, so set the tracking. 
+                    setTracking();
+                }
+            }
+        };
+    }]);
+
+app.directive('validateOnSubmit', function () {
+    return {
+        restrict: 'A',
+        require: '^form',
+        link: function (scope, elem, attrs, ctrl) {
+            
+            elem.bind("click", function () {
+                scope.$broadcast('show-errors-check-validity');
+            });
+
+        }
+    }
+});
+
+app.directive('validateExpMonth', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            
+            ctrl.$parsers.unshift(function (viewValue) {
+                
+                if (utils.isValidInteger(viewValue) == false) {
+                    ctrl.$setValidity('month', false);
+                    return undefined;
+                }
+                
+                if (viewValue > 12) {
+                    ctrl.$setValidity('month', false);
+                    return undefined;
+                }
+                
+                if (viewValue < 1) {
+                    ctrl.$setValidity('month', false);
+                    return undefined;
+                }
+                
+                ctrl.$setValidity('month', true);
+                return viewValue;
+
+            });
+
+        }
+
+    }
+
+});
+
+app.directive('validateExpYear', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            
+            ctrl.$parsers.unshift(function (viewValue) {
+                
+                if (utils.isValidInteger(viewValue) == false) {
+                    ctrl.$setValidity('year', false);
+                    return undefined;
+                }
+                
+                if (viewValue.length > 4) {
+                    ctrl.$setValidity('year', false);
+                    return undefined;
+                }
+                
+                if (viewValue.length < 2) {
+                    ctrl.$setValidity('year', false);
+                    return undefined;
+                }
+                
+                ctrl.$setValidity('year', true);
+                return viewValue;
+
+            });
+
+        }
+
+    }
+
+});
+
+app.directive('validateCvv', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            
+            ctrl.$parsers.unshift(function (viewValue) {
+                
+                var type = attrs.validateCvv;
+                var length;
+                
+                // If the supplied cart number is Amex, then the length must be 4. Otherwise, 3.
+                if (type) {
+                    if (type.substring(0, 1).toString() == "3") {
+                        length = 4;
+                    } else {
+                        length = 3;
+                    }
+                }
+                
+                if (utils.isValidInteger(viewValue) == false) {
+                    ctrl.$setValidity('cvv', false);
+                    return undefined;
+                }
+                
+                if (viewValue.length < 3) {
+                    ctrl.$setValidity('cvv', false);
+                    return undefined;
+                }
+                
+                if (viewValue.length > 4) {
+                    ctrl.$setValidity('cvv', false);
+                    return undefined;
+                }
+                
+                // If the length is defined, we have a card number which means we know the card type. If the length does not match the card type, error.
+                if (length) {
+                    if (viewValue.length != length) {
+                        ctrl.$setValidity('cvv', false);
+                        return undefined;
+                    }
+                }
+                
+                ctrl.$setValidity('cvv', true);
+                return viewValue;
+
+            });
+
+        }
+
+    }
+
+});
+
+app.directive('validateCard', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            
+            ctrl.$parsers.unshift(function (viewValue) {
+                
+                // Strip any whitespace
+                viewValue = utils.removeWhitespace(viewValue);
+                
+                if (utils.isNullOrEmpty(viewValue)) {
+                    ctrl.$setValidity('card', false);
+                    return undefined;
+                }
+                
+                if (/^\d+$/.test(viewValue) == false) {
+                    ctrl.$setValidity('card', false);
+                    return undefined;
+                }
+                
+                if (viewValue.length < 14) {
+                    ctrl.$setValidity('card', false);
+                    return undefined;
+                }
+                
+                if (viewValue.length > 19) {
+                    ctrl.$setValidity('card', false);
+                    return undefined;
+                }
+                
+                if (utils.luhnCheck(viewValue) == false) {
+                    ctrl.$setValidity('card', false);
+                    return undefined;
+                }
+                
+                ctrl.$setValidity('card', true);
+                return viewValue;
+
+            });
+
+        }
+
+    }
+
+});
+
+app.directive('isValidInteger', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            
+            ctrl.$validators.characters = function (modelValue, viewValue) {
+                var value = modelValue || viewValue;
+                if (attrs.allowEmptyValue == "true" && (value == "" || value == null)) {
+                    return true;
+                }
+                if (utils.isValidInteger(value) == false) {
+                    return false;
+                }
+                if (attrs.max) {
+                    if (value > attrs.max) {
+                        return false;
+                    }
+                }
+                if (attrs.lessThan) {
+                    if (value >= attrs.lessThan) {
+                        return false;
+                    }
+                }
+                if (attrs.min) {
+                    if (value < attrs.min) {
+                        return false;
+                    }
+                }
+                if (attrs.greaterThan) {
+                    if (value <= attrs.greaterThan) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    };
+});
+
+app.directive('isValidNumber', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            
+            ctrl.$validators.characters = function (modelValue, viewValue) {
+                var value = modelValue || viewValue;
+                if (attrs.allowEmptyValue == "true" && (value == "" || value == null)) {
+                    return true;
+                }
+                if (utils.isValidNumber(value) == false) {
+                    return false;
+                }
+                if (attrs.max) {
+                    if (value > attrs.max) {
+                        return false;
+                    }
+                }
+                if (attrs.lessThan) {
+                    if (value >= attrs.lessThan) {
+                        return false;
+                    }
+                }
+                if (attrs.min) {
+                    if (value < attrs.min) {
+                        return false;
+                    }
+                }
+                if (attrs.greaterThan) {
+                    if (value <= attrs.greaterThan) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    };
+});
+
+app.directive('promoCode', ['CartService', '$timeout', function (CartService, $timeout) {
+        
+        // Shared scope:
+        // cart: The cart to which the promo code should be applied
+        // onAdd: A function that will be called from scope when the currency is successfully changed. Will include the newly updated cart as a parameter.
+        // onRemove: A function that will be called from scope when the currency is successfully changed. Will include the newly updated cart as a parameter.
+        // onError: A function that will be called from scope when the currency change fails. Will include an error object as a parameter.
+        // error: The error object to communicate errors.
+        
+        // Attributes
+        // params: Any parameters you want to pass to the update function (i.e. expand, show, etc.)
+        
+        // An HTML template that shows the classes that should be applied to each component and state of the promotion code request
+        //<div class="col-xs-12 promo-code" ng-cloak promo-code cart="data.cart" error="data.error">
+        //    <label class="ask-promo-code">Enter Promo Code</label>
+        //    <div class="form-inline supply-promo-code">
+        //        <input class="form-control" type="text" placeholder="{{ 'Enter Promo Code' | translate}}">
+        //        <button type="submit" class="btn btn-info apply-promo-code">Apply</button>
+        //    </div>
+        //    <div class="applied-promo-code">
+        //        <strong translate>Discount applied.</strong>&nbsp;&nbsp;<strong class="text-success">{{data.cart.promotion_code}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-trash fa-lg pointer remove-promo-code"></i>
+        //    </div>
+        //</div>
+        
+        return {
+            restrict: 'A',
+            scope: {
+                cart: '=?',
+                params: '=?',
+                error: '=?',
+                onAdd: '=?',
+                onRemove: '=?',
+                onError: '=?'
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                var label = angular.element(elem[0].querySelector('.ask-promo-code'));
+                var request = angular.element(elem[0].querySelector('.supply-promo-code'));
+                var applied = angular.element(elem[0].querySelector('.applied-promo-code'));
+                var input = angular.element(elem.find("input"));
+                var button = angular.element(elem[0].querySelector('.apply-promo-code'));
+                var remove = angular.element(elem[0].querySelector('.remove-promo-code'));
+                
+                // Set the state
+                request.addClass("hidden");
+                applied.addClass("hidden");
+                
+                scope.$watch("cart", function (newCart, oldCart) {
+                    if (newCart) {
+                        if (newCart.promotion_code) {
+                            label.addClass("hidden");
+                            applied.removeClass("hidden");
+                        } else {
+                            applied.addClass("hidden");
+                        }
+                    }
+                });
+                
+                label.bind("click", function () {
+                    
+                    label.addClass("hidden");
+                    request.removeClass("hidden");
+                    
+                    // Focus the input
+                    $timeout(function () {
+                        elem.find("input")[0].focus();
+                    });
+
+                });
+                
+                button.bind("click", function () {
+                    
+                    // Get the promo code
+                    var promoCode = input.val();
+                    
+                    if (utils.isNullOrEmpty(promoCode)) {
+                        return;
+                    }
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Build the request
+                    var cart = { promotion_code: promoCode };
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    CartService.update(cart, scope.params).then(function (cart) {
+                        scope.cart = cart;
+                        
+                        // Fire the add event
+                        if (scope.onAdd) {
+                            scope.onAdd(cart);
+                        }
+                        
+                        // Hide the request form
+                        request.addClass("hidden");
+                        
+                        // Show the applied field
+                        applied.removeClass("hidden");
+
+                    }, function (error) {
+                        
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+
+                    });
+
+                });
+                
+                remove.bind("click", function () {
+                    
+                    // Reset the promo code
+                    input.val("");
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Build the request
+                    var cart = { promotion_code: null };
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, null);
+                    
+                    CartService.update(cart, scope.params).then(function (cart) {
+                        scope.cart = cart;
+                        
+                        // Fire the remove event
+                        if (scope.onRemove) {
+                            scope.onRemove(cart);
+                        }
+                        
+                        // Show the label
+                        label.removeClass("hidden");
+                        
+                        // Hide the applied field
+                        applied.addClass("hidden");
+
+                    }, function (error) {
+                        scope.error = error;
+                        
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+
+                    });
+
+                });
+                
+                input.bind("blur", function () {
+                    
+                    // On blur, if no code is supplied, reset back to default
+                    if (utils.isNullOrEmpty(input.val())) {
+                        request.addClass("hidden");
+                        applied.addClass("hidden");
+                        label.removeClass("hidden");
+                        
+                        // Clear previous errors
+                        $timeout(function () {
+                            scope.error = null;
+                        });
+                    }
+                
+                });
+
+            }
+        };
+    }]);
+
+app.directive('customerSignin', ['CartService', '$timeout', function (CartService, $timeout) {
+        
+        // Shared scope:
+        // cart: The cart to which the login should be applied
+        // paymentMethod: The cart's payment method object
+        // onSigninSubmit: A function that will be called when the signin is submitted.
+        // onSignoutSubmit: A function that will be called when the signout is submitted.
+        // onSigninSuccess: A function that will be called when the signin is successfully completed. Will include the cart as a parameter.
+        // onSignoutSuccess: A function that will be called when the signout is successfully completed. Will include the cart as a parameter.
+        // onSigninError: A function that will be called when the signin fails. Will include an error object as a parameter.
+        // onSignoutError: A function that will be called when the signout fails. Will include an error object as a parameter.
+        // error: The error object to communicate errors.
+        // options: The cart options that indicates if the login prompt should be shown or not.
+        
+        // Attributes
+        // params: Any parameters you want to pass to the update function (i.e. expand, show, etc.)
+        
+        // An HTML template that shows the classes that should be applied to each component and state of the signin
+        //<div customer-signin cart="data.cart" payment-method="data.payment_method" options="data.cart.options" error="data.error" params="params">
+        
+        //    <div class="well clearfix ask-signin">
+        //        <strong><span translate>Have an account?</span></strong>
+        //        <strong><a class="pointer pull-right show-signin" translate>Sign In</a></strong>
+        //    </div>
+        
+        //    <div class="well clearfix supply-signin">
+        //        <div class="col-xs-12 col-md-6" id="un">
+        //            <div class="form-group">
+        //                <label class="control-label" for="un" translate>Username</label>
+        //                <input class="form-control signin-username" name="un" type="text">
+        //            </div>
+        //        </div>
+        
+        //        <div class="col-xs-12 col-md-6" id="pw">
+        //            <div class="form-group">
+        //                <label class="control-label" for="pw" translate>Password</label>
+        //                <input class="form-control signin-password" name="pw" type="password">
+        //            </div>
+        //        </div>
+        
+        //        <div class="col-xs-12 text-right">
+        //            <button class="btn btn-sm cancel-signin" translate>Cancel</button>
+        //            <button type="submit" class="btn btn-default btn-sm submit-signin" customer-login cart="data.cart" username="data.un" password="data.pw" error="data.error" translate>Sign In</button>
+        //        </div>
+        //    </div>
+        
+        //    <div class="well signed-in">
+        //        <span>Signed in as {{data.cart.customer.username}}</span><strong><a class="pointer pull-right submit-signout" customer-logout cart="data.cart" error="data.error" translate>Sign out</a></strong>
+        //    </div>
+        
+        //</div>        
+        
+        
+        return {
+            restrict: 'A',
+            scope: {
+                cart: '=',
+                paymentMethod: '=?',
+                options: '=?',
+                params: '=?',
+                error: '=?',
+                onSigninSubmit: '=?',
+                onSignoutSubmit: '=?',
+                onSigninSuccess: '=?',
+                onSignoutSuccess: '=?',
+                onSigninError: '=?',
+                onSignoutError: '=?',
+            },
+            link: function (scope, elem, attrs) {
+                
+                var askSignin = angular.element(elem[0].querySelector('.ask-signin'));
+                var showSignin = angular.element(elem[0].querySelector('.show-signin'));
+                var supplySignin = angular.element(elem[0].querySelector('.supply-signin'));
+                var username = angular.element(elem[0].querySelector('.signin-username'));
+                var password = angular.element(elem[0].querySelector('.signin-password'));
+                var submit = angular.element(elem[0].querySelector('.submit-signin'));
+                var cancel = angular.element(elem[0].querySelector('.cancel-signin'));
+                var signedIn = angular.element(elem[0].querySelector('.signed-in'));
+                var signOut = angular.element(elem[0].querySelector('.submit-signout'));
+                
+                var hideAll = function () {
+                    askSignin.addClass("hidden");
+                    supplySignin.addClass("hidden");
+                    signedIn.addClass("hidden");
+                }
+                
+                // Set the default state
+                elem.addClass("hidden");
+                hideAll();
+                
+                scope.$watchGroup(["options", "cart"], function (newValues, oldValues) {
+                    
+                    var options = newValues[0];
+                    var cart = newValues[1];
+                    
+                    if (options) {
+                        if (options.customer_optional_fields) {
+                            if (options.customer_optional_fields.indexOf("username") >= 0) {
+                                hideAll();
+                                elem.removeClass("hidden");
+                                askSignin.removeClass("hidden");
+                            }
+                        }
+                    }
+                    
+                    if (cart) {
+                        if (cart.customer) {
+                            hideAll();
+                            if (cart.customer.username) {
+                                signedIn.removeClass("hidden");
+                            } else {
+                                askSignin.removeClass("hidden");
+                            }
+                        }
+                    }
+
+                }, true);
+                
+                showSignin.bind("click", function () {
+                    
+                    askSignin.addClass("hidden");
+                    supplySignin.removeClass("hidden");
+                    
+                    // Focus the input
+                    $timeout(function () {
+                        elem.find("input")[0].focus();
+                    });
+
+                });
+                
+                // Bind to the password enter event
+                password.bind("keydown", function (event) {
+                    if (event.which == 13) {
+                        submitForm();
+                    }
+                });
+                
+                // Bind to the username enter event
+                username.bind("keydown", function (event) {
+                    if (event.which == 13) {
+                        submitForm();
+                    }
+                });
+                
+                // Bind to the submit button click          
+                submit.bind("click", function (event) {
+                    submitForm();
+                });
+                
+                signOut.bind("click", function () {
+                    
+                    // Fire the event
+                    if (scope.onSignoutSubmit) {
+                        scope.onSignoutSubmit();
+                    }
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "customer.payment_methods");
+                    
+                    CartService.logout(scope.params).then(function (cart) {
+                        
+                        scope.cart = cart;
+                        
+                        // Delete the payment_method_id on the payment method object
+                        delete scope.paymentMethod.payment_method_id;
+                        
+                        // Fire the success event
+                        if (scope.onSignoutSuccess) {
+                            scope.onSignoutSuccess(cart);
+                        }
+
+                    }, function (error) {
+                        
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onSignoutError) {
+                            scope.onSignoutError(error);
+                        }
+
+                    });
+                    
+                });
+                
+                cancel.bind("click", function () {
+                    
+                    // Reset the username and password
+                    username.val("");
+                    password.val("");
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Reset back to login prompt.
+                    hideAll();
+                    askSignin.removeClass("hidden");
+
+                });
+                
+                var submitForm = function () {
+                    
+                    // Get the login values
+                    var un = username.val();
+                    var pw = password.val();
+                    
+                    if (utils.isNullOrEmpty(un) || utils.isNullOrEmpty(pw)) {
+                        return;
+                    }
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Fire the event
+                    if (scope.onSigninSubmit) {
+                        scope.onSigninSubmit();
+                    }
+                    
+                    // Build the login object
+                    var login = { username: un, password: pw };
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "customer.payment_methods");
+                    
+                    CartService.login(login, scope.params).then(function (cart) {
+                        
+                        scope.cart = cart;
+                        
+                        // Remove the username and password
+                        username.val("");
+                        password.val("");
+                        
+                        // If the customer has payment methods and the payment method object is supplied, assign the default payment method id
+                        if (cart.customer.payment_methods.data.length > 0 && scope.paymentMethod) {
+                            var payment_method_id = _.findWhere(cart.customer.payment_methods.data, { is_default: true }).payment_method_id;
+                            scope.paymentMethod.payment_method_id = payment_method_id;
+                        }
+                        
+                        // Fire the success event
+                        if (scope.onSigninSuccess) {
+                            scope.onSigninSuccess(cart);
+                        }
+
+                    }, function (error) {
+                        
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onSigninError) {
+                            scope.onSigninError(error);
+                        }
+
+                    });
+
+                }
+
+            }
+        };
+    }]);
+
+app.directive('createAccount', ['CustomerService', '$timeout', function (CustomerService, $timeout) {
+        
+        // Shared scope:
+        // customer: The customer for which an account will be created. Must include the customer_id.
+        // onSubmit: A function that will be called when the signin is submitted.
+        // onSuccess: A function that will be called when the signin is successfully completed. Will include the cart as a parameter.
+        // onError: A function that will be called when the signout fails. Will include an error object as a parameter.
+        // error: The error object to communicate errors.
+        // options: The cart options that indicates if the create account prompt should be shown or not.
+        
+        // Attributes
+        // params: Any parameters you want to pass to the update function (i.e. expand, show, etc.)
+        
+        // An HTML template that shows the classes that should be applied to each component and state of the signin
+        //<div customer-signin cart="data.cart" payment-method="data.payment_method" options="data.cart.options" error="data.error" params="params">
+        
+        //    <div class="well clearfix ask-signin">
+        //        <strong><span translate>Have an account?</span></strong>
+        //        <strong><a class="pointer pull-right show-signin" translate>Sign In</a></strong>
+        //    </div>
+        
+        //    <div class="well clearfix create-account">
+        //        <div class="col-xs-12 col-md-6" id="un">
+        //            <div class="form-group">
+        //                <label class="control-label" for="un" translate>Username</label>
+        //                <input class="form-control signin-username" name="un" type="text">
+        //            </div>
+        //        </div>
+        
+        //        <div class="col-xs-12 col-md-6" id="pw">
+        //            <div class="form-group">
+        //                <label class="control-label" for="pw" translate>Password</label>
+        //                <input class="form-control signin-password" name="pw" type="password">
+        //            </div>
+        //        </div>
+        
+        //        <div class="col-xs-12 text-right">
+        //            <button class="btn btn-sm cancel-signin" translate>Cancel</button>
+        //            <button type="submit" class="btn btn-default btn-sm submit-signin" customer-login cart="data.cart" username="data.un" password="data.pw" error="data.error" translate>Sign In</button>
+        //        </div>
+        //    </div>
+        
+        //    <div class="well signed-in">
+        //        <span>Signed in as {{data.cart.customer.username}}</span><strong><a class="pointer pull-right submit-signout" customer-logout cart="data.cart" error="data.error" translate>Sign out</a></strong>
+        //    </div>
+        
+        //</div>        
+        
+        
+        return {
+            restrict: 'A',
+            scope: {
+                customer: '=',
+                options: '=?',
+                params: '=?',
+                error: '=?',
+                onSubmit: '=?',
+                onSuccess: '=?',
+                onError: '=?'
+            },
+            link: function (scope, elem, attrs) {
+                
+                var supplyCredentials = angular.element(elem[0].querySelector('.supply-credentials'));
+                var username = angular.element(elem[0].querySelector('.create-account-username'));
+                var password = angular.element(elem[0].querySelector('.create-account-password'));
+                var submit = angular.element(elem[0].querySelector('.submit-create-account'));
+                var accountCreated = angular.element(elem[0].querySelector('.account-created'));
+                
+                // Set the default state
+                elem.addClass("hidden");
+                accountCreated.addClass("hidden");
+                
+                scope.$watchGroup(["options", "customer"], function (newValues, oldValues) {
+                    
+                    var options = newValues[0];
+                    var customer = newValues[1];
+                    
+                    // When both the options and customer come through, look to see if the field is set in the options and that a customer username is not already set.
+                    if (options && customer) {
+                        if (options.customer_optional_fields) {
+                            if (options.customer_optional_fields.indexOf("username") >= 0 && !customer.username) {
+                                // Show the form.
+                                elem.removeClass("hidden");
+                            }
+                        }
+                    }
+                });
+                
+                // Bind to the password enter event
+                password.bind("keydown", function (event) {
+                    if (event.which == 13) {
+                        submitForm();
+                    }
+                });
+                
+                // Bind to the username enter event
+                username.bind("keydown", function (event) {
+                    if (event.which == 13) {
+                        submitForm();
+                    }
+                });
+                
+                // Bind to the submit button click          
+                submit.bind("click", function (event) {
+                    submitForm();
+                });
+                
+                var submitForm = function () {
+                    
+                    // Get the login values
+                    var un = username.val();
+                    var pw = password.val();
+                    
+                    if (utils.isNullOrEmpty(un) || utils.isNullOrEmpty(pw)) {
+                        return;
+                    }
+                    
+                    // Clear previous errors
+                    scope.error = null;
+                    
+                    // Fire the event
+                    if (scope.onSubmit) {
+                        scope.onSubmit();
+                    }
+                    
+                    // Build the login object
+                    scope.customer.username = un;
+                    scope.customer.password = pw;
+                    
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "customer.payment_methods");
+                    
+                    CustomerService.createAccount(scope.customer, scope.params).then(function (customer) {
+                        
+                        scope.customer = customer;
+                        
+                        // Remove the username and password
+                        username.val("");
+                        password.val("");
+                        
+                        // Show the success message
+                        accountCreated.removeClass("hidden");
+                        
+                        // Hide the login form
+                        supplyCredentials.addClass("hidden");
+                        
+                        // Fire the success event
+                        if (scope.onSuccess) {
+                            scope.onSuccess(customer);
+                        }
+
+                    }, function (error) {
+                        
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+
+                    });
+                }
+            }
+        };
+    }]);
+
+app.directive('selectStateProv', ['GeoService', '$timeout', function (GeoService, $timeout) {
+        
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function (scope, elem, attrs, ctrl) {
+                
+                scope.$watch(attrs.country, function (country, oldCountry) {
+                    
+                    if (country) {
+                            var statesProvs = GeoService.getStatesProvs(country);
+                            
+                            var elemNg = angular.element(elem[0]);
+                            
+                            // Clear any previous options
+                            elemNg.html("");
+                            
+                            // Add a blank
+                            elemNg.append("<option></option>");
+                            
+                            var value = ctrl.$viewValue || ctrl.$modelValue;
+                            var hasSelected = false;
+                            
+                            _.each(statesProvs, function (stateProv) {
+                                var option = '<option value="' + stateProv.code + '"';
+                                if (value == stateProv.code) {
+                                    option += " selected";
+                                    hasSelected = true;
+                                }
+                                option += '>' + stateProv.name + '</option>';
+                                elemNg.append(option);
+                            });
+                            
+                            // If not item was selected, then there was no match. If the control currently has a value for state, reset it.
+                            if (hasSelected == false) {
+                                ctrl.$setViewValue(null);
+                            }
+                    }
+                });
+            }
+        };
+    }]);
+
+app.directive('customerBackgroundSave', ['CartService', '$timeout', function (CartService, $timeout) {
+        
+        // Shared scope:
+        // cart: The updated cart to save. If an existing cart does not exist, one will be created and returned.
+        // error: The error object to communicate errors.
+        
+        // Attributes
+        // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+        // quiet: true / false to indicate if the loading bar should be displayed while calling the API. Default is false.
+        
+        return {
+            restrict: 'A',
+            scope: {
+                cart: '=customerBackgroundSave',
+                params: '=?',
+                error: '=?'
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                // Find all inputs that have the attribute of customer-field
+                var fields = document.querySelectorAll(".customer-background-save");
+                
+                _.each(fields, function (input) {
+                    
+                    // Bind on blur as the default, on change for select.
+                    var event = "blur";
+                    if (input.nodeName == "SELECT") {
+                        event = "change";
+                    }
+                    
+                    var inputNg = angular.element(input);
+                    
+                    var updateBuffer;
+                    
+                    inputNg.bind(event, function () {
+                        
+                        if (updateBuffer) {
+                            $timeout.cancel(updateBuffer);
+                        }
+                        
+                        // Wrap in timeout and apply a buffer so that if a form fill agent is used you only perform one update at the end. The buffer is 100 ms, which seems to accomplish the job.
+                        updateBuffer = $timeout(function () {
+                            
+                            // Since this is a "background update", we need special handling. Angular converts required fields to undefined when they are zero-length, which means they are stripped from the api payload.
+                            // This means that if a user sets an item to blank, it will re-populate itself on update because the API didn't see it and didn't know to null it. We'll set all undefined items to null.
+                            var cartCopy = angular.copy(scope.cart)
+                            utils.undefinedToNull(cartCopy);
+                            
+                            // Prep the params
+                            var params = scope.params || attrs.params;
+                            params = utils.mergeParams(params, null, null);
+                            
+                            if (scope.cart) {
+                                
+                                // Use the ngModel attribute to get the property name
+                                var property = input.getAttribute("ng-model");
+                                
+                                // Strip everything before customer.mo
+                                property = property.split("customer.")[1];
+                                
+                                scope.cart.customer[property] = inputNg.val();
+                                
+                                CartService.update(cartCopy, scope.params, true).then(function (cart) {
+                                    
+                                    // In the event that there were changes to the view between the time the call was sent and returned, we don't want to overwrite them. As a result, we won't sync the server customer values with the model.
+                                    if (scope.cart) {
+                                        cart.customer = scope.cart.customer;
+                                    }
+                                    
+                                    // Sync the scope to the response.
+                                    scope.cart = cart;
+
+                                }, function (error) {
+                                    scope.error = error;
+                                });
+                            }
+                        }, 25);
+                    });
+                });
+   
+            }
+        };
+    }]);
+
+app.directive('creditCardImage', [function () {
+        
+        return {
+            restrict: 'A',
+            link: function (scope, elem, attrs) {
+                
+                scope.$watch(attrs.creditCardImage, function (creditCardImage) {
+                    
+                    if (creditCardImage) {
+                        var filename = creditCardImage.replace(" ", "").toLowerCase() + ".png";
+                        var image = '<img src="images/' + filename + '" />';
+                        var elemNg = angular.element(elem);
+                        elemNg.empty();
+                        elemNg.html(image);
+                    }
+
+                });
+            }
+        }
+    }]);
+
+app.directive('creditCards', ['CartService', function (CartService) {
+        return {
+            restrict: 'A',
+            link: function (scope, elem, attrs) {
+                
+                scope.$watch(attrs.creditCards, function (newVal) {
+                    if (_.isArray(newVal)) {
+                        var images = "";
+                        _.each(newVal, function (item) {
+                            var filename = item.replace(" ", "").toLowerCase() + ".png";
+                            images += '<img src="images/' + filename + '" title="' + item + '" />';
+                        });
+                        
+                        var elemNg = angular.element(elem);
+                        elemNg.empty();
+                        elemNg.html(images);
+                    }
+                });
+
+            }
+        }
+    }]);
+
+app.directive('stateProvInput', ['GeoService', '$compile', function (GeoService, $compile) {
+        
+        return {
+            restrict: 'E',
+            terminal: true,
+            link: function (scope, elem, attrs) {
+                
+                attrs.$observe('country', function (country) {
+                    
+                    if (country) {
+                        
+                        var statesProvs = GeoService.getStatesProvs(attrs.country);
+                        
+                        if (attrs.type == "select") {
+                            
+                            // The select element is the template
+                            var template = elem[0].querySelector("select").outerHTML;
+                            
+                            if (statesProvs == null) {
+                                
+                                // Remove ngModel
+                                template = template.replace("ng-model", "suspend-model");
+                                var templateEl = angular.element(template);
+                                elem.empty();
+                                elem.append(templateEl);
+                                $compile(templateEl)(scope);
+
+                            } else {
+                                
+                                // Add ngModel
+                                template = template.replace("suspend-model", "ng-model");
+                                var templateEl = angular.element(template);
+                                elem.empty();
+                                elem.append(templateEl);
+                                $compile(templateEl)(scope);
+
+                            }
+
+                        }
+                        
+                        if (attrs.type == "input") {
+                            
+                            // The select element is the template
+                            var template = elem[0].querySelector("input").outerHTML;
+                            
+                            if (statesProvs != null) {
+                                
+                                // Remove ngModel
+                                template = template.replace("ng-model", "suspend-model");
+                                var templateEl = angular.element(template);
+                                elem.empty();
+                                elem.append(templateEl);
+                                $compile(templateEl)(scope);
+
+                            } else {
+                                
+                                // Add ngModel
+                                template = template.replace("suspend-model", "ng-model");
+                                var templateEl = angular.element(template);
+                                elem.empty();
+                                elem.append(templateEl);
+                                $compile(templateEl)(scope);
+
+                            }
+
+                        }
+                        
+                    }
+                });
+
+            }
+        };
+
+    }]);
+
+app.directive('selectOnClick', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, elem, attrs) {
+            elem.on('click', function () {
+                this.select();
+            });
+        }
+    };
+});
+
+app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScope', 'LanguageService', function (CartService, InvoiceService, $timeout, $rootScope, LanguageService) {
+        
+        return {
+            restrict: 'AE',
+            templateUrl: "app/templates/fields.html",
+            scope: {
+                fieldlist: '=',
+                sale: '='
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                // Shared scope:
+                // fieldlist: The list of field configurations
+                // sale: The cart or invoice
+                
+                // The fieldlist will be supplied as a JSON string that must be parsed into an object.
+                scope.fields = [];
+                
+                var loadFields = function (fieldsJson) {
+
+                    // If the fields are a string, parse to an object.
+                    var fields = [];
+
+                    if (typeof fieldsJson == "string" && utils.isNullOrEmpty(fieldsJson) == false) {
+                        // Make sure you have valid JSON
+                        try {
+                            fields = JSON.parse(fieldsJson);
+                        } catch (e) {
+                            // Set to an empty array if not.
+                            fields = [];
+                            // Log to help in debugging
+                            console.log("The JSON provided for custom fields is not valid JSON. As a result, no custom fields will display. Error message: " + e);
+                        };
+                    }
+                    
+                    // Group by section.
+                    fields = groupFields(fields)
+                    
+                    // If the user's language is provided in any of the fields, use that language.
+                    var language = LanguageService.getSelectedLanguage().code;
+                    
+                    _.each(fields, function (field) {
+                        
+                        if (field.languages) {
+                            if (field.languages[language]) {
+                                
+                                if (field.languages[language].label) {
+                                    field.label = field.languages[language].label;
+                                }
+                                
+                                if (field.languages[language].description) {
+                                    field.description = field.languages[language].description;
+                                }
+
+                                if (field.languages[language].section) {
+                                    field.section = field.languages[language].section;
+                                }
+
+                                if (field.languages[language].options) {
+                                    field.options = field.languages[language].options;
+                                }
+
+                            }
+                        }
+
+                    });
+                    
+                    return fields;
+
+                }
+                
+                var groupFields = function (fields) { 
+                
+                    // Group the objects together by section
+                    var sorted = [];
+                    var processed = [];
+                    _.each(fields, function (item) {
+                        
+                        if (processed.indexOf(item.section) == -1) {
+                            var matches = _.where(fields, { section: item.section });
+                            
+                            if (matches) {
+                                sorted = sorted.concat(matches);
+                                processed.push(item.section);
+                            }
+                        }
+
+                    });
+
+                    return sorted;
+                }
+                
+                var loadDefaults = function (fields, meta) {
+
+                    // Loop through the fields and set the default values if a value is not already provided.
+                    for (var property in fields) {
+                        
+                        // Set default values for any selections that don't already have a value.
+                        if (fields.hasOwnProperty(property)) {
+                            if (scope.sale.meta[fields[property].name] == null) {
+                                scope.sale.meta[fields[property].name] = fields[property].default_value;
+                            }
+                        }
+
+                    }
+
+                }
+                
+                // Load the fields.           
+                scope.fields = loadFields(scope.fieldlist);
+                
+                // On the first time the sale is loaded, loop through the fields and set default vaules for items that don't already have a value.
+                var cancelWatch = scope.$watch('sale.meta', function (newVal, oldValue) {
+                    
+                    // If the sale isn't populated yet, return.
+                    if (scope.sale == null) {
+                        return;
+                    }
+                    
+                    // If the current selections are null, set to an empty object.
+                    if (scope.sale.meta == null) {
+                        scope.sale.meta = {};
+                    }
+                    
+                    loadDefaults(scope.fields, scope.sale.meta);
+                                        
+                    // With the initial load done, we can cancel the watcher.
+                    cancelWatch();
+
+                }, true);
+                
+                // If the language changes, reload the fields, which will update the display language.
+                $rootScope.$on("languageChanged", function (event, language) {
+                    scope.fields = loadFields(scope.fieldlist);
+                });
+                
+                scope.pushToProperty = function (property, value, recordOnChange) {
+                    
+                    // If it doesn't exist, add it. If it exists, remove it.
+                    if (scope.isInProperty(property, value) == false) {
+                        if (scope.sale.meta[property] == null) {
+                            scope.sale.meta[property] = [];
+                            scope.sale.meta[property].push(value);
+                        } else {
+                            scope.sale.meta[property].push(value);
+                        }
+                    } else {
+                        scope.sale.meta[property] = _.without(scope.sale.meta[property], value);
+                    }
+
+                    // If record, save the change
+                    if (recordOnChange) {
+                        scope.record();
+                    }
+
+                }
+                
+                scope.isInProperty = function (property, value) {
+                    
+                    if (scope.sale == null) {
+                        return false;
+                    }
+
+                    if (scope.sale.meta == null) {
+                        return false;
+                    }
+                    
+                    if (scope.sale.meta[property] != null) {
+                        if (_.indexOf(scope.sale.meta[property], value) >= 0) {
+                            return true;
+                        }
+                    }
+                    
+                    return false;
+
+                }
+                
+                scope.isNewSection = function (field, index) {
+                    
+                    // The fields come from the api grouped in sections which makes it easy to determine when sections have changed.
+                    
+                    // The first item is always "new"
+                    if (index == 0) {
+                        return true;
+                    }
+                    
+                    // Otherwise, select the item immediately before this item and see if it's different
+                    var previous = scope.fields[index - 1];
+                    if (previous != null) {
+                        if (previous.section != field.section) {
+                            return true;
+                        }
+                    }
+                    
+                    return false;
+
+                }
+                
+                // Save any changes, as requested.
+                scope.record = function () {
+                    // We'll only update the meta
+                    var sale = { meta: scope.sale.meta };
+                    if (scope.sale.object == "invoice") {
+                        InvoiceService.update(sale);
+                    } else {
+                        CartService.update(sale);
+                    }
+                }
+
+            }
+        }
+
+    }]);
+
+app.directive('validateField', ['gettextCatalog', '$timeout', function (gettextCatalog, $timeout) {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                field: '=validateField',
+                error: '=?'
+            },
+            link: function (scope, elem, attrs, ctrl) {
+                
+                var error = scope.error;
+                var field = scope.field;
+                
+                // If required, initialize the error with a required error message.
+                if (utils.isNullOrEmpty(elem[0].value) && field.required == true) {
+                    scope.error = gettextCatalog.getString("Please provide a value.");
+                }
+                
+                // Use a different message for boolean or toggle.
+                if (field.type == "boolean" && field.required == true) {
+                    scope.error = gettextCatalog.getString("Please make a selection");
+                }
+                
+                // A toggle field with required == true means a checkbox that you must check (i.e. accept terms and conditions or something, not allowed to leave it unchecked)
+                if (field.type == "toggle" && field.required == true) {
+                    scope.error = gettextCatalog.getString("Please confirm");
+                }
+                
+                ctrl.$parsers.unshift(function (viewValue) {
+                    
+                    // Reset the error
+                    var errorMsg = null;
+                    
+                    // Do some additinal testing for decimals and numbers.
+                    if (viewValue != null || field.required == true) {
+                        
+                        switch (field.type) {
+
+                            case "integer":
+                                
+                                if (!utils.isValidInteger(viewValue)) {
+                                    errorMsg = gettextCatalog.getString("Please supply a number without decimals");
+                                }
+                                break;
+
+                            case "decimal":
+                                
+                                if (!utils.isValidNumber(viewValue)) {
+                                    errorMsg = gettextCatalog.getString("Please supply a number");
+                                }
+                                break;
+
+                        }
+                        
+                        // Regardless of the above, if options is not null, change the text
+                        if (field.options != null && utils.isNullOrEmpty(viewValue)) {
+                            errorMsg = gettextCatalog.getString("Please make a selection");
+                        }
+                        
+                        // If no error, check restraints
+                        if (errorMsg == null) {
+                            
+                            // If a list of options are provided, ensure the provided value is within the range.
+                            if (field.options != null) {
+                                if (_.where(field.options, { value: viewValue }) == null) {
+                                    errorMsg = gettextCatalog.getString("Please provide one of the available options");
+                                }
+                            }
+                            
+                            // Range check if a integer or decimal
+                            if (field.type == "integer" || field.type == "decimal") {
+                                
+                                if (field.min_value) {
+                                    if (viewValue < field.min_value) {
+                                        errorMsg = gettextCatalog.getPlural(field.min_value, "The value you provide must be greater than {{$count}}", "The value you provide must be greater than {{$count}}", {});
+                                    }
+                                }
+                                
+                                if (field.max_value) {
+                                    if (viewValue > field.max_value) {
+                                        errorMsg = gettextCatalog.getPlural(field.max_value, "The value you provide must be less than {{$count}}", "The value you provide must be less than {{$count}}", {});
+                                    }
+                                }
+
+                            }
+                            
+                            // Size check if string or text
+                            if (field.type == "string" || field.type == "text") {
+                                
+                                if (field.min_length) {
+                                    if (viewValue.length < field.min_length) {
+                                        errorMsg = gettextCatalog.getPlural(field.min_length, "The value must be at least one character", "The value must be at least {{$count}} characters", {});
+                                    }
+                                }
+                                
+                                if (field.max_length) {
+                                    if (viewValue.length > field.max_length) {
+                                        errorMsg = gettextCatalog.getPlural(field.max_length, "The value must be less than one character", "The value must be less than {{$count}} characters", {});
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    
+                    if (errorMsg != null) {
+                        ctrl.$setValidity('field', false);
+                        scope.error = errorMsg;
+                        return undefined;
+                    }
+                    
+                    ctrl.$setValidity('field', true);
+                    return viewValue;
+
+                });
+            }
+        }
+    }]);
+

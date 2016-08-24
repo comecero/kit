@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Kit\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: kit/app/pages/cart/cart.html:186 kit/app/pages/cart/cart.html:261
+msgid "Address"
+msgstr "Адрес"
+
+#: kit/app/pages/cart/cart.html:194 kit/app/pages/cart/cart.html:269
+msgid "Address 2"
+msgstr "Адрес 2"
+
+#: kit/app/pages/cart/cart.html:88
+msgid "Apply"
+msgstr "Применить"
+
+#: kit/app/pages/cart/cart.html:150 kit/app/pages/payment/review.html:27
+msgid "Billing Address"
+msgstr "Платёжный Адрес"
+
+#: kit/app/pages/products/products.html:29
+msgid "Buy Now"
+msgstr "Купить Сейчас"
+
+#: kit/app/pages/cart/cart.html:137
+msgid "Cancel"
+msgstr "Отмена"
+
+#: kit/app/pages/cart/cart.html:345
+msgid "Card Number"
+msgstr "Номер карты"
+
+#: kit/app/pages/cart/cart.html:328
+msgid "Choose a Payment Method"
+msgstr "Выберите способ оплаты"
+
+#: kit/app/pages/cart/cart.html:202 kit/app/pages/cart/cart.html:277
+msgid "City"
+msgstr "Город"
+
+#: kit/app/pages/cart/cart.html:154 kit/app/pages/payment/review.html:53
+msgid "Company Name"
+msgstr "Название компании"
+
+#: kit/app/pages/cart/cart.html:75
+msgid "Continue Shopping"
+msgstr "Продолжить покупки"
+
+#: kit/app/pages/cart/cart.html:232 kit/app/pages/cart/cart.html:307
+msgid "Country"
+msgstr "Страна"
+
+#: kit/app/pages/cart/cart.html:11
+msgid "Currency"
+msgstr "Валюта"
+
+#: kit/app/pages/cart/cart.html:63
+msgid "Discount"
+msgstr "Скидка"
+
+#: kit/app/pages/cart/cart.html:91
+msgid "Discount applied."
+msgstr "Настройки успешно применены."
+
+#: kit/app/pages/cart/cart.html:170
+msgid "Email"
+msgstr "E-Mail"
+
+#: kit/app/pages/cart/cart.html:87
+msgid "Enter Promo Code"
+msgstr "Введите promo code"
+
+#: kit/app/pages/cart/cart.html:331
+msgid "expiration"
+msgstr "Время действия"
+
+#: kit/app/pages/cart/cart.html:353
+msgid "Expiration Month"
+msgstr "Месяц"
+
+#: kit/app/pages/cart/cart.html:361
+msgid "Expiration Year"
+msgstr "Год"
+
+#: kit/app/pages/receipt/receipt.html:37
+msgid "Expires"
+msgstr "Истекает"
+
+#: kit/app/pages/cart/cart.html:117
+msgid "Have an account?"
+msgstr "У Вас есть аккаунт?"
+
+#: kit/app/pages/cart/cart.html:18
+msgid "Language"
+msgstr "Язык"
+
+#: kit/app/pages/cart/cart.html:162 kit/app/pages/cart/cart.html:253
+#: kit/app/pages/cart/cart.html:35 kit/app/pages/payment/review.html:80
+#: kit/app/pages/receipt/receipt.html:51
+msgid "Name"
+msgstr "Имя"
+
+#: kit/app/templates/fields.html:54
+msgid "No"
+msgstr "Нет"
+
+#: kit/app/pages/cart/cart.html:131
+msgid "Password"
+msgstr "Пароль"
+
+#: kit/app/pages/cart/cart.html:336
+msgid "Pay with a new payment method"
+msgstr "Оплатить с помощью нового способа оплаты"
+
+#: kit/app/pages/cart/cart.html:323
+msgid "Payment Information"
+msgstr "информация об оплате"
+
+#: kit/app/pages/receipt/receipt.html:34
+msgid "Payment Method"
+msgstr "Метод платежа"
+
+#: kit/app/pages/cart/cart.html:178 kit/app/pages/payment/review.html:61
+msgid "Phone"
+msgstr "Телефон"
+
+#: kit/dist/kit.js:2848
+msgid "Please confirm"
+msgstr "Подтвердите, пожалуйста."
+
+#: kit/dist/kit.js:2843 kit/dist/kit.js:2879
+msgid "Please make a selection"
+msgstr "Пожалуйста, сделайте выбор"
+
+#: kit/app/pages/cart/cart.html:204 kit/app/pages/cart/cart.html:279
+msgid "Please provide a city"
+msgstr "Просьба представить город"
+
+#: kit/app/pages/cart/cart.html:156 kit/app/pages/payment/review.html:55
+msgid "Please provide a company name"
+msgstr "Укажите название компании"
+
+#: kit/app/pages/cart/cart.html:234 kit/app/pages/cart/cart.html:309
+msgid "Please provide a country"
+msgstr "Просьба представить страну"
+
+#: kit/app/pages/cart/cart.html:164 kit/app/pages/cart/cart.html:255
+msgid "Please provide a name"
+msgstr "Пожалуйста, укажите имя"
+
+#: kit/app/pages/cart/cart.html:212 kit/app/pages/cart/cart.html:218
+#: kit/app/pages/cart/cart.html:287 kit/app/pages/cart/cart.html:293
+msgid "Please provide a state"
+msgstr "Просьба представить состояние"
+
+#: kit/app/pages/cart/cart.html:347
+msgid "Please provide a valid card number"
+msgstr "Укажите действительный номер карты"
+
+#: kit/app/pages/cart/cart.html:172
+msgid "Please provide a valid email address"
+msgstr "* Пожалуйста, представьте действующий адрес электронной почты"
+
+#: kit/app/pages/cart/cart.html:355
+msgid "Please provide a valid expiration month"
+msgstr "Просьба представить действительный месяц окончания срока"
+
+#: kit/app/pages/cart/cart.html:363
+msgid "Please provide a valid expiration year"
+msgstr "Просьба представить действительный год окончания срока действия"
+
+#: kit/app/pages/cart/cart.html:180 kit/app/pages/payment/review.html:63
+msgid "Please provide a valid phone number"
+msgstr "Укажите действительный номер телефона"
+
+#: kit/app/pages/cart/cart.html:371
+msgid "Please provide a valid security code"
+msgstr "Укажите действительный код безопасности"
+
+#: kit/dist/kit.js:2838
+msgid "Please provide a value."
+msgstr "Просьба представить значение."
+
+#: kit/app/pages/cart/cart.html:226 kit/app/pages/cart/cart.html:301
+msgid "Please provide a zip / postal code"
+msgstr "Пожалуйста, укажите почтовый / почтовый индекс"
+
+#: kit/app/pages/cart/cart.html:188 kit/app/pages/cart/cart.html:196
+#: kit/app/pages/cart/cart.html:263 kit/app/pages/cart/cart.html:271
+msgid "Please provide an address"
+msgstr "Укажите адрес"
+
+#: kit/dist/kit.js:2888
+msgid "Please provide one of the available options"
+msgstr "Просьба предоставить один из доступных вариантов"
+
+#: kit/dist/kit.js:2871
+msgid "Please supply a number"
+msgstr "Пожалуйста, предоставьте номер"
+
+#: kit/dist/kit.js:2864
+msgid "Please supply a number without decimals"
+msgstr "Просьба число без десятичных знаков"
+
+#: kit/app/pages/products/products.html:17
+msgid "Products"
+msgstr "Товары"
+
+#: kit/app/pages/cart/cart.html:34 kit/app/pages/payment/review.html:79
+#: kit/app/pages/receipt/receipt.html:50
+msgid "Quantity"
+msgstr "Количество"
+
+#: kit/app/pages/receipt/receipt.html:9
+msgid "Receipt"
+msgstr "Рецепт"
+
+#: kit/app/pages/cart/cart.html:216 kit/app/pages/cart/cart.html:291
+msgid "Region / Province"
+msgstr "Регион / Область"
+
+#: kit/app/pages/payment/review.html:21
+msgid "Return to PayPal to try your payment again."
+msgstr "Возвращение в PayPal, чтобы повторить попытку платежа."
+
+#: kit/app/pages/payment/review.html:11
+msgid "Review Your Order"
+msgstr "Просмотрите ваш заказ"
+
+#: kit/app/pages/cart/cart.html:369
+msgid "Security Code"
+msgstr "Код безопасности"
+
+#: kit/app/pages/cart/cart.html:243 kit/app/pages/payment/review.html:38
+msgid "Shipping Address"
+msgstr "Адрес получателя"
+
+#: kit/app/pages/cart/cart.html:25
+msgid "Shopping Cart"
+msgstr "Корзина"
+
+#: kit/app/pages/cart/cart.html:118
+msgid "Sign in"
+msgstr "войти"
+
+#: kit/app/pages/cart/cart.html:138
+msgid "Sign In"
+msgstr "Войти"
+
+#: kit/app/pages/cart/cart.html:144
+msgid "Sign out"
+msgstr "Выйти"
+
+#: kit/app/pages/cart/cart.html:210 kit/app/pages/cart/cart.html:285
+msgid "State / Province"
+msgstr "Область/край/республика"
+
+#: kit/app/pages/cart/cart.html:36 kit/app/pages/payment/review.html:81
+#: kit/app/pages/receipt/receipt.html:52
+msgid "Subtotal"
+msgstr "Подитог"
+
+#: kit/app/pages/cart/cart.html:57 kit/app/pages/payment/review.html:101
+#: kit/app/pages/receipt/receipt.html:72
+msgid "Tax"
+msgstr "Налог"
+
+#: kit/app/pages/receipt/receipt.html:17
+msgid "Thank you! Your order is complete."
+msgstr "Спасибо! Ваш заказ будет завершен."
+
+#: kit/dist/kit.js:2914
+msgid "The value must be at least one character"
+msgid_plural "The value must be at least {{$count}} characters"
+msgstr[0] "Значение должно быть по крайней мере один символ"
+msgstr[1] "Значение должно быть по крайней мере {{$count}} символа"
+msgstr[2] "Значение должно быть по крайней мере {{$count}} символов"
+
+#: kit/dist/kit.js:2920
+msgid "The value must be less than one character"
+msgid_plural "The value must be less than {{$count}} characters"
+msgstr[0] "Значение должно быть меньше, чем один символ"
+msgstr[1] "Значение должно быть меньше, чем {{$count}} символа"
+msgstr[2] "Значение должно быть меньше, чем {{$count}} символов"
+
+#: kit/dist/kit.js:2897
+msgid "The value you provide must be greater than {{$count}}"
+msgid_plural "The value you provide must be greater than {{$count}}"
+msgstr[0] "Значение вы предоставляете должно быть больше, чем {{$}}"
+msgstr[1] "Значение вы предоставляете должно быть больше, чем {{$}}"
+msgstr[2] "Значение вы предоставляете должно быть больше, чем {{$}}"
+
+#: kit/dist/kit.js:2903
+msgid "The value you provide must be less than {{$count}}"
+msgid_plural "The value you provide must be less than {{$count}}"
+msgstr[0] "Значение вы предоставляете должно быть меньше, чем {{$}}"
+msgstr[1] "Значение вы предоставляете должно быть меньше, чем {{$}}"
+msgstr[2] "Значение вы предоставляете должно быть меньше, чем {{$}}"
+
+#: kit/app/pages/cart/cart.html:74
+msgid "There are no items in your cart"
+msgstr "в корзине нет предметов"
+
+#: kit/app/pages/cart/cart.html:68 kit/app/pages/payment/review.html:107
+#: kit/app/pages/receipt/receipt.html:78
+msgid "Total"
+msgstr "Всего"
+
+#: kit/app/pages/cart/cart.html:124
+msgid "Username"
+msgstr "Имя Пользователя"
+
+#: kit/app/templates/fields.html:52
+msgid "Yes"
+msgstr "Да"
+
+#: kit/app/pages/cart/cart.html:110
+msgid "Your Information"
+msgstr "Ваша информация"
+
+#: kit/app/pages/cart/cart.html:224 kit/app/pages/cart/cart.html:299
+msgid "Zip / Postal Code"
+msgstr "Zip / Почтовый индекс"

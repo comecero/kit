@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Checkout</title>
+
+    <!-- Scale set to 1.0001 to address a bug in Safari on iOS 9.x -->
+    <meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
+
+    <!-- CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/loading-bar.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    <!-- Pull in the app and account settings. These must come before any app bootstrapping. In local development, these are just static files. In the hosted environment, these files are supplied dynamically with "live" settings. -->
+    <script src="settings/app.js"></script>
+    <script src="settings/account.js"></script>
+
+    <!-- Load the base Angular framework   -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+
+</head>
+
+<body ng-app="checkout">
+
+    <!-- A global header can be inserted here -->
+
+    <div class="container">
+        <ng-view autoscroll="true"></ng-view>
+    </div>
+
+    <!-- A global footer can be inserted here -->
+
+    <!-- Modules (CDN)  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.js"></script>
+
+    <!-- Modules (Local)  -->
+    <script src="app/modules/loading-bar.min.js"></script>
+    <script src="app/modules/angular-gettext.min.js"></script>
+    <script src="app/modules/ui-bootstrap-custom-1.1.0.min.js"></script> <!-- Includes alert, collapse, dropdown, modal, tooltip, typeahead -->
+    <script src="app/modules/angular-scroll-min.js"></script>
+    <script src="app/modules/tmhDynamicLocale.js"></script>
+
+    <!-- Libraries (Local) -->
+    <script src="app/libraries/underscore.js"></script>
+
+    <!-- Utilities file. Needs to come before app.js -->    
+    <script src="app/utilities.js"></script>
+
+    <!-- Main Application File. Needs to come before run.js -->
+    <script src="app/app.js"></script>
+
+    <!-- Bootstrap the app -->
+    <script src="app/run.js"></script>
+
+    <!-- Shared -->
+    <script src="app/shared/factories.js"></script>
+    <script src="app/shared/directives.js"></script>
+    <script src="app/shared/filters.js"></script>
+    <script src="app/shared/services.js"></script>
+
+    <!-- Features -->
+    <script src="app/pages/cart/cartController.js"></script>
+    <script src="app/pages/payment/paymentController.js"></script>
+    <script src="app/pages/receipt/receiptController.js"></script>
+    <script src="app/pages/products/productsController.js"></script>
+
+    <!-- Analytics -->
+    <script id="app_pageview"></script>
+
+</body>
+</html>

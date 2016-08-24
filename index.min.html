@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!-- This is a copy of index.html that shows how the javascript files loaded when concatenated and compressed -->
+
+<head>
+    <title>Checkout</title>
+
+    <!-- Scale set to 1.0001 to address a bug in Safari on iOS 9.x -->
+    <meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
+
+    <!-- CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/loading-bar.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    <!-- Pull in the app and account settings. Must come before any app bootstrapping. In local development, these are just static files. In the hosted environment, these files are supplied dynamically with "live" settings. -->
+    <script src="settings/app.js"></script>
+    <script src="settings/account.js"></script>
+
+    <!-- Load the base Angular framework   -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+
+</head>
+
+<body ng-app="checkout">
+
+    <!-- A global header can be inserted here -->
+
+    <div class="container">
+        <ng-view autoscroll="true"></ng-view>
+    </div>
+
+    <!-- A global footer can be inserted here -->
+
+    <!-- Modules (CDN)  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-sanitize.js"></script>
+
+    <script src="app/modules/angular-scroll-min.js"></script>
+
+    <!-- Main Application File. Must come before kit.js. -->
+    <script src="app/app.js"></script>
+
+    <!-- App Kit -->
+    <script src="dist/kit.js"></script>
+
+    <!-- Pages -->
+    <script src="dist/pages.js"></script>
+
+    <!-- Analytics -->
+    <script id="app_pageview"></script>
+
+</body>
+</html>
