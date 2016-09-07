@@ -1,6 +1,6 @@
 ﻿window.__settings = window.__settings || {};
 window.__settings.account = {
-    "account_id": "AA0000",
+    "account_id": "KO0000",
     "test": true,
     "development": true,
     "allow_save_cards": false,
