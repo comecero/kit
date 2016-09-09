@@ -4,6 +4,9 @@ var uglify = require("gulp-uglify");
 var sourcemaps = require("gulp-sourcemaps");
 var rename = require("gulp-rename");
 var sequence = require("run-sequence");
+var header = require('gulp-header');
+var zip = require('gulp-zip');
+var fs = require("fs");
 
 // It is important that you include utilities.js first and run.js second. After that, the order is not important.
 gulp.task("concat", function () {
@@ -22,8 +25,8 @@ gulp.task("compress", function () {
     return gulp.src(["./dist/*.js", "!./dist/*.min.js"])
     .pipe(uglify())
      .pipe(rename({
-        extname: ".min.js"
-    }))
+         extname: ".min.js"
+     }))
     .pipe(gulp.dest("./dist/"));
 });
 
@@ -36,6 +39,23 @@ gulp.task("sourcemap", function () {
 
 gulp.task('dist', function (done) {
     sequence('concat', 'concat-pages-js', 'compress', 'sourcemap', function () {
+
+        // Read the version number
+        var version = fs.readFileSync("./version.html", "utf8");
+
+        // Add headers with the release number to each of the distribution files.
+        gulp.src(['./dist/kit.js', './dist/kit.min.js']).pipe(header("/*\nComecero Kit version: " + version + "\nhttps://comecero.com\nhttps://github.com/comecero/kit\nCopyright Comecero and other contributors. Released under MIT license. See LICENSE for details.\n*/\n\n")).pipe(gulp.dest('./dist/'));
         done();
+
     });
+});
+
+gulp.task('zip', function (done) {
+
+    // Read the version number
+    var version = fs.readFileSync("./version.html", "utf8");
+
+    return gulp.src(["./**", "!./.git", "!./.vs", "!./.git/*", "!./settings/**", "!./settings/", "!./.gitattributes", "!./.gitignore", "!./*.sln", "!./Web.config", "!./Web.Debug.config", "!./*.zip"])
+    .pipe(zip("kit-" + version + ".zip"))
+    .pipe(gulp.dest("./"));
 });
