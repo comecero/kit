@@ -5,6 +5,7 @@ var sourcemaps = require("gulp-sourcemaps");
 var rename = require("gulp-rename");
 var sequence = require("run-sequence");
 var header = require('gulp-header');
+var zip = require('gulp-zip');
 var fs = require("fs");
 
 // It is important that you include utilities.js first and run.js second. After that, the order is not important.
@@ -47,4 +48,14 @@ gulp.task('dist', function (done) {
         done();
 
     });
+});
+
+gulp.task('zip', function (done) {
+
+    // Read the version number
+    var version = fs.readFileSync("./version.html", "utf8");
+
+    return gulp.src(["./**", "!./.git", "!./.vs", "!./.git/*", "!./settings/**", "!./settings/", "!./.gitattributes", "!./.gitignore", "!./*.sln", "!./Web.config", "!./Web.Debug.config", "!./*.zip"])
+    .pipe(zip("kit-" + version + ".zip"))
+    .pipe(gulp.dest("./"));
 });
