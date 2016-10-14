@@ -1,5 +1,5 @@
 /*
-Comecero Kit version: ﻿1.0.1
+Comecero Kit version: ﻿1.0.2
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
