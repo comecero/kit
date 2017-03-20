@@ -687,7 +687,7 @@ app.directive('languageSelect', ['LanguageService', '$timeout', '$rootScope', fu
                             
                             // Placed within a timeout otherwise the update was happening before the change to the model occured.
                             $timeout(function () {
-                                LanguageService.setLanguage(language.code);
+                                LanguageService.setLanguage(language.code, attrs.languagesPath);
                             });
 
                         });
@@ -1119,31 +1119,25 @@ app.directive('conversion', ['SettingsService', 'StorageService', function (Sett
                 var setTracking = function () {
                     attrs.$observe("conversion", function (order_id) {
                         if (utils.isNullOrEmpty(order_id) == false) {
-                            // Check if we've already recorded the conversion.
-                            var conv = StorageService.get("conv");
-                            if (conv != order_id) {
-                                
-                                var head = document.getElementsByTagName("head")[0];
-                                var js = document.createElement("script");
-                                js.id = "app_conversionload";
-                                js.type = "text/javascript";
-                                js.src = "analytics/conversion.js";
-                                js.setAttribute("data-order-id", order_id);
-                                
-                                // Remove any existing
-                                if (document.getElementById("app_conversionload") != null) {
-                                    head.removeChild(document.getElementById("app_conversionload"));
-                                }
-                                
-                                // Add again to force reload.
-                                head.appendChild(js);
-                                
-                                StorageService.set("conv", order_id, 60 * 60 * 24 * 10);
+
+                            var head = document.getElementsByTagName("head")[0];
+                            var js = document.createElement("script");
+                            js.id = "__conversion";
+                            js.type = "text/javascript";
+                            js.src = "analytics/conversion.js";
+                            js.setAttribute("data-order_id", order_id);
+
+                            // Remove any existing
+                            if (document.getElementById("__conversion") != null) {
+                                head.removeChild(document.getElementById("__conversion"));
                             }
+
+                            // Add again to force reload.
+                            head.appendChild(js);
                         }
                     });
                 }
-                
+
                 // Get the settings
                 var settings = SettingsService.get();
                 if (settings.config.development != true) {
@@ -2118,49 +2112,52 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
                             params = utils.mergeParams(params, null, null);
                             
                             if (scope.cart) {
-                                
+
                                 // Use the ngModel attribute to get the property name
                                 var property = input.getAttribute("ng-model");
-                                
-                                // Strip everything before customer.
-                                property = property.split("customer.")[1];
-                                
-                                scope.cart.customer[property] = inputNg.val();
 
-                                // If set that billing is same as shipping, set all shipping values to null so that the API doesn't receive any of the data set on the view.
-                                if (scope.shippingIsBilling) {
-                                    if (cartCopy.customer.shipping_address) {
-                                        cartCopy.customer.shipping_address.name = null;
-                                        cartCopy.customer.shipping_address.address_1 = null;
-                                        cartCopy.customer.shipping_address.address_2 = null;
-                                        cartCopy.customer.shipping_address.city = null;
-                                        cartCopy.customer.shipping_address.state_prov = null;
-                                        cartCopy.customer.shipping_address.postal_code = null;
-                                        cartCopy.customer.shipping_address.country = null;
+                                if (property) {
+
+                                    // Strip everything before customer.
+                                    property = property.split("customer.")[1];
+
+                                    scope.cart.customer[property] = inputNg.val();
+
+                                    // If set that billing is same as shipping, set all shipping values to null so that the API doesn't receive any of the data set on the view.
+                                    if (scope.shippingIsBilling) {
+                                        if (cartCopy.customer.shipping_address) {
+                                            cartCopy.customer.shipping_address.name = null;
+                                            cartCopy.customer.shipping_address.address_1 = null;
+                                            cartCopy.customer.shipping_address.address_2 = null;
+                                            cartCopy.customer.shipping_address.city = null;
+                                            cartCopy.customer.shipping_address.state_prov = null;
+                                            cartCopy.customer.shipping_address.postal_code = null;
+                                            cartCopy.customer.shipping_address.country = null;
+                                        }
                                     }
+
+                                    CartService.update(cartCopy, scope.params, true).then(function (cart) {
+
+                                        // In the event that there were changes to the view between the time the call was sent and returned, we don't want to overwrite them. As a result, we won't sync the server customer values with the model.
+                                        if (scope.cart) {
+                                            cart.customer = scope.cart.customer;
+                                        }
+
+                                        // Sync the scope to the response.
+                                        scope.cart = cart;
+
+                                    }, function (error) {
+                                        scope.error = error;
+                                    });
                                 }
-                                
-                                CartService.update(cartCopy, scope.params, true).then(function (cart) {
-                                    
-                                    // In the event that there were changes to the view between the time the call was sent and returned, we don't want to overwrite them. As a result, we won't sync the server customer values with the model.
-                                    if (scope.cart) {
-                                        cart.customer = scope.cart.customer;
-                                    }
-                                    
-                                    // Sync the scope to the response.
-                                    scope.cart = cart;
-
-                                }, function (error) {
-                                    scope.error = error;
-                                });
                             }
                         }, 25);
                     });
                 });
-   
+
             }
         };
-    }]);
+}]);
 
 app.directive('creditCardImage', [function () {
         
@@ -2170,9 +2167,14 @@ app.directive('creditCardImage', [function () {
                 
                 scope.$watch(attrs.creditCardImage, function (creditCardImage) {
                     
+                    var path = "images/";
+                    if (attrs.path) {
+                        path = attrs.path;
+                    }
+
                     if (creditCardImage) {
                         var filename = creditCardImage.replace(" ", "").toLowerCase() + ".png";
-                        var image = '<img src="images/' + filename + '" />';
+                        var image = '<img src="' + path + filename + '" />';
                         var elemNg = angular.element(elem);
                         elemNg.empty();
                         elemNg.html(image);
@@ -2188,12 +2190,17 @@ app.directive('creditCards', ['CartService', function (CartService) {
             restrict: 'A',
             link: function (scope, elem, attrs) {
                 
+                var path = "images/";
+                if (attrs.path) {
+                    path = attrs.path;
+                }
+
                 scope.$watch(attrs.creditCards, function (newVal) {
                     if (_.isArray(newVal)) {
                         var images = "";
                         _.each(newVal, function (item) {
                             var filename = item.replace(" ", "").toLowerCase() + ".png";
-                            images += '<img src="images/' + filename + '" title="' + item + '" />';
+                            images += '<img src="' + path + filename + '" title="' + item + '" />';
                         });
                         
                         var elemNg = angular.element(elem);

@@ -7,6 +7,7 @@
         getList: getList,
         update: update,
         remove: remove,
+        getItemPdf: getItemPdf,
         getToken: getToken,
         getTokenExpiration: getTokenExpiration
     });
@@ -263,6 +264,41 @@
                 headers: {
                     "Authorization": "Bearer " + token,
                     "Content-Type": "application/json"
+                }
+            });
+
+            request.then(function (response) { onApiSuccess(response, deferred) }, function (error) { onApiError(error, deferred) });
+
+        }, function (error) {
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
+
+    }
+
+    function getItemPdf(url, parameters, quiet) {
+
+        var deferred = $q.defer();
+
+        getToken().then(function (token) {
+
+            // Get the settings
+            var settings = SettingsService.get();
+
+            // Prepare the url
+            var endpoint = buildUrl(url, settings);
+
+            var request = $http({
+                ignoreLoadingBar: quiet,
+                method: "get",
+                url: endpoint + "?timezone=UTC",
+                params: parameters,
+                timeout: 15000,
+                responseType: "arraybuffer",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/pdf"
                 }
             });
 
@@ -791,6 +827,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
                     }
 
                     // Set the item into the cart
+                    cart.items = cart.items || [];
                     cart.items.push(item);
                     location.search(property, null);
 
@@ -1450,7 +1487,7 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
 
     }
 
-    function setLanguage(language) {
+    function setLanguage(language, languagesPath) {
 
         // Only attempt to set the language if the supplied value is valid.
         if (isSupportedLanguage(language) == false) {
@@ -1467,7 +1504,7 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
             // English does not need to be loaded since it's embedded in the HTML.
             if (language != "en") {
                 // Load the language configuration file.
-                gettextCatalog.loadRemote("languages/" + language + "/" + language + ".json");
+                gettextCatalog.loadRemote((languagesPath || "languages/") + language + "/" + language + ".json");
             }
         }
 
@@ -1511,7 +1548,7 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
 
     }
 
-    function establishLanguage() {
+    function establishLanguage(languagesPath) {
 
         // This called when the app is intially bootstrapped and sets the language according to the user's preference, auto-detected language or default language.
         getUserLanguage().then(function (language) {
@@ -1522,7 +1559,7 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
             }
 
             // Set the language
-            setLanguage(language);
+            setLanguage(language, languagesPath);
 
         });
 
