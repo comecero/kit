@@ -10,8 +10,8 @@ app.run(['$rootScope', '$http', 'SettingsService', 'StorageService', 'LanguageSe
             $http.defaults.useXDomain = true;
         }
                
-        // Establish the app language
-        LanguageService.establishLanguage();
+    // Establish the app language
+        LanguageService.establishLanguage($rootScope.languagesPath);
         
         // Establish the pageview load code. This is used to send Analytics data to the platform.
         var loadPageview = function () {
@@ -35,11 +35,5 @@ app.run(['$rootScope', '$http', 'SettingsService', 'StorageService', 'LanguageSe
                 head.appendChild(js);
             }
         }
-        
-        // Analytics. Watch for route changes and load analytics accordingly.
-        $rootScope.$on('$locationChangeSuccess', function () {
-            // Load the pageview on every page change
-            loadPageview();
-        });
         
     }]);

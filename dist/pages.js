@@ -1,3 +1,10 @@
+/*
+Comecero Kit version: ﻿1.0.3
+https://comecero.com
+https://github.com/comecero/kit
+Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
+*/
+
 app.controller("CartController", ['$scope', '$location', 'CartService', 'GeoService', 'CurrencyService', 'SettingsService', 'HelperService', '$document', function ($scope, $location, CartService, GeoService, CurrencyService, SettingsService, HelperService, $document) {
 
     // Define a place to hold your data

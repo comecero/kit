@@ -8,9 +8,9 @@ var header = require('gulp-header');
 var zip = require('gulp-zip');
 var fs = require("fs");
 
-// It is important that you include utilities.js first and run.js second. After that, the order is not important.
+// It is important that you include utilities.js first, run.js second and libraries/*.js third. After that, the order is not important.
 gulp.task("concat", function () {
-    return gulp.src(["./app/utilities.js", "./app/run.js", "./app/modules/*.js", "./app/libraries/*.js", "./app/modules/*.js", "./app/shared/*.js"])
+    return gulp.src(["./app/utilities.js", "./app/run.js", "./app/libraries/*.js", "./app/modules/*.js", "./app/shared/*.js"])
       .pipe(concat("kit.js"))
       .pipe(gulp.dest("./dist/"));
 });
@@ -44,7 +44,7 @@ gulp.task('dist', function (done) {
         var version = fs.readFileSync("./version.html", "utf8");
 
         // Add headers with the release number to each of the distribution files.
-        gulp.src(['./dist/kit.js', './dist/kit.min.js']).pipe(header("/*\nComecero Kit version: " + version + "\nhttps://comecero.com\nhttps://github.com/comecero/kit\nCopyright Comecero and other contributors. Released under MIT license. See LICENSE for details.\n*/\n\n")).pipe(gulp.dest('./dist/'));
+        gulp.src(['./dist/kit.js', './dist/kit.min.js', './dist/pages.js', './dist/pages.min.js']).pipe(header("/*\nComecero Kit version: " + version + "\nhttps://comecero.com\nhttps://github.com/comecero/kit\nCopyright Comecero and other contributors. Released under MIT license. See LICENSE for details.\n*/\n\n")).pipe(gulp.dest('./dist/'));
         done();
 
     });
