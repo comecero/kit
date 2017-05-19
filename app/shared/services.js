@@ -762,7 +762,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
             PaymentService.create(payment_method, url, parameters, quiet).then(function (payment) {
 
                 // If the payment status is completed or the payment status is pending and the payment method is credit card, delete the cart_id. Attempting to interact with a closed cart (due to a successful payment) will result in errors.
-                if (payment.status == "completed" || (payment.status == "pending" && payment.payment_method.type == "credit_card")) {
+                if (payment.status == "completed" || payment.status == "pending") {
                     StorageService.remove("cart_id");
                 }
 
@@ -1055,7 +1055,7 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
     return ({
         create: create,
         get: get,
-        capture: capture
+        commit: commit
     });
 
     function create(payment_method, url, parameters, quiet) {
@@ -1101,12 +1101,11 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
 
     }
 
-    function capture(payment_id, data, parameters, quiet) {
+    function commit(payment_id, data, parameters, quiet) {
 
-        // This is used for payment methods such as PayPal that need to be tiggered for completion or "capture" after they have been reviewed by the customer.
-        // In the case of PayPal, the data payload should be null or empty JSON (i.e. {}).
+        // This is used for payment methods such as PayPal and Amazon Pay that need to be tiggered for completion after they have been reviewed by the customer.
 
-        var url = "/payments/" + payment_id + "/capture";
+        var url = "/payments/" + payment_id + "/commit";
 
         var deferred = $q.defer();
         parameters = setDefaultParameters(parameters);
@@ -1114,8 +1113,8 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
         ApiService.create(data, url, parameters, quiet).then(function (response) {
             var payment = response.data;
 
-            // If the payment status is completed, delete the cart_id and / or invoice_id. Attempting to interact with a closed cart or invoice (due to a successful payment) will result in errors.
-            if (payment.status == "completed" || (payment.status == "pending" && payment.payment_method.type == "credit_card")) {
+            // If the payment status is completed or pending, delete the cart_id and / or invoice_id. Attempting to interact with a closed cart or invoice (due to a successful payment) will result in errors.
+            if (payment.status == "completed" || payment.status == "pending") {
                 StorageService.remove("cart_id");
                 StorageService.remove("invoice_id");
             }

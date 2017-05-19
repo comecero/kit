@@ -5,6 +5,7 @@
 - Update to latest version of AngularJS Bootstrap UI.
 - Add support to set path for language and image files in directives.
 - Added support to download PDF files returned from the API.
+- Handle API changes to support PayPal recurring payments.
 
 <a name="1.0.2"></a>
 # 1.0.2
