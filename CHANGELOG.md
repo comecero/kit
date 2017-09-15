@@ -1,4 +1,10 @@
-﻿<a name="1.0.3"></a>
+﻿<a name="1.0.4"></a>
+# 1.0.4
+
+- Update analytics to load by JavaScript rather than HTML tag
+- Update to latest version of Angular UI Bootstrap
+
+<a name="1.0.3"></a>
 # 1.0.3
 
 - Allow option for manually triggering pageview and conversions.
