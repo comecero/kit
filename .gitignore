@@ -5,3 +5,4 @@
 /publish.js
 /.vscode
 *.zip
+/node_modules

@@ -22,6 +22,12 @@
         // Get the payment.
         PaymentService.get($routeParams.id, params).then(function (payment) {
             $scope.data.payment = payment;
+
+            // Invoke the conversion. If the user reloads the receipt page the conversion code will prevent the conversion from being recorded multiple times.
+            if (window.__conversion && window.__conversion.recordConversion) {
+                window.__conversion.recordConversion(payment.order.order_id);
+            }
+
         }, function (error) {
             $scope.exception = error;
         });
