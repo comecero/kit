@@ -629,7 +629,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
         } else {
 
             // No cart exists. Create a new cart.
-            return create(data, parameters, quiet);
+            return create(data, parameters, quiet, fromParams);
 
         }
 
@@ -960,7 +960,7 @@ app.service("InvoiceService", ['$http', '$q', '$rootScope', 'ApiService', 'Payme
     return ({
         get: get,
         update: update,
-        pay: pay,
+        pay: pay
     });
 
     function get(parameters, quiet) {
@@ -1087,8 +1087,11 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
     // Return public API.
     return ({
         create: create,
+        createDirect: createDirect,
         get: get,
-        commit: commit
+        getOptions: getOptions,
+        commit: commit,
+        fromParams: fromParams
     });
 
     function create(payment_method, url, parameters, quiet) {
@@ -1102,6 +1105,23 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
         ApiService.create(data, url, parameters, quiet).then(function (response) {
             var payment = response.data;
             deferred.resolve(payment);
+        }, function (error) {
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
+
+    }
+
+    function createDirect(payment, parameters, quiet) {
+
+        var deferred = $q.defer();
+        parameters = setDefaultParameters(parameters);
+        var url = "/payments"
+
+        ApiService.create(payment, url, parameters, quiet).then(function (response) {
+            var result = response.data;
+            deferred.resolve(result);
         }, function (error) {
             deferred.reject(error);
         });
@@ -1134,6 +1154,22 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
 
     }
 
+    function getOptions(parameters, quiet) {
+
+        var deferred = $q.defer();
+
+            var url = "/payments/options";
+            ApiService.getItem(url, parameters, quiet).then(function (response) {
+                var options = response.data;
+                deferred.resolve(options);
+            }, function (error) {
+                deferred.reject(error);
+            });
+
+        return deferred.promise;
+
+    }
+
     function commit(payment_id, data, parameters, quiet) {
 
         // This is used for payment methods such as PayPal and Amazon Pay that need to be tiggered for completion after they have been reviewed by the customer.
@@ -1158,6 +1194,83 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
         });
 
         return deferred.promise;
+
+    }
+
+    function fromParams(payment, location) {
+
+        // location should be the angular $location object
+
+        // Make a copy so we can modify without changing the original params
+        var params = angular.copy(location.search());
+
+        // This is designed to be used for a "hosted payment page", where the customer makes an arbitrary payment not associated with a cart or invoice. Parameters such as amount, currency, description, reference and customer details can be passed as URL params.
+
+        if (params.subtotal) {
+            payment.subtotal = params.subtotal;
+            delete params.subtotal;
+        }
+
+        if (params.shipping) {
+            payment.shipping = params.shipping;
+            delete params.shipping;
+        }
+
+        if (params.tax) {
+            payment.tax = params.tax;
+            delete params.tax;
+        }
+
+        if (params.currency) {
+            payment.currency = params.currency;
+            delete params.currency;
+        }
+
+        if (params.reference) {
+            payment.reference = params.reference;
+            delete params.reference;
+        }
+
+        if (params.description) {
+            payment.description = params.description;
+            delete params.description;
+        }
+
+        payment.customer = payment.customer || {};
+
+        if (params.company_name) {
+            payment.customer.company_name = params.company_name;
+            delete params.company_name;
+        }
+
+        if (params.name) {
+            payment.customer.name = params.name;
+            delete params.name;
+        }
+
+        if (params.email) {
+            if (utils.isValidEmail(params.email)) {
+                payment.customer.email = params.email;
+            }
+            delete params.email;
+        }
+
+        if (params.referrer) {
+            payment.referrer = params.referrer;
+            delete params.referrer;
+        }
+
+        // Append any other parameters as meta
+        for (var property in params) {
+            if (params.hasOwnProperty(property)) {
+                if (payment.meta == null) {
+                    payment.meta = {};
+                }
+                payment.meta[property] = params[property];
+            }
+        }
+
+        return payment;
 
     }
 
@@ -1239,7 +1352,8 @@ app.service("CustomerService", ['$http', '$q', 'ApiService', function ($http, $q
 
     // Return public API.
     return ({
-        createAccount: createAccount
+        createAccount: createAccount,
+        login: login
     });
 
     function createAccount(customer, parameters, quiet) {
@@ -1259,6 +1373,37 @@ app.service("CustomerService", ['$http', '$q', 'ApiService', function ($http, $q
             deferred.reject({ "type": "bad_request", reference: "8b1oMYs", code: "invalid_input", message: "The request could not be completed.", status: 400 });
             console.log("The customer object in the account creation request did not contain a customer_id.");
         }
+
+        return deferred.promise;
+
+    }
+
+    function login(data, parameters, quiet) {
+
+        var deferred = $q.defer();
+        parameters = setDefaultParameters(parameters);
+
+        var url = "/customers/login";
+        ApiService.create(data, url, parameters, quiet).then(function (response) {
+
+            var cart = response.data;
+            // Update the cookie expiration date. The expiration date of this cookie will be the same as the token expiration, which we can get from the headers.
+            StorageService.set("cart_id", cart.cart_id, response.headers("X-Token-Expires-In-Seconds"));
+
+            // In case it changed, sync the currency
+            syncCurrency(cart.currency);
+
+            deferred.resolve(cart);
+
+        }, function (error) {
+
+            // If 404, perform a session reset.
+            if (error.status == 404) {
+                HelperService.newSessionRedirect(true, "Performing a session reset due to an invalid cart_id in the cookie / request. (404 - cart not found)");
+            }
+
+            deferred.reject(error);
+        });
 
         return deferred.promise;
 
@@ -1395,7 +1540,7 @@ app.service("CurrencyService", ['$q', '$rootScope', 'SettingsService', 'CartServ
     return ({
         getCurrency: getCurrency,
         getCurrencyName: getCurrencyName,
-        setCurrency: setCurrency,
+        setCurrency: setCurrency
     });
 
     function getCurrency() {
@@ -1780,9 +1925,10 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
     function hasShippingAddress(customer) {
 
         if (customer) {
-            if (customer.shipping_address) { }
-            if (customer.shipping_address.address_1) {
-                return true;
+            if (customer.shipping_address) {
+                if (customer.shipping_address.address_1) {
+                    return true;
+                }
             }
         };
 
@@ -1879,7 +2025,7 @@ app.service("StorageService", ['appCache', function (appCache) {
     return ({
         get: get,
         set: set,
-        remove: remove,
+        remove: remove
     });
 
     function get(key) {
