@@ -1,7 +1,7 @@
 ﻿app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'HelperService', 'StorageService', '$rootScope', 'gettextCatalog', function ($http, $q, $location, SettingsService, HelperService, StorageService, $rootScope, gettextCatalog) {
 
     // Return public API.
-    return ({
+    return {
         create: create,
         getItem: getItem,
         getList: getList,
@@ -10,7 +10,7 @@
         getItemPdf: getItemPdf,
         getToken: getToken,
         getTokenExpiration: getTokenExpiration
-    });
+    };
 
     function getTokenExpiration(expiresInSeconds) {
 
@@ -44,7 +44,7 @@
         var settings = SettingsService.get();
 
         if (settings.account.account_id && settings.config.development == true) {
-            parameters = { account_id: settings.account.account_id }
+            parameters = { account_id: settings.account.account_id, browser_info: true };
         }
 
         // Prepare the url
@@ -65,6 +65,8 @@
         request.then(function (response) {
 
             StorageService.set("token", response.data.token, response.headers("X-Token-Expires-In-Seconds"));
+            StorageService.set("locale", response.data.browser_info.locale);
+            StorageService.set("language", response.data.browser_info.language);
 
             // If you got a new token, delete any cart_id or invoice_id cookie. The new token won't be bound to them and letting them remain will cause a conflict when the new token tries to access a cart_id that it's not associated with.
             StorageService.remove("cart_id");
@@ -108,7 +110,7 @@
                 }
             });
 
-            request.then(function (response) { onApiSuccess(response, deferred) }, function (error) { onApiError(error, deferred) });
+            request.then(function (response) { onApiSuccess(response, deferred); }, function (error) { onApiError(error, deferred); });
 
         }, function (error) {
             deferred.reject(error);
@@ -142,7 +144,7 @@
                 }
             });
 
-            request.then(function (response) { onApiSuccess(response, deferred) }, function (error) { onApiError(error, deferred) });
+            request.then(function (response) { onApiSuccess(response, deferred); }, function (error) { onApiError(error, deferred); });
 
         }, function (error) {
             deferred.reject(error);
@@ -176,7 +178,7 @@
 
             // Remove the current query string
             if (url.indexOf("?") > 0) {
-                url = url.substring(0, url.indexOf("?"))
+                url = url.substring(0, url.indexOf("?"));
             }
 
             // Append the parameters
@@ -194,7 +196,7 @@
                 }
             });
 
-            request.then(function (response) { onApiSuccess(response, deferred) }, function (error) { onApiError(error, deferred) });
+            request.then(function (response) { onApiSuccess(response, deferred); }, function (error) { onApiError(error, deferred); });
 
         }, function (error) {
             deferred.reject(error);
@@ -233,7 +235,7 @@
                 }
             });
 
-            request.then(function (response) { onApiSuccess(response, deferred) }, function (error) { onApiError(error, deferred) });
+            request.then(function (response) { onApiSuccess(response, deferred); }, function (error) { onApiError(error, deferred); });
 
         }, function (error) {
             deferred.reject(error);
@@ -267,7 +269,7 @@
                 }
             });
 
-            request.then(function (response) { onApiSuccess(response, deferred) }, function (error) { onApiError(error, deferred) });
+            request.then(function (response) { onApiSuccess(response, deferred); }, function (error) { onApiError(error, deferred); });
 
         }, function (error) {
             deferred.reject(error);
@@ -302,7 +304,7 @@
                 }
             });
 
-            request.then(function (response) { onApiSuccess(response, deferred) }, function (error) { onApiError(error, deferred) });
+            request.then(function (response) { onApiSuccess(response, deferred); }, function (error) { onApiError(error, deferred); });
 
         }, function (error) {
             deferred.reject(error);
@@ -372,7 +374,7 @@
             StorageService.set("token", StorageService.get("token"), response.headers("X-Token-Expires-In-Seconds"));
         }
 
-        return (defer.resolve(response));
+        return defer.resolve(response);
     }
 
     function onApiError(response, defer) {
@@ -422,7 +424,7 @@
         }
 
         if (response.status == 403) {
-            message = "There was a problem establishing your session. Please reload the page to try again."
+            message = "There was a problem establishing your session. Please reload the page to try again.";
         }
 
         // If you don't have an error.message, then you didn't receive a normalized error message from the server. This should not happen rarely but prevents the application from having to consider edge cases where an unexpected response format is returned.
@@ -459,7 +461,7 @@
 app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentService', 'SettingsService', 'HelperService', 'StorageService', function ($http, $q, $rootScope, ApiService, PaymentService, SettingsService, HelperService, StorageService) {
 
     // Return public API.
-    return ({
+    return {
         create: create,
         get: get,
         update: update,
@@ -469,7 +471,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
         login: login,
         logout: logout,
         fromParams: fromParams
-    });
+    };
 
     function create(data, parameters, quiet, fromParams) {
 
@@ -601,7 +603,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
                 if (error.code == "invalid_promotion_code" && fromParams) {
                     delete data.promotion_code;
                     update(data, parameters, quiet, false).then(function (response) {
-                        deferred.resolve(response)
+                        deferred.resolve(response);
                     }, function (error) {
                         deferred.reject(error);
                     });
@@ -704,7 +706,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
         var deferred = $q.defer();
 
         if (data == null) {
-            deferred.reject({ type: "bad_request", reference: "vbVcrcF", code: "invalid_input", message: "You must supply an item to add to the cart.", status: 400 })
+            deferred.reject({ type: "bad_request", reference: "vbVcrcF", code: "invalid_input", message: "You must supply an item to add to the cart.", status: 400 });
             return deferred.promise;
         }
 
@@ -752,7 +754,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
                     deferred.resolve(_.findWhere(cart.items, { item_id: data.product_id }));
                 }, function (error) {
                     deferred.reject(error);
-                })
+                });
             }
 
         }, function (error) {
@@ -774,7 +776,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
 
         }, function (error) {
             deferred.reject(error);
-        })
+        });
 
         return deferred.promise;
 
@@ -804,7 +806,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
             }, function (error) {
                 deferred.reject(error);
             });
-        }
+        };
 
         // If there currently is no cart, create it. Otherwise, update the existing cart.
         if (cart.cart_id == null) {
@@ -812,14 +814,14 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
                 sendPayment(cart.cart_id, payment_method);
             }, function (error) {
                 deferred.reject(error);
-            })
+            });
 
         } else {
             update(cart, parameters, quiet).then(function (cart) {
                 sendPayment(cart.cart_id, payment_method);
             }, function (error) {
                 deferred.reject(error);
-            })
+            });
         }
 
         return deferred.promise;
@@ -854,9 +856,9 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
                     }
 
                     // Remove the item if it already exists in the cart
-                    var existingItem = _.find(cart.items, function (i) { return i.product_id == item.product_id });
+                    var existingItem = _.find(cart.items, function (i) { return i.product_id == item.product_id; });
                     if (existingItem != null) {
-                        cart.items = _.reject(cart.items, function (i) { return i.product_id == item.product_id });
+                        cart.items = _.reject(cart.items, function (i) { return i.product_id == item.product_id; });
                     }
 
                     // Set the item into the cart
@@ -907,7 +909,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
         }
 
         // Append any other parameters as meta
-        var params = location.search();
+        params = location.search();
 
         for (var property in params) {
             if (params.hasOwnProperty(property)) {
@@ -957,11 +959,11 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
 app.service("InvoiceService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentService', 'SettingsService', 'HelperService', 'StorageService', function ($http, $q, $rootScope, ApiService, PaymentService, SettingsService, HelperService, StorageService) {
 
     // Return public API.
-    return ({
+    return {
         get: get,
         update: update,
         pay: pay
-    });
+    };
 
     function get(parameters, quiet) {
 
@@ -1042,7 +1044,7 @@ app.service("InvoiceService", ['$http', '$q', '$rootScope', 'ApiService', 'Payme
             }, function (error) {
                 deferred.reject(error);
             });
-        }
+        };
 
         // Send the payment.
         sendPayment(invoice.invoice_id, payment_method);
@@ -1085,14 +1087,15 @@ app.service("InvoiceService", ['$http', '$q', '$rootScope', 'ApiService', 'Payme
 app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', 'StorageService', function ($http, $q, ApiService, SettingsService, StorageService) {
 
     // Return public API.
-    return ({
+    return {
         create: create,
         createDirect: createDirect,
         get: get,
+        update: update,
         getOptions: getOptions,
         commit: commit,
         fromParams: fromParams
-    });
+    };
 
     function create(payment_method, url, parameters, quiet) {
 
@@ -1113,11 +1116,27 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
 
     }
 
+    function update(data, parameters, quiet) {
+
+        var deferred = $q.defer();
+        parameters = setDefaultParameters(parameters);
+
+        ApiService.update(data, "/payments/" + data.payment_id, parameters, quiet).then(function (response) {
+            var payment = response.data;
+            deferred.resolve(payment);
+        }, function (error) {
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
+
+    }
+
     function createDirect(payment, parameters, quiet) {
 
         var deferred = $q.defer();
         parameters = setDefaultParameters(parameters);
-        var url = "/payments"
+        var url = "/payments";
 
         ApiService.create(payment, url, parameters, quiet).then(function (response) {
             var result = response.data;
@@ -1170,7 +1189,7 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
 
     }
 
-    function commit(payment_id, data, parameters, quiet) {
+    function commit(payment_id, parameters, quiet) {
 
         // This is used for payment methods such as PayPal and Amazon Pay that need to be tiggered for completion after they have been reviewed by the customer.
 
@@ -1179,7 +1198,7 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
         var deferred = $q.defer();
         parameters = setDefaultParameters(parameters);
 
-        ApiService.create(data, url, parameters, quiet).then(function (response) {
+        ApiService.create(null, url, parameters, quiet).then(function (response) {
             var payment = response.data;
 
             // If the payment status is completed or pending, delete the cart_id and / or invoice_id. Attempting to interact with a closed cart or invoice (due to a successful payment) will result in errors.
@@ -1206,34 +1225,51 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
 
         // This is designed to be used for a "hosted payment page", where the customer makes an arbitrary payment not associated with a cart or invoice. Parameters such as amount, currency, description, reference and customer details can be passed as URL params.
 
-        if (params.subtotal) {
-            payment.subtotal = params.subtotal;
-            delete params.subtotal;
-        }
-
-        if (params.shipping) {
-            payment.shipping = params.shipping;
-            delete params.shipping;
-        }
-
-        if (params.tax) {
-            payment.tax = params.tax;
-            delete params.tax;
-        }
-
         if (params.currency) {
             payment.currency = params.currency;
             delete params.currency;
+            location.search("currency", null);
+        }
+
+        if (params.total && utils.isValidNumber(params.total)) {
+            payment.total = params.total;
+            delete params.total;
+            location.search("total", null);
+        }
+
+        // If the total is not supplied, look for subtotal, shipping, tax.
+        if (!payment.total) {
+
+            if (params.subtotal && utils.isValidNumber(params.subtotal)) {
+                payment.subtotal = params.subtotal;
+                delete params.subtotal;
+                location.search("subtotal", null);
+            }
+
+            if (params.shipping && utils.isValidNumber(params.shipping)) {
+                payment.shipping = params.shipping;
+                delete params.shipping;
+                location.search("shipping", null);
+            }
+
+            if (params.tax && utils.isValidNumber(params.tax)) {
+                payment.tax = params.tax;
+                delete params.tax;
+                location.search("tax", null);
+            }
+
         }
 
         if (params.reference) {
             payment.reference = params.reference;
             delete params.reference;
+            location.search("reference", null);
         }
 
         if (params.description) {
             payment.description = params.description;
             delete params.description;
+            location.search("description", null);
         }
 
         payment.customer = payment.customer || {};
@@ -1285,10 +1321,10 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
                 parameters.expand = "response_data,payment_method";
             } else {
                 if (parameters.expand.indexOf("response_data") == "-1") {
-                    parameters.expand += ",response_data"
+                    parameters.expand += ",response_data";
                 }
                 if (parameters.expand.indexOf("payment_method") == "-1") {
-                    parameters.expand += ",payment_method"
+                    parameters.expand += ",payment_method";
                 }
             }
 
@@ -1307,9 +1343,9 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
 app.service("OrderService", ['$http', '$q', 'ApiService', function ($http, $q, ApiService) {
 
     // Return public API.
-    return ({
+    return {
         get: get
-    });
+    };
 
     function get(order_id, parameters, quiet) {
 
@@ -1351,10 +1387,10 @@ app.service("OrderService", ['$http', '$q', 'ApiService', function ($http, $q, A
 app.service("CustomerService", ['$http', '$q', 'ApiService', function ($http, $q, ApiService) {
 
     // Return public API.
-    return ({
+    return {
         createAccount: createAccount,
         login: login
-    });
+    };
 
     function createAccount(customer, parameters, quiet) {
 
@@ -1381,27 +1417,14 @@ app.service("CustomerService", ['$http', '$q', 'ApiService', function ($http, $q
     function login(data, parameters, quiet) {
 
         var deferred = $q.defer();
-        parameters = setDefaultParameters(parameters);
 
         var url = "/customers/login";
         ApiService.create(data, url, parameters, quiet).then(function (response) {
 
-            var cart = response.data;
-            // Update the cookie expiration date. The expiration date of this cookie will be the same as the token expiration, which we can get from the headers.
-            StorageService.set("cart_id", cart.cart_id, response.headers("X-Token-Expires-In-Seconds"));
-
-            // In case it changed, sync the currency
-            syncCurrency(cart.currency);
-
-            deferred.resolve(cart);
+            var customer = response.data;
+            deferred.resolve(customer);
 
         }, function (error) {
-
-            // If 404, perform a session reset.
-            if (error.status == 404) {
-                HelperService.newSessionRedirect(true, "Performing a session reset due to an invalid cart_id in the cookie / request. (404 - cart not found)");
-            }
-
             deferred.reject(error);
         });
 
@@ -1414,10 +1437,10 @@ app.service("CustomerService", ['$http', '$q', 'ApiService', function ($http, $q
 app.service("ProductService", ['$http', '$q', 'ApiService', 'CurrencyService', function ($http, $q, ApiService, CurrencyService) {
 
     // Return public API.
-    return ({
+    return {
         get: get,
         getList: getList
-    });
+    };
 
     function get(product_id, parameters, quiet) {
 
@@ -1487,11 +1510,12 @@ app.service("ProductService", ['$http', '$q', 'ApiService', 'CurrencyService', f
 app.service("GeoService", [function () {
 
     // Return public API.
-    return ({
+    return {
         getData: getData,
         getStatesProvs: getStatesProvs,
-        isEu: isEu
-    });
+        isEu: isEu,
+        getCurrencySymbol: getCurrencySymbol
+    };
 
     function getData() {
 
@@ -1532,16 +1556,23 @@ app.service("GeoService", [function () {
 
     }
 
+    function getCurrencySymbol(code) {
+
+        var currencies = { "AED": "د.إ", "AFN": "؋", "ALL": "L", "AMD": "֏", "ANG": "ƒ", "AOA": "Kz", "ARS": "$", "AUD": "$", "AWG": "ƒ", "AZN": "ман", "BAM": "KM", "BBD": "$", "BDT": "৳", "BGN": "лв", "BHD": ".د.ب", "BIF": "FBu", "BMD": "$", "BND": "$", "BOB": "$b", "BRL": "R$", "BSD": "$", "BTC": "฿", "BTN": "Nu.", "BWP": "P", "BYR": "p.", "BZD": "BZ$", "CAD": "$", "CDF": "FC", "CHF": "CHF", "CLP": "$", "CNY": "¥", "COP": "$", "CRC": "₡", "CUC": "$", "CUP": "₱", "CVE": "$", "CZK": "Kč", "DJF": "Fdj", "DKK": "kr", "DOP": "RD$", "DZD": "دج", "EEK": "kr", "EGP": "£", "ERN": "Nfk", "ETB": "Br", "ETH": "Ξ", "EUR": "€", "FJD": "$", "FKP": "£", "GBP": "£", "GEL": "₾", "GGP": "£", "GHC": "₵", "GHS": "GH₵", "GIP": "£", "GMD": "D", "GNF": "FG", "GTQ": "Q", "GYD": "$", "HKD": "$", "HNL": "L", "HRK": "kn", "HTG": "G", "HUF": "Ft", "IDR": "Rp", "ILS": "₪", "IMP": "£", "INR": "₹", "IQD": "ع.د", "IRR": "﷼", "ISK": "kr", "JEP": "£", "JMD": "J$", "JOD": "JD", "JPY": "¥", "KES": "KSh", "KGS": "лв", "KHR": "៛", "KMF": "CF", "KPW": "₩", "KRW": "₩", "KWD": "KD", "KYD": "$", "KZT": "лв", "LAK": "₭", "LBP": "£", "LKR": "₨", "LRD": "$", "LSL": "M", "LTC": "Ł", "LTL": "Lt", "LVL": "Ls", "LYD": "LD", "MAD": "MAD", "MDL": "lei", "MGA": "Ar", "MKD": "ден", "MMK": "K", "MNT": "₮", "MOP": "MOP$", "MRO": "UM", "MUR": "₨", "MVR": "Rf", "MWK": "MK", "MXN": "$", "MYR": "RM", "MZN": "MT", "NAD": "$", "NGN": "₦", "NIO": "C$", "NOK": "kr", "NPR": "₨", "NZD": "$", "OMR": "﷼", "PAB": "B/.", "PEN": "S/.", "PGK": "K", "PHP": "₱", "PKR": "₨", "PLN": "zł", "PYG": "Gs", "QAR": "﷼", "RMB": "￥", "RON": "lei", "RSD": "Дин.", "RUB": "₽", "RWF": "R₣", "SAR": "﷼", "SBD": "$", "SCR": "₨", "SDG": "ج.س.", "SEK": "kr", "SGD": "$", "SHP": "£", "SLL": "Le", "SOS": "S", "SRD": "$", "SSP": "£", "STD": "Db", "SVC": "$", "SYP": "£", "SZL": "E", "THB": "฿", "TJS": "SM", "TMT": "T", "TND": "د.ت", "TOP": "T$", "TRL": "₤", "TRY": "₺", "TTD": "TT$", "TVD": "$", "TWD": "NT$", "TZS": "TSh", "UAH": "₴", "UGX": "USh", "USD": "$", "UYU": "$U", "UZS": "лв", "VEF": "Bs", "VND": "₫", "VUV": "VT", "WST": "WS$", "XAF": "FCFA", "XBT": "Ƀ", "XCD": "$", "XOF": "CFA", "XPF": "₣", "YER": "﷼", "ZAR": "R", "ZWD": "Z$" }
+
+        return currencies[code] || "";
+    }
+
 }]);
 
 app.service("CurrencyService", ['$q', '$rootScope', 'SettingsService', 'CartService', 'InvoiceService', 'StorageService', 'ApiService', function ($q, $rootScope, SettingsService, CartService, InvoiceService, StorageService, ApiService) {
 
     // Return public API.
-    return ({
+    return {
         getCurrency: getCurrency,
         getCurrencyName: getCurrencyName,
         setCurrency: setCurrency
-    });
+    };
 
     function getCurrency() {
         return StorageService.get("currency");
@@ -1563,55 +1594,13 @@ app.service("CurrencyService", ['$q', '$rootScope', 'SettingsService', 'CartServ
 
     }
 
-    function setCurrency(newValue, parameters) {
+    function setCurrency(newValue) {
 
-        var deferred = $q.defer();
+        // Store in a cookie to persist page refreshes
+        StorageService.set("currency", newValue);
 
-        if (StorageService.get("cart_id")) {
-
-            // Update the cart
-            CartService.update({ currency: newValue }, parameters).then(function (cart) {
-
-                // Store in a cookie to persist page refreshes
-                StorageService.set("currency", newValue);
-
-                // Emit the change
-                $rootScope.$emit("currencyChanged", newValue);
-
-                // Resolve with the cart
-                deferred.resolve({ cart: cart });
-
-            }, function (error) {
-                deferred.reject(error);
-            });
-
-        } else if (StorageService.get("invoice_id")) {
-
-            // Update the invoice
-            InvoiceService.update({ currency: newValue }, parameters).then(function (invoice) {
-
-                // Store in a cookie to persist page refreshes
-                StorageService.set("currency", newValue);
-
-                // Resolve with the invocie
-                deferred.resolve({ invoice: invoice });
-
-            }, function (error) {
-                deferred.reject(error);
-            });
-
-        } else {
-
-            // Otherwise, just set the new currency
-            StorageService.set("currency", newValue);
-
-            // Emit the change
-            $rootScope.$emit("currencyChanged", newValue);
-
-            deferred.resolve({});
-        }
-
-        return deferred.promise;
+        // Emit the change
+        $rootScope.$emit("currencyChanged", newValue);
 
     }
 
@@ -1622,12 +1611,12 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
     // Angular gettext https://angular-gettext.rocketeer.be/ Used to provide application translations. Translation files are located in the languages folder.
 
     // Return public API.
-    return ({
+    return {
         getSelectedLanguage: getSelectedLanguage,
         getLanguages: getLanguages,
         setLanguage: setLanguage,
         establishLanguage: establishLanguage
-    });
+    };
 
     function getLanguages() {
 
@@ -1647,7 +1636,7 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
         var language = StorageService.get("language");
 
         // Only return if the value is valid.
-        var language = _.findWhere(languages, { code: language });
+        language = _.findWhere(languages, { code: language });
         if (language) {
             return language;
         }
@@ -1693,7 +1682,7 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
 
         // Check if languages are provided. If not, just return english and don't bother fetching the user's language from the server.
         if (!$rootScope.languages) {
-            deferred.resolve("en")
+            deferred.resolve("en");
             return deferred.promise;
         }
 
@@ -1747,9 +1736,9 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
 app.service("SettingsService", [function ($http, $q) {
 
     // Return public API.
-    return ({
+    return {
         get: get
-    });
+    };
 
     function get() {
 
@@ -1781,7 +1770,7 @@ app.service("SettingsService", [function ($http, $q) {
             accountSettings.date = date.getDate();
 
             return accountSettings;
-        }
+        };
 
         // Get app settings
         var getAppSettings = function () {
@@ -1795,7 +1784,7 @@ app.service("SettingsService", [function ($http, $q) {
             }
 
             return appSettings;
-        }
+        };
 
         // Build and return the settings object
         var settings = { account: getAccountSettings(), app: getAppSettings(), config: {} };
@@ -1823,7 +1812,7 @@ app.service("SettingsService", [function ($http, $q) {
 app.service("HelperService", ['SettingsService', 'StorageService', '$location', function (SettingsService, StorageService, $location) {
 
     // Return public API.
-    return ({
+    return {
         isRequiredCustomerField: isRequiredCustomerField,
         isOptionalCustomerField: isOptionalCustomerField,
         isCustomerField: isCustomerField,
@@ -1833,7 +1822,7 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
         hasSubscription: hasSubscription,
         hasPhysical: hasPhysical,
         supportsPaymentMethod: supportsPaymentMethod
-    });
+    };
 
     function isRequiredCustomerField(field, options, shippingIsBilling) {
 
@@ -1930,7 +1919,7 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
                     return true;
                 }
             }
-        };
+        }
 
         return false;
 
@@ -1985,7 +1974,7 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
 
     function hasSubscription(items) {
 
-        if (_.find(items, function (item) { return item.subscription_plan != null }) != null) {
+        if (_.find(items, function (item) { return item.subscription_plan != null; }) != null) {
             return true;
         }
 
@@ -1995,7 +1984,7 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
 
     function hasPhysical(items) {
 
-        if (_.find(items, function (item) { return item.type == "physical" }) != null) {
+        if (_.find(items, function (item) { return item.type == "physical"; }) != null) {
             return true;
         }
 
@@ -2009,7 +1998,7 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
             return false;
         }
 
-        if (_.find(options.payment_methods, function (item) { return item.payment_method_type == type }) != null) {
+        if (_.find(options.payment_methods, function (item) { return item.payment_method_type == type; }) != null) {
             return true;
         }
 
@@ -2022,11 +2011,11 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
 app.service("StorageService", ['appCache', function (appCache) {
 
     // Return public API.
-    return ({
+    return {
         get: get,
         set: set,
         remove: remove
-    });
+    };
 
     function get(key) {
 
@@ -2043,7 +2032,7 @@ app.service("StorageService", ['appCache', function (appCache) {
 
     function set(key, value, expiresInSeconds) {
 
-        appCache.put(key, value)
+        appCache.put(key, value);
 
         // If expiresInSeconds is not defined, we'll use 14 days as the default
         if (expiresInSeconds == null) {
@@ -2051,7 +2040,7 @@ app.service("StorageService", ['appCache', function (appCache) {
         }
 
         // Backup to a cookie
-        utils.setCookie(key, value, (expiresInSeconds / 60));
+        utils.setCookie(key, value, expiresInSeconds / 60);
 
     }
 
