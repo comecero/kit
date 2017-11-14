@@ -1,5 +1,5 @@
 /*
-Comecero Kit version: ﻿1.0.4
+Comecero Kit version: ﻿1.0.5
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -180,43 +180,6 @@ app.controller("PaymentController", ['$scope', '$location', '$routeParams', 'Car
 
     }]);
 
-app.controller("ProductsController", ['$scope', '$routeParams', '$location', '$document', 'ProductService', 'CartService', 'GeoService', 'CurrencyService', function ($scope, $routeParams, $location, $document, ProductService, CartService, GeoService, CurrencyService) {
-        
-        // Define a place to hold your data
-        $scope.data = {};
-        
-        // Load the geo service for countries, states, provinces (used for dropdowns).
-        $scope.geo = GeoService.getData();
-        
-        $scope.data.params = {};
-        $scope.data.params.expand = "items.product,items.subscription_terms,customer.payment_methods";
-        $scope.data.params.show = "product_id,name,price,currency,description,images.*";
-        $scope.data.params.currency = CurrencyService.getCurrency();
-        $scope.data.params.formatted = true;
-        $scope.data.params.limit = 50;
-        
-        $scope.data.cartParams = {};
-        $scope.data.cartParams.show = "cart_id";
-        
-        // Load the products
-        ProductService.getList($scope.data.params).then(function (products) {
-            $scope.data.products = products;
-        }, function (error) {
-            $scope.data.error = error;
-        });
-        
-        $scope.onAddToCart = function (item) {
-            $location.path("/cart");
-        }
-        
-        // Watch for error to be populated, and if so, scroll to it.
-        $scope.$watch("data.error", function (newVal, oldVal) {
-            if ($scope.data.error) {
-                $document.scrollTop(0, 500);
-            }
-        });
-
-    }]);
 app.controller("ReceiptController", ['$scope', '$routeParams', 'PaymentService', 'SettingsService', function ($scope, $routeParams, PaymentService, SettingsService) {
         
         // Define a place to hold your data
@@ -250,6 +213,43 @@ app.controller("ReceiptController", ['$scope', '$routeParams', 'PaymentService',
         }, function (error) {
             $scope.exception = error;
         });
+        
+        // Watch for error to be populated, and if so, scroll to it.
+        $scope.$watch("data.error", function (newVal, oldVal) {
+            if ($scope.data.error) {
+                $document.scrollTop(0, 500);
+            }
+        });
+
+    }]);
+app.controller("ProductsController", ['$scope', '$routeParams', '$location', '$document', 'ProductService', 'CartService', 'GeoService', 'CurrencyService', function ($scope, $routeParams, $location, $document, ProductService, CartService, GeoService, CurrencyService) {
+        
+        // Define a place to hold your data
+        $scope.data = {};
+        
+        // Load the geo service for countries, states, provinces (used for dropdowns).
+        $scope.geo = GeoService.getData();
+        
+        $scope.data.params = {};
+        $scope.data.params.expand = "items.product,items.subscription_terms,customer.payment_methods";
+        $scope.data.params.show = "product_id,name,price,currency,description,images.*";
+        $scope.data.params.currency = CurrencyService.getCurrency();
+        $scope.data.params.formatted = true;
+        $scope.data.params.limit = 50;
+        
+        $scope.data.cartParams = {};
+        $scope.data.cartParams.show = "cart_id";
+        
+        // Load the products
+        ProductService.getList($scope.data.params).then(function (products) {
+            $scope.data.products = products;
+        }, function (error) {
+            $scope.data.error = error;
+        });
+        
+        $scope.onAddToCart = function (item) {
+            $location.path("/cart");
+        }
         
         // Watch for error to be populated, and if so, scroll to it.
         $scope.$watch("data.error", function (newVal, oldVal) {
