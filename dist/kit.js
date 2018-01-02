@@ -3327,7 +3327,7 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
                                 });
                             }
                         }
-                    }, 25);
+                    }, 2000);
                 });
             });
 
@@ -5079,6 +5079,9 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
     }
 
     function fromParams(payment, location) {
+
+        // Set payment as an object if null
+        payment = payment || {}
 
         // location should be the angular $location object
 
