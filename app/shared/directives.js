@@ -2300,6 +2300,9 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
             // Find all inputs that have the attribute of customer-field
             var fields = document.querySelectorAll(".customer-background-save");
 
+            // Only allow one update buffer per page.
+            var updateBuffer;
+
             _.each(fields, function (input) {
 
                 // Bind on blur as the default, on change for select.
@@ -2313,9 +2316,14 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
 
                 var inputNg = angular.element(input);
 
-                var updateBuffer;
+                // Track original value because blur events don't care if value has changed.
+                var originalVal = inputNg.val();
 
                 inputNg.bind(event, function () {
+                    // Ensure that value has really changed, triggering on blur event makes this needed.
+                    if (event == 'blur' && angular.equals(originalVal,inputNg.val())) return;
+                    // Reset original value so we can track later changes by user.
+                    originalVal = inputNg.val();
 
                     if (updateBuffer) {
                         $timeout.cancel(updateBuffer);
@@ -2373,7 +2381,7 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
                                 });
                             }
                         }
-                    }, 25);
+                    }, 100); // Timeout set to a value that prevents sending every value if user presses and holds down arrow on country select.
                 });
             });
 
