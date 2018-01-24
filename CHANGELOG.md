@@ -1,4 +1,10 @@
-﻿<a name="1.0.4"></a>
+﻿<a name="1.0.5"></a>
+# 1.0.5
+
+- Add support for direct customer payments (a payment without a cart or invoice)
+- Minor bug fixes and refactoring
+
+<a name="1.0.4"></a>
 # 1.0.4
 
 - Update analytics to load by JavaScript rather than HTML tag
