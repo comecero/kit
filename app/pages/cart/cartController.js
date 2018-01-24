@@ -26,7 +26,7 @@
             "success_url": window.location.href.substring(0, window.location.href.indexOf("#")) + "#/payment/review/{{payment_id}}",
             "cancel_url": window.location.href.substring(0, window.location.href.indexOf("#")) + "#/cart"
         }
-    }
+    };
 
     // Get the current cart
     CartService.get().then(function (cart) {
@@ -35,7 +35,7 @@
         cart = CartService.fromParams(cart, $location);
 
         // Update the cart. There might not be a cart on the server at this point; if not, the CartService.update process will create the new cart for the user.
-        CartService.update(cart, $scope.data.params).then(function (cart) {
+        CartService.update(cart, $scope.data.params, false, true).then(function (cart) {
 
             // Set the cart on the scope.
             $scope.data.cart = cart;
@@ -47,7 +47,7 @@
             var data = ((cart.customer || {}).payment_methods || {}).data;
             if (data) {
                 if (data.length > 0) {
-                    $scope.data.payment_method.payment_method_id = _.find(cart.customer.payment_methods.data, function (payment_method) { return payment_method.is_default == true }).payment_method_id;
+                    $scope.data.payment_method.payment_method_id = _.find(cart.customer.payment_methods.data, function (payment_method) { return payment_method.is_default == true; }).payment_method_id;
                 }
             }
 
@@ -77,7 +77,7 @@
                 $location.path("/receipt/" + payment.payment_id);
         }
 
-    }
+    };
 
     // Watch for error to be populated, and if so, scroll to it.
     $scope.$watch("data.error", function (newVal, oldVal) {

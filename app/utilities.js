@@ -446,6 +446,24 @@
         }
 
     }
+
+    function cleanPrice(price) {
+        // Strip everything except numbers and decimals
+
+        if (typeof price === 'undefined' || price == null) {
+            return "";
+        }
+
+        var cleanedPrice = price.toString().replace(/[^0-9\.\s]/g, '').trim();
+
+        if (isNaN(cleanedPrice) == true || cleanedPrice.trim() == "") {
+            // The value is not reasonably close enough for it to be a valid price. Just return the original input.
+            return price;
+        } else {
+            // Truncate at two decimal places.
+            return parseFloat(cleanedPrice).toFixed(2);
+        }
+    }
     
     return {
         setCookie: setCookie,
@@ -480,7 +498,8 @@
         repeat: repeat,
         mergeParams: mergeParams,
         deDuplicateCsv: deDuplicateCsv,
-        getLocale: getLocale
+        getLocale: getLocale,
+        cleanPrice: cleanPrice
     };
 
 })();

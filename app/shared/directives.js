@@ -177,7 +177,7 @@ app.directive('addToCart', ['CartService', 'gettextCatalog', function (CartServi
                 if (ctrl.$invalid == true) {
                     scope.$apply(function () {
                         scope.error = { type: "bad_request", reference: "AWu1twY", code: "invalid_input", message: gettextCatalog.getString("There was a problem with some of the information you supplied. Please review for errors and try again."), status: 400 };
-                    })
+                    });
                     return;
                 }
 
@@ -216,12 +216,13 @@ app.directive('addToCart', ['CartService', 'gettextCatalog', function (CartServi
     };
 }]);
 
-app.directive('submitPayment', ['CartService', 'InvoiceService', 'gettextCatalog', function (CartService, InvoiceService, gettextCatalog) {
+app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService', 'gettextCatalog', function (CartService, InvoiceService, PaymentService, gettextCatalog) {
 
     // Shared scope:
     // submitPayment: Provide the payment_method to be used for payment. Should include, at a minimum, the following properties: payment_type, data (data includes payment method-specific fields such as credit card number).
     // cart: Provide the cart that will be paid for. The cart will automatically be updated (or created if not yet created) through the API before the payment for the payment is submitted. Cart or invoice can be supplied, but not both.
     // invoice: Provide the invoice that will be paid for. The invoice will automatically be updated through the API before the payment for the payment is submitted (i.e. a currency change). Cart or invoice can be supplied, but not both.
+    // payment: Provide the payment object for a direct, stand-alone payment (no cart or invoice). If payment is provided cart and invoice should NOT be provided.
     // error: The error object to communicate errors.
     // onSubmit: A function that will be called from scope when a payment is submitted.
     // onSuccess: A function that will be called from scope when the payment is successfully completed. Will include the response payment object as a parameter.
@@ -238,12 +239,13 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'gettextCatalog
             paymentMethod: '=submitPayment',
             cart: '=?',
             invoice: '=?',
+            payment: '=?',
             params: '=?',
             error: '=?',
             onSubmit: '=?',
             onSuccess: '=?',
             onError: '=?',
-            shippingIsBilling: '=?',
+            shippingIsBilling: '=?'
         },
         link: function (scope, elem, attrs, ctrl) {
 
@@ -267,6 +269,39 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'gettextCatalog
                     }
 
                     return;
+                }
+
+                // If a direct payment (i.e. hosted payment page - no cart or invoice) and PayPal, total, subtotal and / or shipping must be provided.
+                if (scope.paymentMethod.type == "paypal" && !scope.cart && !scope.invoice) {
+
+                    if (!scope.payment.total && !scope.payment.subtotal && !scope.payment.shipping) {
+                        scope.$apply(function () {
+                            scope.error = { type: "bad_request", reference: "eiptRbg", code: "invalid_input", message: gettextCatalog.getString("Please provide an amount for your payment."), status: 400 };
+                        });
+
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+
+                        return;
+                    }
+
+                }
+
+                // Make sure numeric values, if supplied, are not strings. This ensures that the JSON sent to the API will be in numeric format and not string, which the API will reject as invalid.
+                if (scope.payment) {
+                    if (scope.payment.total)
+                        scope.payment.total = Number(scope.payment.total);
+
+                    if (scope.payment.subtotal)
+                        scope.payment.subtotal = Number(scope.payment.subtotal);
+
+                    if (scope.payment.shipping)
+                        scope.payment.shipping = Number(scope.payment.shipping);
+
+                    if (scope.payment.tax)
+                        scope.payment.tax = Number(scope.payment.tax);
                 }
 
                 // Disable the clicked element
@@ -338,6 +373,40 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'gettextCatalog
                     });
                 }
 
+                if (scope.payment) {
+
+                    scope.payment.payment_method = scope.paymentMethod;
+
+                    // If billing is shipping, remove the shipping address
+                    if (scope.shippingIsBilling && scope.payment.customer) {
+                        delete scope.payment.customer.shipping_address;
+                    }
+
+                    PaymentService.createDirect(scope.payment, params).then(function (payment) {
+
+                        // Fire the success event
+                        if (scope.onSuccess) {
+                            scope.onSuccess(payment);
+                        }
+
+                        // Remove the disabled attribute
+                        elem.prop("disabled", null);
+
+                    }, function (error) {
+
+                        scope.error = error;
+
+                        // Fire the error event
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+
+                        // Remove the disabled attribute
+                        elem.prop("disabled", null);
+
+                    });
+                }
+
             });
 
         }
@@ -365,14 +434,13 @@ app.directive('commitPayment', ['CartService', 'InvoiceService', 'PaymentService
         require: '^form',
         scope: {
             paymentId: '=commitPayment',
-            paymentMethod: '=?',
             sale: '=?',
             invoice: '=?',
             params: '=?',
             error: '=?',
             onSubmit: '=?',
             onSuccess: '=?',
-            onError: '=?',
+            onError: '=?'
         },
         link: function (scope, elem, attrs, ctrl) {
 
@@ -409,9 +477,9 @@ app.directive('commitPayment', ['CartService', 'InvoiceService', 'PaymentService
                 params = utils.mergeParams(params, null, "order");
 
                 // Define the commit function.
-                var commit = function (payment_id, payment_method, params) {
+                var commit = function (payment_id, params) {
 
-                    PaymentService.commit(payment_id, payment_method, params).then(function (payment) {
+                    PaymentService.commit(payment_id, params).then(function (payment) {
 
                         // Fire the success event
                         if (scope.onSuccess) {
@@ -434,13 +502,13 @@ app.directive('commitPayment', ['CartService', 'InvoiceService', 'PaymentService
                         elem.prop("disabled", null);
 
                     });
-                }
+                };
 
                 // Perform the commit. If a cart, update the cart before running the payment.
                 if (attrs.saleType == "cart") {
 
                     CartService.update(scope.sale).then(function (cart) {
-                        commit(scope.paymentId, scope.paymentMethod, params);
+                        commit(scope.paymentId, params);
                     }, function (error) {
 
                         scope.error = error;
@@ -456,8 +524,8 @@ app.directive('commitPayment', ['CartService', 'InvoiceService', 'PaymentService
                     });
 
                 } else {
-                    // An invoice, which isn't updated by the customer. Just run the commit.
-                    commit(scope.paymentId, scope.paymentMethod, params);
+                    // An invoice or direct payment. Nothing to update in advance, just run the commit.
+                    commit(scope.paymentId, params);
                 }
 
             });
@@ -466,7 +534,7 @@ app.directive('commitPayment', ['CartService', 'InvoiceService', 'PaymentService
     };
 }]);
 
-app.directive('currencySelect', ['CurrencyService', 'CartService', 'InvoiceService', 'ProductService', 'SettingsService', '$timeout', '$rootScope', function (CurrencyService, CartService, InvoiceService, ProductService, SettingsService, $timeout, $rootScope) {
+app.directive('currencySelect', ['CurrencyService', 'CartService', 'InvoiceService', 'PaymentService', 'ProductService', 'SettingsService', 'StorageService', '$timeout', '$rootScope', function (CurrencyService, CartService, InvoiceService, PaymentService, ProductService, SettingsService, StorageService, $timeout, $rootScope) {
 
     return {
         restrict: 'A',
@@ -474,11 +542,13 @@ app.directive('currencySelect', ['CurrencyService', 'CartService', 'InvoiceServi
             currency: '=selectCurrency',
             cart: '=?',
             invoice: '=?',
+            payment: '=?',
+            options: '=?',
             products: '=?',
             params: '=?',
             onSuccess: '=?',
             onError: '=?',
-            error: '=?',
+            error: '=?'
         },
         link: function (scope, elem, attrs) {
 
@@ -486,6 +556,8 @@ app.directive('currencySelect', ['CurrencyService', 'CartService', 'InvoiceServi
             // currency: The new currency
             // cart: If running on a page with an cart, pass the cart object in and it will be updated with the pricing in the new currency
             // invoice: If running on a page with an invoice, pass the invoice object in and it will be updated with the pricing in the new currency
+            // payment: If running on a page with a stand-alone payment, pass the payment object in and the currency will be set on the object
+            // options: If suppying a payment, you can supply the payment/options object and it will be updated with a new version as a result of the currency selection / change.
             // product: If running on a page with a single product, pass the product in and it will be updated with the pricing in the new currency
             // products: If running on a page with a list of products, pass the products list in and it will be updated with the pricing in the new currency
             // error: The error object to communicate errors.
@@ -578,70 +650,79 @@ app.directive('currencySelect', ['CurrencyService', 'CartService', 'InvoiceServi
                 var params = scope.params || attrs.params;
                 params = utils.mergeParams(params, null, null);
 
-                CurrencyService.setCurrency(selectedCurrency, scope.params).then(function (result) {
+                // If associated with a cart, update the cart.
+                if (scope.cart && StorageService.get("cart_id")) {
 
-                    // If a cart or invoice was updated as a result, it will be returned.
-                    if (result.cart) {
+                    CartService.update({ currency: selectedCurrency }, scope.params).then(function (cart) {
+
+                        CurrencyService.setCurrency(selectedCurrency);
 
                         // We don't want to remove unsaved customer values from the view.
                         var customer = null;
                         if (scope.cart) {
                             customer = scope.cart.customer;
                         }
-                        scope.cart = result.cart;
+                        scope.cart = cart;
 
                         if (customer) {
                             // Restore the original customer data.
                             scope.cart.customer = customer;
                         }
 
-                    }
+                        if (scope.onSuccess) {
+                            scope.onSuccess(selectedCurrency);
+                        }
 
-                    if (result.invoice) {
+                    }, function (error) {
+                        scope.error = error;
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
+
+                };
+
+                // If associated with an invoice, update the invoice.
+                if (scope.invoice && StorageService.get("invoice_id")) {
+
+                    InvoiceService.update({ currency: selectedCurrency }, scope.params).then(function (invoice) {
+
+                        CurrencyService.setCurrency(selectedCurrency);
 
                         // We don't want to remove unsaved customer values from the view.
                         var customer = null;
                         if (scope.invoice) {
                             customer = scope.invoice.customer;
                         }
-                        scope.invoice = result.invoice;
+                        scope.invoice = invoice;
 
                         if (customer) {
                             // Restore the original customer data.
                             scope.invoice.customer = customer;
                         }
 
-                    }
+                        if (scope.onSuccess) {
+                            scope.onSuccess(selectedCurrency);
+                        }
 
-                    // If products were supplied, refresh
-                    if (scope.products) {
+                    }, function (error) {
+                        scope.error = error;
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
 
-                        // Pass through the current parameters from products (such as pagination)
-                        var pageParams = utils.getQueryParameters(scope.products.current_page_url);
+                };
 
-                        // Set the new currency
-                        params.currency = selectedCurrency;
+                // If associated with a payment, update the payment. Refresh the payment options, if provided.
+                if (scope.payment) {
 
-                        ProductService.getList(scope.params).then(function (products) {
-                            scope.products = products;
-                        }, function (error) {
-                            scope.error = error;
-                            if (scope.onError) {
-                                scope.onError(error);
-                            }
-                        });
-                    }
+                    scope.payment.currency = selectedCurrency;
 
-                    if (scope.product) {
-
-                        // Pass through the current parameters from product (such as pagination)
-                        var pageParams = utils.getQueryParameters(scope.product.url);
-
-                        // Set the new currency
-                        scope.params.currency = selectedCurrency;
-
-                        ProductService.get(scope.product.product_id, scope.params).then(function (product) {
-                            scope.product = product;
+                    if (scope.options) {
+                        // Update the options according to the supplied currency.
+                        PaymentService.getOptions({ currency: selectedCurrency }).then(function (options) {
+                            scope.options = options;
                         }, function (error) {
                             scope.error = error;
                             if (scope.onError) {
@@ -654,13 +735,74 @@ app.directive('currencySelect', ['CurrencyService', 'CartService', 'InvoiceServi
                         scope.onSuccess(selectedCurrency);
                     }
 
-                }, function (error) {
-                    scope.error = error;
-                    if (scope.onError) {
-                        scope.onError(error);
-                    }
-                });
-            }
+                    CurrencyService.setCurrency(selectedCurrency);
+                    scope.payment.currency = selectedCurrency;
+
+                };
+
+                // If products were supplied, refresh the list of products to show the products in the newly selected currency
+                if (scope.products) {
+
+                    // Pass through the current parameters from products (such as pagination)
+                    var pageParams = utils.getQueryParameters(scope.products.current_page_url);
+
+                    // Set the new currency
+                    params.currency = selectedCurrency;
+
+                    ProductService.getList(scope.params).then(function (products) {
+
+                        scope.products = products;
+                        CurrencyService.setCurrency(selectedCurrency);
+
+                        // If the user changes the currency of a product and has a cart, update the cart to that same currency to provide a better experience.
+                        if (StorageService.get("cart_id")) {
+                            CartService.update({ currency: selectedCurrency }, scope.params, true);
+                        };
+
+                        if (scope.onSuccess) {
+                            scope.onSuccess(selectedCurrency);
+                        }
+
+                    }, function (error) {
+                        scope.error = error;
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
+                }
+
+                // If a product was supplied, refresh the product to show the product in the newly selected currency
+                if (scope.product) {
+
+                    // Pass through the current parameters from product
+                    var pageParams = utils.getQueryParameters(scope.product.url);
+
+                    // Set the new currency
+                    scope.params.currency = selectedCurrency;
+
+                    ProductService.get(scope.product.product_id, scope.params).then(function (product) {
+
+                        scope.product = product;
+                        CurrencyService.setCurrency(selectedCurrency);
+
+                        // If the user changes the currency of a product and has a cart, update the cart to that same currency to provide a better experience.
+                        if (StorageService.get("cart_id")) {
+                            CartService.update({ currency: selectedCurrency }, scope.params, true);
+                        };
+
+                        if (scope.onSuccess) {
+                            scope.onSuccess(selectedCurrency);
+                        }
+
+                    }, function (error) {
+                        scope.error = error;
+                        if (scope.onError) {
+                            scope.onError(error);
+                        }
+                    });
+                }
+
+            };
         }
     };
 }]);
@@ -753,7 +895,7 @@ app.directive('shippingSelect', ['CartService', 'InvoiceService', '$timeout', fu
             params: '=?',
             onSuccess: '=?',
             onError: '=?',
-            error: '=?',
+            error: '=?'
         },
         link: function (scope, elem, attrs) {
 
@@ -869,7 +1011,7 @@ app.directive('shippingRadio', ['CartService', 'InvoiceService', '$timeout', fun
             params: '=?',
             onSuccess: '=?',
             onError: '=?',
-            error: '=?',
+            error: '=?'
         },
         link: function (scope, elem, attrs) {
 
@@ -972,7 +1114,7 @@ app.directive('customerCountries', ['GeoService', '$timeout', function (GeoServi
                     // Get the entire list of countries
                     var countries = GeoService.getData().countries;
 
-                    countries = _.filter(countries, function (country) { return customerCountries.indexOf(country.code) > -1 });
+                    countries = _.filter(countries, function (country) { return customerCountries.indexOf(country.code) > -1; });
 
                     // Insert a blank at the top
                     elemNg.append("<option></option>");
@@ -1088,7 +1230,7 @@ app.directive('showErrors', ['$timeout', 'SettingsService', function ($timeout, 
                     });
 
                 });
-            }
+            };
 
             // Set the initial listener
             load();
@@ -1100,7 +1242,7 @@ app.directive('showErrors', ['$timeout', 'SettingsService', function ($timeout, 
                 });
             }
         }
-    }
+    };
 }]);
 
 app.directive('conversion', ['SettingsService', 'StorageService', function (SettingsService, StorageService) {
@@ -1111,7 +1253,7 @@ app.directive('conversion', ['SettingsService', 'StorageService', function (Sett
     return {
         restrict: 'A',
         scope: {
-            conversion: '@',
+            conversion: '@'
         },
         link: function (scope, elem, attrs, ctrl) {
 
@@ -1136,7 +1278,7 @@ app.directive('conversion', ['SettingsService', 'StorageService', function (Sett
                         head.appendChild(js);
                     }
                 });
-            }
+            };
 
             // Get the settings
             var settings = SettingsService.get();
@@ -1159,7 +1301,7 @@ app.directive('validateOnSubmit', function () {
             });
 
         }
-    }
+    };
 });
 
 app.directive('validateExpMonth', function () {
@@ -1192,7 +1334,7 @@ app.directive('validateExpMonth', function () {
 
         }
 
-    }
+    };
 
 });
 
@@ -1226,7 +1368,7 @@ app.directive('validateExpYear', function () {
 
         }
 
-    }
+    };
 
 });
 
@@ -1280,7 +1422,7 @@ app.directive('validateCvv', function () {
 
         }
 
-    }
+    };
 
 });
 
@@ -1327,7 +1469,7 @@ app.directive('validateCard', function () {
 
         }
 
-    }
+    };
 
 });
 
@@ -1366,7 +1508,7 @@ app.directive('isValidInteger', function () {
                     }
                 }
                 return true;
-            }
+            };
         }
     };
 });
@@ -1406,7 +1548,7 @@ app.directive('isValidNumber', function () {
                     }
                 }
                 return true;
-            }
+            };
         }
     };
 });
@@ -1587,10 +1729,11 @@ app.directive('promoCode', ['CartService', '$timeout', function (CartService, $t
     };
 }]);
 
-app.directive('customerSignin', ['CartService', '$timeout', function (CartService, $timeout) {
+app.directive('customerSignin', ['CartService', 'CustomerService', '$timeout', function (CartService, CustomerService, $timeout) {
 
     // Shared scope:
-    // cart: The cart to which the login should be applied
+    // cart: The cart to which the login should be applied, if the login is associated with a cart
+    // customer: The customer object to which the login should be applied. Must be provided if a cart is not provided, if a cart is provided this is unnecessary and will not be used.
     // paymentMethod: The cart's payment method object
     // onSigninSubmit: A function that will be called when the signin is submitted.
     // onSignoutSubmit: A function that will be called when the signout is submitted.
@@ -1644,6 +1787,7 @@ app.directive('customerSignin', ['CartService', '$timeout', function (CartServic
         restrict: 'A',
         scope: {
             cart: '=',
+            customer: '=',
             paymentMethod: '=?',
             options: '=?',
             params: '=?',
@@ -1653,7 +1797,7 @@ app.directive('customerSignin', ['CartService', '$timeout', function (CartServic
             onSigninSuccess: '=?',
             onSignoutSuccess: '=?',
             onSigninError: '=?',
-            onSignoutError: '=?',
+            onSignoutError: '=?'
         },
         link: function (scope, elem, attrs) {
 
@@ -1671,16 +1815,17 @@ app.directive('customerSignin', ['CartService', '$timeout', function (CartServic
                 askSignin.addClass("hidden");
                 supplySignin.addClass("hidden");
                 signedIn.addClass("hidden");
-            }
+            };
 
             // Set the default state
             elem.addClass("hidden");
             hideAll();
 
-            scope.$watchGroup(["options", "cart"], function (newValues, oldValues) {
+            scope.$watchGroup(["options", "cart", "customer"], function (newValues, oldValues) {
 
                 var options = newValues[0];
                 var cart = newValues[1];
+                var customer = newValues[2];
 
                 if (options) {
                     if (options.customer_optional_fields) {
@@ -1700,6 +1845,15 @@ app.directive('customerSignin', ['CartService', '$timeout', function (CartServic
                         } else {
                             askSignin.removeClass("hidden");
                         }
+                    }
+                }
+
+                if (customer) {
+                    hideAll();
+                    if (customer.username) {
+                        signedIn.removeClass("hidden");
+                    } else {
+                        askSignin.removeClass("hidden");
                     }
                 }
 
@@ -1743,31 +1897,56 @@ app.directive('customerSignin', ['CartService', '$timeout', function (CartServic
                     scope.onSignoutSubmit();
                 }
 
-                // Prep the params
-                var params = scope.params || attrs.params;
-                params = utils.mergeParams(params, null, "customer.payment_methods");
+                // If associated with a cart, log the customer out of the cart to disassociated the cart from the user.
+                if (scope.cart) {
 
-                CartService.logout(scope.params).then(function (cart) {
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "customer.payment_methods");
 
-                    scope.cart = cart;
+                    CartService.logout(params).then(function (cart) {
 
-                    // Delete the payment_method_id on the payment method object
-                    delete scope.paymentMethod.payment_method_id;
+                        scope.cart = cart;
 
-                    // Fire the success event
-                    if (scope.onSignoutSuccess) {
-                        scope.onSignoutSuccess(cart);
+                        // Delete the payment_method_id on the payment method object
+                        delete scope.paymentMethod.payment_method_id;
+
+                        // Fire the success event
+                        if (scope.onSignoutSuccess) {
+                            scope.onSignoutSuccess(cart);
+                        }
+
+                    }, function (error) {
+
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onSignoutError) {
+                            scope.onSignoutError(error);
+                        }
+
+                    });
+
+                } else {
+
+                    // Not associated with a cart
+                    if (scope.customer) {
+
+                        scope.$apply(function () {
+
+                            // Reset the customer to empty. Set country explicitly to null otherwise you end up with an option 'undefined' in country HTML select controls.
+                            scope.customer = { billing_address: { country: null }, shipping_address: { country: null } };
+
+                            // Delete the payment_method_id on the payment method object
+                            delete scope.paymentMethod.payment_method_id;
+                        });
+
+                        // Fire the success event
+                        if (scope.onSignoutSuccess) {
+                            scope.onSignoutSuccess();
+                        }
                     }
 
-                }, function (error) {
-
-                    scope.error = error;
-                    // Fire the error event
-                    if (scope.onSignoutError) {
-                        scope.onSignoutError(error);
-                    }
-
-                });
+                }
 
             });
 
@@ -1807,40 +1986,83 @@ app.directive('customerSignin', ['CartService', '$timeout', function (CartServic
                 // Build the login object
                 var login = { username: un, password: pw };
 
-                // Prep the params
-                var params = scope.params || attrs.params;
-                params = utils.mergeParams(params, null, "customer.payment_methods");
+                // If a cart is provided, log the user into the cart.
+                if (scope.cart) {
 
-                CartService.login(login, scope.params).then(function (cart) {
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "customer.payment_methods");
 
-                    scope.cart = cart;
+                    CartService.login(login, params).then(function (cart) {
 
-                    // Remove the username and password
-                    username.val("");
-                    password.val("");
+                        scope.cart = cart;
 
-                    // If the customer has payment methods and the payment method object is supplied, assign the default payment method id
-                    if (cart.customer.payment_methods.data.length > 0 && scope.paymentMethod) {
-                        var payment_method_id = _.findWhere(cart.customer.payment_methods.data, { is_default: true }).payment_method_id;
-                        scope.paymentMethod.payment_method_id = payment_method_id;
-                    }
+                        // Remove the username and password
+                        username.val("");
+                        password.val("");
 
-                    // Fire the success event
-                    if (scope.onSigninSuccess) {
-                        scope.onSigninSuccess(cart);
-                    }
+                        // If the customer has payment methods and the payment method object is supplied, assign the default payment method id
+                        if (cart.customer.payment_methods.data.length > 0 && scope.paymentMethod) {
+                            var payment_method_id = _.findWhere(cart.customer.payment_methods.data, { is_default: true }).payment_method_id;
+                            scope.paymentMethod.payment_method_id = payment_method_id;
+                        }
 
-                }, function (error) {
+                        // Fire the success event
+                        if (scope.onSigninSuccess) {
+                            scope.onSigninSuccess(cart);
+                        }
 
-                    scope.error = error;
-                    // Fire the error event
-                    if (scope.onSigninError) {
-                        scope.onSigninError(error);
-                    }
+                    }, function (error) {
 
-                });
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onSigninError) {
+                            scope.onSigninError(error);
+                        }
 
-            }
+                    });
+
+                } else {
+
+                    // Otherwise, log the customer in directly.
+
+                    // Prep the params
+                    var params = scope.params || attrs.params;
+                    params = utils.mergeParams(params, null, "payment_methods");
+
+                    CustomerService.login(login, params).then(function (customer) {
+
+                        // Update the customer object with the returned customer.
+                        scope.customer = customer;
+
+                        // Remove the username and password
+                        username.val("");
+                        password.val("");
+
+                        // If the customer has payment methods and the payment method object is supplied, assign the default payment method id
+                        if (customer.payment_methods.data.length > 0 && scope.paymentMethod) {
+                            var payment_method_id = _.findWhere(customer.payment_methods.data, { is_default: true }).payment_method_id;
+                            scope.paymentMethod.payment_method_id = payment_method_id;
+                        }
+
+                        // Fire the success event
+                        if (scope.onSigninSuccess) {
+                            scope.onSigninSuccess(customer);
+                        }
+
+                    }, function (error) {
+
+                        scope.error = error;
+                        // Fire the error event
+                        if (scope.onSigninError) {
+                            scope.onSigninError(error);
+                        }
+
+                    });
+
+                }
+
+            };
 
         }
     };
@@ -2007,7 +2229,7 @@ app.directive('createAccount', ['CustomerService', '$timeout', function (Custome
                     }
 
                 });
-            }
+            };
         }
     };
 }]);
@@ -2078,6 +2300,9 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
             // Find all inputs that have the attribute of customer-field
             var fields = document.querySelectorAll(".customer-background-save");
 
+            // Only allow one update buffer per page.
+            var updateBuffer;
+
             _.each(fields, function (input) {
 
                 // Bind on blur as the default, on change for select.
@@ -2091,9 +2316,14 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
 
                 var inputNg = angular.element(input);
 
-                var updateBuffer;
+                // Track original value because blur events don't care if value has changed.
+                var originalVal = inputNg.val();
 
                 inputNg.bind(event, function () {
+                    // Ensure that value has really changed, triggering on blur event makes this needed.
+                    if (event == 'blur' && angular.equals(originalVal,inputNg.val())) return;
+                    // Reset original value so we can track later changes by user.
+                    originalVal = inputNg.val();
 
                     if (updateBuffer) {
                         $timeout.cancel(updateBuffer);
@@ -2104,7 +2334,7 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
 
                         // Since this is a "background update", we need special handling. Angular converts required fields to undefined when they are zero-length, which means they are stripped from the api payload.
                         // This means that if a user sets an item to blank, it will re-populate itself on update because the API didn't see it and didn't know to null it. We'll set all undefined items to null.
-                        var cartCopy = angular.copy(scope.cart)
+                        var cartCopy = angular.copy(scope.cart);
                         utils.undefinedToNull(cartCopy);
 
                         // Prep the params
@@ -2151,7 +2381,7 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
                                 });
                             }
                         }
-                    }, 25);
+                    }, 250); // Timeout set to a value that prevents sending every value if user presses and holds down arrow on country select.
                 });
             });
 
@@ -2182,7 +2412,7 @@ app.directive('creditCardImage', [function () {
 
             });
         }
-    }
+    };
 }]);
 
 app.directive('creditCards', ['CartService', function (CartService) {
@@ -2210,7 +2440,7 @@ app.directive('creditCards', ['CartService', function (CartService) {
             });
 
         }
-    }
+    };
 }]);
 
 app.directive('stateProvInput', ['GeoService', '$compile', function (GeoService, $compile) {
@@ -2331,11 +2561,11 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
                         fields = [];
                         // Log to help in debugging
                         console.log("The JSON provided for custom fields is not valid JSON. As a result, no custom fields will display. Error message: " + e);
-                    };
+                    }
                 }
 
                 // Group by section.
-                fields = groupFields(fields)
+                fields = groupFields(fields);
 
                 // If the user's language is provided in any of the fields, use that language.
                 var language = LanguageService.getSelectedLanguage().code;
@@ -2368,7 +2598,7 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
 
                 return fields;
 
-            }
+            };
 
             var groupFields = function (fields) {
 
@@ -2389,7 +2619,7 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
                 });
 
                 return sorted;
-            }
+            };
 
             var loadDefaults = function (fields, meta) {
 
@@ -2405,7 +2635,7 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
 
                 }
 
-            }
+            };
 
             // Load the fields.           
             scope.fields = loadFields(scope.fieldlist);
@@ -2454,7 +2684,7 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
                     scope.record();
                 }
 
-            }
+            };
 
             scope.isInProperty = function (property, value) {
 
@@ -2474,7 +2704,7 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
 
                 return false;
 
-            }
+            };
 
             scope.isNewSection = function (field, index) {
 
@@ -2495,7 +2725,7 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
 
                 return false;
 
-            }
+            };
 
             // Save any changes, as requested.
             scope.record = function () {
@@ -2506,10 +2736,10 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
                 } else {
                     CartService.update(sale);
                 }
-            }
+            };
 
         }
-    }
+    };
 
 }]);
 
@@ -2629,6 +2859,30 @@ app.directive('validateField', ['gettextCatalog', '$timeout', function (gettextC
 
             });
         }
-    }
+    };
+}]);
+
+app.directive('cleanPrice', [function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+
+            var clean = function (value) {
+                if (angular.isUndefined(value)) {
+                    return;
+                }
+                var cleanedPrice = utils.cleanPrice(value);
+                if (cleanedPrice !== value) {
+                    ctrl.$setViewValue(cleanedPrice);
+                    ctrl.$render();
+                }
+                return cleanedPrice;
+            }
+
+            ctrl.$parsers.unshift(clean);
+            clean(scope[attrs.ngModel]);
+        }
+    };
 }]);
 
