@@ -1040,7 +1040,14 @@ app.service("InvoiceService", ['$http', '$q', '$rootScope', 'ApiService', 'Payme
 
             // Run the payment
             PaymentService.create(payment_method, url, parameters, quiet).then(function (payment) {
+
+                // If the payment status is completed or the payment status is pending and the payment method is credit card, delete the cart_id. Attempting to interact with a closed cart (due to a successful payment) will result in errors.
+                if (payment.status == "completed" || payment.status == "pending") {
+                    StorageService.remove("invoice_id");
+                }
+
                 deferred.resolve(payment);
+
             }, function (error) {
                 deferred.reject(error);
             });
@@ -1177,13 +1184,13 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
 
         var deferred = $q.defer();
 
-            var url = "/payments/options";
-            ApiService.getItem(url, parameters, quiet).then(function (response) {
-                var options = response.data;
-                deferred.resolve(options);
-            }, function (error) {
-                deferred.reject(error);
-            });
+        var url = "/payments/options";
+        ApiService.getItem(url, parameters, quiet).then(function (response) {
+            var options = response.data;
+            deferred.resolve(options);
+        }, function (error) {
+            deferred.reject(error);
+        });
 
         return deferred.promise;
 
