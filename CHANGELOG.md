@@ -1,4 +1,10 @@
-﻿<a name="1.0.5"></a>
+﻿<a name="1.0.6"></a>
+# 1.0.6
+
+- Bug fix to clear invoice_id when completing an invoice payment
+- Bug fix when signing into an existing cart or invoice, properly set the payment method object
+
+<a name="1.0.5"></a>
 # 1.0.5
 
 - Add support for direct customer payments (a payment without a cart or invoice)
