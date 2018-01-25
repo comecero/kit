@@ -1041,7 +1041,7 @@ app.service("InvoiceService", ['$http', '$q', '$rootScope', 'ApiService', 'Payme
             // Run the payment
             PaymentService.create(payment_method, url, parameters, quiet).then(function (payment) {
 
-                // If the payment status is completed or the payment status is pending and the payment method is credit card, delete the cart_id. Attempting to interact with a closed cart (due to a successful payment) will result in errors.
+                // If the payment is completed or pending, remove the invoice_id from the cookie.
                 if (payment.status == "completed" || payment.status == "pending") {
                     StorageService.remove("invoice_id");
                 }
