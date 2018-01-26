@@ -2004,7 +2004,7 @@ app.directive('customerSignin', ['CartService', 'CustomerService', '$timeout', f
                         // If the customer has payment methods and the payment method object is supplied, assign the default payment method id
                         if (cart.customer.payment_methods.data.length > 0 && scope.paymentMethod) {
                             var payment_method_id = _.findWhere(cart.customer.payment_methods.data, { is_default: true }).payment_method_id;
-                            scope.paymentMethod.payment_method_id = payment_method_id;
+                            scope.paymentMethod = { payment_method_id: payment_method_id };
                         }
 
                         // Fire the success event
@@ -2042,7 +2042,7 @@ app.directive('customerSignin', ['CartService', 'CustomerService', '$timeout', f
                         // If the customer has payment methods and the payment method object is supplied, assign the default payment method id
                         if (customer.payment_methods.data.length > 0 && scope.paymentMethod) {
                             var payment_method_id = _.findWhere(customer.payment_methods.data, { is_default: true }).payment_method_id;
-                            scope.paymentMethod.payment_method_id = payment_method_id;
+                            scope.paymentMethod = { payment_method_id: payment_method_id };
                         }
 
                         // Fire the success event
