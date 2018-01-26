@@ -1,5 +1,5 @@
 /*
-Comecero Kit version: ﻿1.0.5
+Comecero Kit version: ﻿1.0.6
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -3910,11 +3910,11 @@ app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'Helpe
         }
 
         // The account_id is only needed in development environments. The hosted environment can call this endpoint without the account_id and it will be determined on the api side from the hostname.
-        var parameters = {};
+        var parameters = { browser_info: true };
         var settings = SettingsService.get();
 
         if (settings.account.account_id && settings.config.development == true) {
-            parameters = { account_id: settings.account.account_id, browser_info: true };
+            parameters = { account_id: settings.account.account_id };
         }
 
         // Prepare the url
