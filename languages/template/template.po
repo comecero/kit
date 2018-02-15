@@ -213,7 +213,7 @@ msgid "Please provide a valid security code"
 msgstr ""
 
 #: ./app/shared/directives.js:2761
-msgid "Please provide a value."
+msgid "Please provide a value"
 msgstr ""
 
 #: ./app/pages/cart/cart.html:226
