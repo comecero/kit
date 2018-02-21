@@ -1,4 +1,9 @@
-﻿<a name="1.0.6"></a>
+﻿<a name="1.0.7"></a>
+# 1.0.7
+
+- Add support for the following languages: Czech, German, Greek, Spanish, Finnish, French, Italian, Japanese, Korean, Dutch, Polish, Portuguese, Russian, Swedish
+
+<a name="1.0.6"></a>
 # 1.0.6
 
 - Bug fix to clear invoice_id when completing an invoice payment
