@@ -1210,8 +1210,8 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
                     scope.onSubmit();
                 }
 
-                // Data is not validated with PayPal since the customer data will come from the response.
-                if (ctrl.$invalid == true && scope.paymentMethod.type != "paypal") {
+                // Data is not validated with PayPal, Amazon Pay since the customer data will come from the response.
+                if (ctrl.$invalid == true && (scope.paymentMethod.type != "paypal" || scope.paymentMethod.type != "amazon_pay")) {
 
                     scope.$apply(function () {
                         scope.error = { type: "bad_request", reference: "kI1ETNz", code: "invalid_input", message: gettextCatalog.getString("There was a problem with some of the information you supplied. Please review for errors and try again."), status: 400 };
@@ -1225,8 +1225,8 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
                     return;
                 }
 
-                // If a direct payment (i.e. hosted payment page - no cart or invoice) and PayPal, total, subtotal and / or shipping must be provided.
-                if (scope.paymentMethod.type == "paypal" && !scope.cart && !scope.invoice) {
+                // If a direct payment (i.e. hosted payment page - no cart or invoice) and PayPal or Amazon Pay, total, subtotal and / or shipping must be provided.
+                if ((scope.paymentMethod.type != "paypal" || scope.paymentMethod.type != "amazon_pay") && !scope.cart && !scope.invoice) {
 
                     if (!scope.payment.total && !scope.payment.subtotal && !scope.payment.shipping) {
                         scope.$apply(function () {
