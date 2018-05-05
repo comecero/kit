@@ -108,7 +108,7 @@ var utils = (function () {
         a = /\+/g,  // Regex for replacing addition symbol with a space
         r = /([^&;=]+)=?([^&;]*)/g,
         d = function (s) { return decodeURIComponent(s.replace(a, " ")); }
-        var queryParameters = {};
+        queryParameters = {};
 
         while (e = r.exec(query))
             queryParameters[d(e[1])] = d(e[2]);
@@ -275,8 +275,8 @@ var utils = (function () {
         value = value.replace(/\D/g, "");
 
         for (var n = value.length - 1; n >= 0; n--) {
-            var cDigit = value.charAt(n),
-                nDigit = parseInt(cDigit, 10);
+            var cDigit = value.charAt(n);
+            nDigit = parseInt(cDigit, 10);
 
             if (bEven) {
                 if ((nDigit *= 2) > 9) nDigit -= 9;
@@ -1181,7 +1181,14 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
     // onSubmit: A function that will be called from scope when a payment is submitted.
     // onSuccess: A function that will be called from scope when the payment is successfully completed. Will include the response payment object as a parameter.
     // onError: A function that will be called from scope when the payment fails. Will include the (failed) response payment object as a parameter.
+
+    // Shared scope that are specific to different payment methods:
+
+    // Credit Card
     // shippingIsBilling: A flag to indicate if the billing address and shipping address are the same. If so, the shipping address will be removed.
+
+    // Amazon Pay
+    // billingAgreementConsent: A flag to indicate if the user has checked the box indicating consent to save and bill the payment method in the future.
 
     // Attributes
     // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
@@ -1199,7 +1206,8 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
             onSubmit: '=?',
             onSuccess: '=?',
             onError: '=?',
-            shippingIsBilling: '=?'
+            shippingIsBilling: '=?',
+            billingAgreementConsent: '=?'
         },
         link: function (scope, elem, attrs, ctrl) {
 
@@ -1210,40 +1218,87 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
                     scope.onSubmit();
                 }
 
-                // Data is not validated with PayPal, Amazon Pay since the customer data will come from the response.
-                if (ctrl.$invalid == true && (scope.paymentMethod.type != "paypal" || scope.paymentMethod.type != "amazon_pay")) {
+                // Validation functions. 
+                function validateFormData() {
 
-                    scope.$apply(function () {
-                        scope.error = { type: "bad_request", reference: "kI1ETNz", code: "invalid_input", message: gettextCatalog.getString("There was a problem with some of the information you supplied. Please review for errors and try again."), status: 400 };
-                    });
+                    var error = null;
 
-                    // Fire the error event
-                    if (scope.onError) {
-                        scope.onError(error);
+                    if (ctrl.$invalid == true) {
+                        error = { type: "bad_request", reference: "kI1ETNz", code: "invalid_input", message: gettextCatalog.getString("There was a problem with some of the information you supplied. Please review for errors and try again."), status: 400 };
                     }
 
-                    return;
+                    return error;
+
                 }
 
-                // If a direct payment (i.e. hosted payment page - no cart or invoice) and PayPal or Amazon Pay, total, subtotal and / or shipping must be provided.
-                if ((scope.paymentMethod.type != "paypal" || scope.paymentMethod.type != "amazon_pay") && !scope.cart && !scope.invoice) {
+                function validateAmountIsProvided() {
+
+                    var error = null;
 
                     if (!scope.payment.total && !scope.payment.subtotal && !scope.payment.shipping) {
-                        scope.$apply(function () {
-                            scope.error = { type: "bad_request", reference: "eiptRbg", code: "invalid_input", message: gettextCatalog.getString("Please provide an amount for your payment."), status: 400 };
-                        });
-
-                        // Fire the error event
-                        if (scope.onError) {
-                            scope.onError(error);
-                        }
-
-                        return;
+                        error = { type: "bad_request", reference: "eiptRbg", code: "invalid_input", message: gettextCatalog.getString("Please provide an amount for your payment."), status: 400 };
                     }
+
+                    return error;
 
                 }
 
-                // Make sure numeric values, if supplied, are not strings. This ensures that the JSON sent to the API will be in numeric format and not string, which the API will reject as invalid.
+                // Perform validatations, depending on payment method type
+                var error = null;
+                switch (scope.paymentMethod.type) {
+
+                    case "credit_card":
+
+                        // Wallet providers such as PayPal and Amazon Pay provide customer data as a callback so no need to collect from the user directly.
+                        error = validateFormData();
+
+                        if (error) {
+                            scope.$apply(function () {
+                                scope.error = error;
+                            });
+                            return;
+                        }
+
+                        break;
+
+                    case "paypal":
+
+                        // We skip validating form data for this payment method as customer data is provided by the provider. If a direct payment, we need to validate that an amount is provided.
+                        if (!scope.cart && !scope.invoice) {
+                            error = validateAmountIsProvided();
+                        }
+
+                        if (error) {
+                            scope.$apply(function () {
+                                scope.error = error;
+                            });
+                            return;
+                        }
+
+                    case "amazon_pay":
+
+                        // If the payment method contains a billing agreement ID or the payment is marked to be saved and the user has not given consent, return an error.
+                        if ((scope.paymentMethod.data.billing_agreement_id || scope.paymentMethod.save) && !scope.billingAgreementConsent) {
+                            error = { type: "bad_request", reference: "nauRcF8", code: "invalid_input", message: gettextCatalog.getString("Please check the box to provide consent to save your payment method for future payments."), status: 400 };
+                        }
+
+                        // We skip validating form data for this payment method as customer data is provided by the provider. If a direct payment, we need to validate that an amount is provided.
+                        if (!scope.cart && !scope.invoice) {
+                            error = validateAmountIsProvided();
+                        }
+
+                        if (error) {
+                            scope.$apply(function () {
+                                scope.error = error;
+                            });
+                            return;
+                        }
+
+                        break;
+
+                }
+
+                // For direct payments, amounts are provided by form input. If supplied, make sure the values are numbers and not strings. This ensures that the JSON sent to the API will be in numeric format and not string, which the API will reject as invalid.
                 if (scope.payment) {
                     if (scope.payment.total)
                         scope.payment.total = Number(scope.payment.total);

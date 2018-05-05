@@ -101,7 +101,7 @@
         a = /\+/g,  // Regex for replacing addition symbol with a space
         r = /([^&;=]+)=?([^&;]*)/g,
         d = function (s) { return decodeURIComponent(s.replace(a, " ")); }
-        var queryParameters = {};
+        queryParameters = {};
 
         while (e = r.exec(query))
             queryParameters[d(e[1])] = d(e[2]);
@@ -268,8 +268,8 @@
         value = value.replace(/\D/g, "");
 
         for (var n = value.length - 1; n >= 0; n--) {
-            var cDigit = value.charAt(n),
-                nDigit = parseInt(cDigit, 10);
+            var cDigit = value.charAt(n);
+            nDigit = parseInt(cDigit, 10);
 
             if (bEven) {
                 if ((nDigit *= 2) > 9) nDigit -= 9;
