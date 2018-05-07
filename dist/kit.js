@@ -1,5 +1,5 @@
 /*
-Comecero Kit version: ﻿1.0.6
+Comecero Kit version: ﻿1.0.7
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -555,6 +555,357 @@ app.run(['$rootScope', '$http', 'SettingsService', 'StorageService', 'LanguageSe
         }
         
     }]);
+var amazonPay = (function () {
+
+    var url = "https://static-na.payments-amazon.com/OffAmazonPayments/us/js/Widgets.js";
+    if (window.__settings.account.test) {
+        url = "https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js";
+    }
+
+    var access_token = null;
+    var order_reference_id = null;
+    var billing_agreement_id = null;
+    var loaded = false;
+    var consent_status = false;
+
+    var address_book;
+
+    // Load the Amazon Pay SDK, if available for this account.
+    if (isAvailable()) {
+        loadScript(url, function () {
+            loaded = true;
+        });
+    }
+
+    function createPaymentButton(client_id, seller_id, target_id, type, color, size, callback) {
+
+        // client_id: The Amazon Pay client ID
+        // seller_id: The Amazon Pay seller ID
+        // target_id: The id of the HTML element the button should be placed within
+        // type, color, size: Button customizations, see function code for possibilities
+        // callback(error, data): The function that is called when the button is created, data returns the access_token, which needs to be passed to the API when submitting the payment.
+
+        // Load the SDK, if not already loaded.
+        if (!loaded) {
+            loadScript(url, function () {
+                loaded = true;
+            });
+        }
+
+        // Run now if ready, otherwise wait till ready.
+        if (!window.amazon) {
+            window.onAmazonLoginReady = function () {
+                _createPaymentButton(target_id, type, color, size, callback);
+            }
+        } else {
+            _createPaymentButton(target_id, type, color, size, callback);
+        }
+
+        function _createPaymentButton(target_id, type, color, size, callback) {
+
+            // Set the ids
+            amazon.Login.setClientId(client_id);
+            amazon.Login.setUseCookie(true);
+
+            // Create the payment button
+            OffAmazonPayments.Button(target_id, seller_id, {
+
+                // https://pay.amazon.com/us/developer/documentation/lpwa/201953980
+                type: type || "PwA", // "PwA", "Pay", "A"
+                color: color || "Gold", // "Gold", "LightGray", "DarkGray"
+                size: size || "medium", // "small", "medium", "large", "x-large"
+                authorization: function () {
+                    var loginOptions = { scope: 'profile payments:widget payments:shipping_address' };
+                    authRequest = amazon.Login.authorize(loginOptions, function (response) {
+                        access_token = response.access_token;
+                    });
+                },
+                onSignIn: function (orderReferenece) {
+
+                    // Return the order reference and the access token that was previously generated
+                    if (callback) {
+                        callback(null, { access_token: access_token, order_reference_id: null, billing_agreement_id: null });
+                    }
+                },
+                onError: function (error) {
+                    callback("There was a problem attempting to load the Amazon Pay button.");
+                    console.log(error.getErrorMessage());
+                }
+
+            });
+        }
+    }
+
+    function loadWidgets(client_id, seller_id, requires_billing_agreement, address_id, wallet_id, consent_id, onAddressSelect, onPaymentMethodSelect, onConsentChange, design_mode, display_mode, callback) {
+
+        if (requires_billing_agreement) {
+            loadWidgetsWithBillingAgreement(seller_id, address_id, wallet_id, consent_id, design_mode, display_mode)
+        } else {
+            billing_agreement_id = null;
+            loadWidgetsWithoutBillingAgreement(seller_id, address_id, wallet_id, design_mode, display_mode)
+        }
+
+        function loadWidgetsWithoutBillingAgreement(seller_id, address_id, wallet_id, design_mode, display_mode) {
+            address_book = new OffAmazonPayments.Widgets.AddressBook({
+                sellerId: seller_id,
+                onOrderReferenceCreate: function (orderReference) {
+                    order_reference_id = orderReference.getAmazonOrderReferenceId();
+                },
+                onAddressSelect: function (data) {
+                    if (onAddressSelect) {
+                        onAddressSelect();
+                    }
+                },
+                display_mode: display_mode || "Edit",
+                design: { designMode: design_mode || "responsive" },
+                onReady: function (orderReference) {
+                    callback(null, { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: null });
+                },
+                onError: function (error) {
+                    callback("There was a problem attempting to load the Amazon Pay address book.");
+                    console.log(error.getErrorMessage());
+                }
+            }).bind(address_id);
+            wallet = new OffAmazonPayments.Widgets.Wallet({
+                sellerId: seller_id,
+                onPaymentSelect: function () {
+                    if (onPaymentMethodSelect) {
+                        onPaymentMethodSelect();
+                    }
+                },
+                display_mode: display_mode || "Edit",
+                design: {
+                    designMode: design_mode || "responsive"
+                },
+                onError: function (error) {
+                    callback("There was a problem attempting to load the Amazon Pay wallet.");
+                    console.log(error.getErrorMessage());
+                }
+            }).bind(wallet_id);
+        }
+
+        function loadWidgetsWithBillingAgreement(seller_id, address_id, wallet_id, consent_id, design_mode, display_mode) {
+
+            var payload = {
+                sellerId: seller_id,
+                agreementType: "BillingAgreement",
+                onReady: function (billingAgreement) {
+                    billing_agreement_id = billingAgreement.getAmazonBillingAgreementId();
+                    wallet = new OffAmazonPayments.Widgets.Wallet({
+                        sellerId: seller_id,
+                        amazonBillingAgreementId: billing_agreement_id,
+                        onReady: function () {
+                            callback(null, { access_token: access_token, billing_agreement_id: billing_agreement_id });
+                        },
+                        onPaymentSelect: function (billingAgreement) {
+                            if (onPaymentMethodSelect) {
+                                onPaymentMethodSelect();
+                            }
+                            consent = new OffAmazonPayments.Widgets.Consent({
+                                sellerId: seller_id,
+                                amazonBillingAgreementId: billing_agreement_id,
+                                design: { designMode: design_mode || "responsive" },
+                                onReady: function (billingAgreementConsentStatus) {
+                                    if (billingAgreementConsentStatus.getConsentStatus) {
+                                        if (consent_status !== utils.stringToBool(billingAgreementConsentStatus.getConsentStatus())) {
+                                            consent_status = !consent_status;
+                                            if (onConsentChange) {
+                                                onConsentChange(consent_status);
+                                            }
+                                        }
+                                    }
+                                },
+                                onConsent: function (billingAgreementConsentStatus) {
+                                    if (consent_status !== utils.stringToBool(billingAgreementConsentStatus.getConsentStatus())) {
+                                        consent_status = !consent_status;
+                                        if (onConsentChange) {
+                                            onConsentChange(consent_status);
+                                        }
+                                    }
+                                },
+                                onError: function (error) {
+                                    callback("There was a problem attempting to load the Amazon Pay wallet.");
+                                    console.log(error.getErrorMessage());
+                                }
+                            }).bind(consent_id);
+                        },
+                        display_mode: display_mode || "Edit",
+                        design: { designMode: design_mode || "responsive" },
+                        onError: function (error) {
+                            callback("There was a problem attempting to load the Amazon Pay wallet.");
+                            console.log(error.getErrorMessage());
+                        }
+                    }).bind(wallet_id);
+                },
+                onAddressSelect: function (billingAgreement) {
+                    if (onAddressSelect) {
+                        onAddressSelect();
+                    }
+                },
+                display_mode: display_mode || "Edit",
+                design: { designMode: design_mode || "responsive" },
+                onError: function (error) {
+                    callback("There was a problem attempting to load the Amazon Pay wallet.");
+                    console.log(error.getErrorMessage());
+                }
+            };
+            address_book = new OffAmazonPayments.Widgets.AddressBook(payload).bind(address_id);
+
+        }
+
+    }
+
+    function reRenderWidgets(seller_id, order_reference_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, design_mode, callback) {
+
+        if (billing_agreement_id) {
+            reRenderWidgetsWithBillingAgreement(seller_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, callback);
+        } else {
+            reRenderWidgetsWithoutBillingAgreement(seller_id, order_reference_id, wallet_id, onPaymentMethodSelect, callback);
+        }
+
+        function reRenderWidgetsWithoutBillingAgreement(seller_id, order_reference_id, wallet_id, onPaymentMethodSelect, callback) {
+
+            new OffAmazonPayments.Widgets.Wallet({
+                sellerId: seller_id,
+
+                amazonOrderReferenceId: order_reference_id,
+
+                onPaymentSelect: function (orderReference) {
+                    if (onPaymentMethodSelect) {
+                        onPaymentMethodSelect();
+                    }
+                },
+                design: {
+                    designMode: design_mode || "responsive"
+                },
+
+                onError: function (error) {
+                    callback("There was a problem attempting to load the Amazon Pay wallet.");
+                    console.log(error.getErrorMessage());
+                }
+            }).bind(wallet_id);
+
+        }
+
+        function reRenderWidgetsWithBillingAgreement(seller_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, callback) {
+
+            new OffAmazonPayments.Widgets.Wallet({
+                sellerId: seller_id,
+
+                billingAgreementId: billing_agreement_id,
+
+                onPaymentSelect: function (orderReference) {
+                    if (onPaymentMethodSelect) {
+                        onPaymentMethodSelect();
+                    }
+                },
+                design: {
+                    designMode: design_mode || "responsive"
+                },
+
+                onError: function (error) {
+                    callback("There was a problem attempting to load the Amazon Pay wallet.");
+                    console.log(error.getErrorMessage());
+                }
+            }).bind(wallet_id);
+
+        }
+    }
+
+    function logout() {
+        access_token = null;
+        order_reference_id = null;
+        billing_agreement_id = null;
+
+        if (amazon) {
+            amazon.Login.logout();
+        }
+    }
+
+    function loadScript(url, callback) {
+        // Appends a script to the DOM
+        var head = document.getElementsByTagName("head")[0], done = false;
+        var script = document.createElement("script");
+        script.src = url;
+        script.type = "text/javascript";
+        script.async = 1;
+        // Attach handlers for all browsers
+        script.onload = script.onreadystatechange = function () {
+            if (!done && (!this.readyState || this.readyState === "loaded" || this.readyState === "complete")) {
+                done = true;
+                // Initialize
+                if (typeof callback === 'function') callback();
+            }
+        };
+        head.appendChild(script);
+    }
+
+    function isAvailable() {
+        // Indicates if Amazon Pay is an available payment method
+        if (window.__settings && window.__settings.account && window.__settings.account.payment_method_types.indexOf("amazon_pay") > -1) {
+            return true;
+        }
+        return false;
+    }
+
+    function showWidgets(address_id, wallet_id, consent_id, recurring) {
+
+        // Show the widgets
+        var addressWidget = document.getElementById(address_id);
+        var walletWidget = document.getElementById(wallet_id);
+        var consentWidget = document.getElementById(consent_id);
+
+        if (addressWidget)
+            addressWidget.style.display = null;
+
+        if (walletWidget)
+            walletWidget.style.display = null;
+
+        if (consentWidget && recurring)
+            consentWidget.style.display = null;
+    }
+
+    function hideWidgets(address_id, wallet_id, consent_id) {
+
+        // Hide the widgets
+        var addressWidget = document.getElementById(address_id);
+        var walletWidget = document.getElementById(wallet_id);
+        var consentWidget = document.getElementById(consent_id);
+
+        // Destroy the contents of each and then hide the element
+        if (addressWidget) {
+            addressWidget.style.display = "none";
+            addressWidget.innerHTML = "";
+        }
+
+        if (walletWidget) {
+            walletWidget.style.display = "none";
+            walletWidget.innerHTML = "";
+        }
+
+        if (consentWidget) {
+            consentWidget.style.display = "none";
+            consentWidget.innerHTML = "";
+        }
+
+    }
+
+    function getConsentStatus() {
+        return consent_status;
+    }
+
+    // Public API
+    return {
+        createPaymentButton: createPaymentButton,
+        loadWidgets: loadWidgets,
+        showWidgets: showWidgets,
+        hideWidgets: hideWidgets,
+        reRenderWidgets: reRenderWidgets,
+        logout: logout,
+        getConsentStatus: getConsentStatus
+    };
+
+})();
 /* FileSaver.js
  * A saveAs() FileSaver implementation.
  * 1.3.0
@@ -3891,6 +4242,295 @@ app.directive('cleanPrice', [function () {
 
             ctrl.$parsers.unshift(clean);
             clean(scope[attrs.ngModel]);
+        }
+    };
+}]);
+
+app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
+
+    // Shared scope:
+    // paymentMethod: Provide the payment method object that will hold the Amazon Pay settings that are returned from the Amazon Pay button and widgets.
+    // options: The cart, invoice or payment options, from which the Amazon Pay client and seller settings will be obtained.
+    // items: The cart or invoice items, if applicable, to determine if the order contains subscription products and a billing agreemement should be established for the customer.
+    // onLoaded: A function that will be called when the Amazon Pay button has been loaded.
+    // onAddressSelect: A function that will be called when the customer selects an address from their Amazon Pay address book.
+    // onPaymentMethodSelect: A function that will be called when the customer selects a payment method from their Amazon Pay wallet.
+    // onConsentLoaded: A function that will be called when tne Amazon Pay consent dialogue is loaded. Returns a parameter true / false that indicates if the state of the checkbox is checked when loaded.
+    // onConsentChange: A function that will be called when the user toggles the Amazon Pay consent checkbox. Returns the status of the consent checkbox as a parameter.
+    // billingAgreementConsent: A flag to indicate if the user has checked the box indicating consent to save and bill the payment method in the future.
+    // error: The error object to communicate errors.
+    // onError: A function that will be called from scope when the payment fails. Will include the (failed) response payment object as a parameter.
+
+    // Attributes
+    // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+    // amazonPayAddressId: The ID of the HTML element that will hold the Amazon Pay address widget
+    // amazonPayWalletId: The ID of the HTML element that will hold the Amazon Pay wallet widget
+    // amazonPayConsentId: The ID of the HTML element that will hold the Amazon Pay consent widget (used when the payment method will be stored)
+    // amazonPayDesignMode: Provides the Amazon Pay design mode, the only current value seems to be "responsive". If nothing is provided, "responsive" will be provided automatically. See https://pay.amazon.com/us/developer/documentation/lpwa/201952070.
+    // amazonPayType: The type of button, "PwA", "Pay", "A"
+    // amazonPayColor: The color of the button, "Gold", "LightGray", "DarkGray"
+    // amazonPayButtonSize: The size of the button, "small", "medium", "large", "x-large"
+
+    return {
+        restrict: 'A',
+        scope: {
+            paymentMethod: '=?',
+            options: '=?',
+            items: '=?',
+            params: '=?',
+            onLoaded: '=?',
+            onAddressSelect: '=?',
+            onPaymentMethodSelect: '=?',
+            onConsentLoaded: '=?',
+            onConsentChange: '=?',
+            billingAgreementConsent: '=?',
+            error: '=?',
+            onError: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+
+            var client_id = null;
+            var seller_id = null;
+            scope.billingAgreementConsent = false;
+
+            // Watch options and set Amazon Pay parameters if provided.
+            scope.$watch("options", function (newValue, oldValue) {
+
+                if (newValue && newValue != oldValue) {
+
+                    // Check if it has Amazon Pay
+                    var ap = _.findWhere(newValue.payment_methods, { payment_method_type: "amazon_pay" });
+                    if (ap) {
+
+                        // Only create the button if the client_id or seller_id have changed.
+                        if (ap.amazon_pay_client_id != client_id || ap.amazon_pay_seller_id != seller_id) {
+
+                            // Hide any widgets and logout
+                            amazonPay.hideWidgets(attrs.amazonPayAddressId, attrs.amazonPayWalletId, attrs.amazonPayConsentId);
+
+                            // If these values currently aren't null, that means the values have changed. Log the customer out of any previous session.
+                            if (client_id || seller_id) {
+                                logout();
+                            }
+
+                            // Set the new ids.
+                            client_id = ap.amazon_pay_client_id;
+                            seller_id = ap.amazon_pay_seller_id;
+
+                            // Create the button
+                            createAmazonPayButton(client_id, seller_id);
+                        }
+
+                    } else {
+
+                        // Hide the widgets
+                        amazonPay.hideWidgets(attrs.amazonPayAddressId, attrs.amazonPayWalletId, attrs.amazonPayConsentId);
+                    }
+                }
+
+            });
+
+            function createAmazonPayButton(client_id, seller_id) {
+
+                // Create the button
+                amazonPay.createPaymentButton(client_id, seller_id, attrs.id, attrs.amazonPayType, attrs.amazonPayColor, attrs.amazonPayButtonSize, function (error, data) {
+
+                    if (error) {
+                        setError("external_server_error", "remote_server_error", error, 502);
+                        return;
+                    }
+
+                    // Set the data on the payment method
+                    scope.$apply(function () {
+                        setPaymentMethodData(data.access_token, data.order_reference_id, data.billing_agreement_id);
+                    });
+
+                    // Determine if a billing agreement is required.
+                    var recurring = requiresBillingAgreement(scope.items, scope.paymentMethod.save);
+
+                    // Show the widgets
+                    amazonPay.showWidgets(attrs.amazonPayAddressId, attrs.amazonPayWalletId, attrs.amazonPayConsentId, recurring);
+
+                    // Define our own onConsentChange function, and then invoke the caller's function, if provided. This allows us to keep track of the status for use within the directive.
+                    var onConsentChange = function (status) {
+
+                        scope.$apply(function () {
+                            scope.billingAgreementConsent = status;
+                        });
+
+                        // Fire the user function, if supplied.
+                        if (scope.onPaymentMethodSelect)
+                            scope.onPaymentMethodSelect(status);
+                    }
+
+                    amazonPay.loadWidgets(client_id, seller_id, recurring, attrs.amazonPayAddressId, attrs.amazonPayWalletId, attrs.amazonPayConsentId, scope.onAddressSelect, scope.onPaymentMethodSelect, onConsentChange, attrs.amazonPayDesignMode, "Edit", function (error, data) {
+
+                        if (error) {
+                            setError("external_server_error", "remote_server_error", error, 502);
+                            return;
+                        }
+
+                        // Set the data on the payment method
+                        scope.$apply(function () {
+                            setPaymentMethodData(data.access_token, data.order_reference_id, data.billing_agreement_id);
+                        });
+
+                    });
+                });
+            }
+
+            function requiresBillingAgreement(items, save) {
+                var recurring = false
+                for (var item_id in scope.items) {
+                    if (scope.items[item_id].subscription_plan) {
+                        return true;
+                    }
+                }
+
+                if (scope.paymentMethod.save) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            function logout() {
+                client_id = null;
+                seller_id = null;
+                setPaymentMethodData(null, null, null);
+                amazonPay.logout();
+            }
+
+            function setPaymentMethodData(access_token, order_reference_id, billing_agreement_id) {
+
+                // If all values are null, remove the property
+                if (!access_token && !order_reference_id && !billing_agreement_id) {
+                    if (scope.paymentMethod.data) {
+                        delete scope.paymentMethod.data;
+                    }
+                    return;
+                }
+
+                scope.paymentMethod.data = { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: billing_agreement_id };
+            }
+
+            function setError(type, code, message, status) {
+                scope.$apply(function () {
+                    scope.error = { type: type, reference: "MmJAvA8", code: code, message: message, status: status };
+                    if (scope.onError) {
+                        scope.onError(error);
+                    }
+                });
+            }
+
+        }
+    };
+}]);
+
+app.directive('amazonPayReset', ['gettextCatalog', function (gettextCatalog) {
+
+    // Shared scope:
+    // paymentMethod: Provide the payment method object that will hold the Amazon Pay settings that are returned from the Amazon Pay button and widgets.
+
+    return {
+        restrict: 'A',
+        scope: {
+            paymentMethod: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+
+            elem.bind("click", function () {
+
+                // Reset the payment method data
+                scope.$apply(function () {
+                    delete scope.paymentMethod.data;
+                });
+
+                // Hide the widgets
+                amazonPay.hideWidgets(attrs.amazonPayAddressId, attrs.amazonPayWalletId, attrs.amazonPayConsentId);
+
+            });
+        }
+    };
+}]);
+
+app.directive('amazonPayWidgetRefresh', ['gettextCatalog', function (gettextCatalog) {
+
+    // Shared scope:
+    // paymentError: The payment object of the failed payment that requires the widgets to be refreshed.
+    // options: The cart, invoice or payment options, from which the Amazon Pay client and seller settings will be obtained.
+    // onPaymentMethodSelect: A function that will be called when the customer selects a payment method from their Amazon Pay wallet.
+    // error: The error object to communicate errors.
+    // onError: A function that will be called from scope when the payment fails. Will include the (failed) response payment object as a parameter.
+
+    // Attributes
+    // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
+    // amazonPayWalletId: The ID of the HTML element that will hold the Amazon Pay wallet widget
+    // amazonPayDesignMode: Provides the Amazon Pay design mode, the only current value seems to be "responsive". If nothing is provided, "responsive" will be provided automatically. See https://pay.amazon.com/us/developer/documentation/lpwa/201952070.
+
+    return {
+        restrict: 'A',
+        scope: {
+            paymentError: '=?',
+            options: '=?',
+            params: '=?',
+            onLoaded: '=?',
+            onPaymentMethodSelect: '=?',
+            error: '=?',
+            onError: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+
+
+            scope.$watchGroup(["paymentError", 'options'], function (newValues, oldValues) {
+
+                if (newValues && newValues != oldValues) {
+
+                    var paymentError = newValues[0];
+                    var options = newValues[1];
+
+                    if (paymentError && options) {
+
+                        var data = paymentError.payment_method.data;
+                        var ap = _.findWhere(options.payment_methods, { payment_method_type: "amazon_pay" });
+                        var recurring = data.billing_agreement_id != null;
+
+                        // Define our own onConsentChange function, and then invoke the caller's function, if provided. This allows us to keep track of the status for use within the directive.
+                        var onConsentChange = function (status) {
+
+                            scope.$apply(function () {
+                                scope.billingAgreementConsent = status;
+                            });
+
+                            // Fire the user function, if supplied.
+                            if (scope.onPaymentMethodSelect)
+                                scope.onPaymentMethodSelect(status);
+                        }
+
+                        amazonPay.reRenderWidgets(ap.amazon_pay_seller_id, data.order_reference_id, data.billing_agreement_id, attrs.amazonPayWalletId, scope.onPaymentMethodSelect, attrs.amazonPayDesignMode, function (error, data) {
+
+                            if (error) {
+                                setError("external_server_error", "remote_server_error", error, 502);
+                                return;
+                            }
+
+                            // Show the widgets
+                            amazonPay.showWidgets(null, attrs.amazonPayWalletId, null, false);
+
+                        });
+                    }
+                }
+            });
+
+            function setError(type, code, message, status) {
+                scope.$apply(function () {
+                    scope.error = { type: type, reference: "MmJAvA8", code: code, message: message, status: status };
+                    if (scope.onError) {
+                        scope.onError(error);
+                    }
+                });
+            }
+
         }
     };
 }]);

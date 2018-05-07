@@ -2,6 +2,7 @@
 # 1.0.7
 
 - Add support for the following languages: Czech, German, Greek, Spanish, Finnish, French, Italian, Japanese, Korean, Dutch, Polish, Portuguese, Russian, Swedish
+- Add support for Amazon Pay
 
 <a name="1.0.6"></a>
 # 1.0.6
