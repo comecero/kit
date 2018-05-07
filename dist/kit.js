@@ -638,6 +638,18 @@ var amazonPay = (function () {
 
     function loadWidgets(client_id, seller_id, requires_billing_agreement, address_id, wallet_id, consent_id, onAddressSelect, onPaymentMethodSelect, onConsentChange, design_mode, display_mode, callback) {
 
+        // client_id: The Amazon Pay client ID
+        // seller_id: The Amazon Pay seller ID
+        // requires_billing_agreement: indicates if the transaction requires establishing a billing agreement, which will generate a consent box for the user to select
+        // address_id: The id of the HTML element (div) that will hold the address widget
+        // wallet_id: The id of the HTML element (div) that will hold the wallet widget
+        // consent_id: The id of the HTML element (div) that will hold the consent widget in the case of establishing a billing agreement
+        // onAddressSelect: Fires when an address has been selected by the user
+        // onPaymentMethodSelect: Fires when a payment method has been selected by the user
+        // onConsentChange: Fires when the consent has been toggled by the user. A callback parameter of 'status' true / false indicates the state of the conset checkbox
+        // design_mode: Indicates the design mode of the widgets, 'responsive' is used if not provided.
+        // callback(error, data): The function that is called when the button is created, data returns an object that contains the access_token and the order_reference_id or billing_agreement_id, depending on establishment of a billing agreement
+
         if (requires_billing_agreement) {
             loadWidgetsWithBillingAgreement(seller_id, address_id, wallet_id, consent_id, design_mode, display_mode)
         } else {
@@ -756,6 +768,14 @@ var amazonPay = (function () {
     }
 
     function reRenderWidgets(seller_id, order_reference_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, design_mode, callback) {
+
+        // seller_id: The Amazon Pay seller ID
+        // order_reference_id: The order_reference_id for the transaction. Required if billing_agreement_id is null.
+        // billing_agreement_id: The billing_agreement_id for the transaction. Required if order_reference_id is null.
+        // wallet_id: The id of the HTML element (div) that will hold the wallet widget.
+        // onPaymentMethodSelect: Fires when a payment method has been selected by the user.
+        // design_mode: Indicates the design mode of the widgets, 'responsive' is used if not provided.
+        // callback(error): The function that is called when the widget is refreshed, including a parameter 'error' that is populated if an error occurs when refreshing the widget.
 
         if (billing_agreement_id) {
             reRenderWidgetsWithBillingAgreement(seller_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, callback);
