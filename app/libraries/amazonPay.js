@@ -67,7 +67,7 @@
 
                     // Return the order reference and the access token that was previously generated
                     if (callback) {
-                        callback(null, { access_token: access_token, order_reference_id: null, billing_agreement_id: null });
+                        callback(null, { access_token: access_token, order_reference_id: null, billing_agreement_id: null, seller_id: seller_id });
                     }
                 },
                 onError: function (error) {
@@ -114,7 +114,7 @@
                 display_mode: display_mode || "Edit",
                 design: { designMode: design_mode || "responsive" },
                 onReady: function (orderReference) {
-                    callback(null, { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: null });
+                    callback(null, { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: null, seller_id: seller_id });
                 },
                 onError: function (error) {
                     callback("There was a problem attempting to load the Amazon Pay address book.");
@@ -150,7 +150,7 @@
                         sellerId: seller_id,
                         amazonBillingAgreementId: billing_agreement_id,
                         onReady: function () {
-                            callback(null, { access_token: access_token, billing_agreement_id: billing_agreement_id });
+                            callback(null, { access_token: access_token, billing_agreement_id: billing_agreement_id, seller_id: seller_id });
                         },
                         onPaymentSelect: function (billingAgreement) {
                             if (onPaymentMethodSelect) {
@@ -210,7 +210,7 @@
 
     }
 
-    function reRenderWidgets(seller_id, order_reference_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, design_mode, callback) {
+    function reRenderWidgets(client_id, seller_id, order_reference_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, design_mode, callback) {
 
         // seller_id: The Amazon Pay seller ID
         // order_reference_id: The order_reference_id for the transaction. Required if billing_agreement_id is null.
@@ -219,6 +219,9 @@
         // onPaymentMethodSelect: Fires when a payment method has been selected by the user.
         // design_mode: Indicates the design mode of the widgets, 'responsive' is used if not provided.
         // callback(error): The function that is called when the widget is refreshed, including a parameter 'error' that is populated if an error occurs when refreshing the widget.
+
+        amazon.Login.setClientId(client_id);
+        amazon.Login.setUseCookie(true);
 
         if (billing_agreement_id) {
             reRenderWidgetsWithBillingAgreement(seller_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, callback);

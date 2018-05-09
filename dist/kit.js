@@ -624,7 +624,7 @@ var amazonPay = (function () {
 
                     // Return the order reference and the access token that was previously generated
                     if (callback) {
-                        callback(null, { access_token: access_token, order_reference_id: null, billing_agreement_id: null });
+                        callback(null, { access_token: access_token, order_reference_id: null, billing_agreement_id: null, seller_id: seller_id });
                     }
                 },
                 onError: function (error) {
@@ -671,7 +671,7 @@ var amazonPay = (function () {
                 display_mode: display_mode || "Edit",
                 design: { designMode: design_mode || "responsive" },
                 onReady: function (orderReference) {
-                    callback(null, { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: null });
+                    callback(null, { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: null, seller_id: seller_id });
                 },
                 onError: function (error) {
                     callback("There was a problem attempting to load the Amazon Pay address book.");
@@ -707,7 +707,7 @@ var amazonPay = (function () {
                         sellerId: seller_id,
                         amazonBillingAgreementId: billing_agreement_id,
                         onReady: function () {
-                            callback(null, { access_token: access_token, billing_agreement_id: billing_agreement_id });
+                            callback(null, { access_token: access_token, billing_agreement_id: billing_agreement_id, seller_id: seller_id });
                         },
                         onPaymentSelect: function (billingAgreement) {
                             if (onPaymentMethodSelect) {
@@ -767,7 +767,7 @@ var amazonPay = (function () {
 
     }
 
-    function reRenderWidgets(seller_id, order_reference_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, design_mode, callback) {
+    function reRenderWidgets(client_id, seller_id, order_reference_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, design_mode, callback) {
 
         // seller_id: The Amazon Pay seller ID
         // order_reference_id: The order_reference_id for the transaction. Required if billing_agreement_id is null.
@@ -776,6 +776,9 @@ var amazonPay = (function () {
         // onPaymentMethodSelect: Fires when a payment method has been selected by the user.
         // design_mode: Indicates the design mode of the widgets, 'responsive' is used if not provided.
         // callback(error): The function that is called when the widget is refreshed, including a parameter 'error' that is populated if an error occurs when refreshing the widget.
+
+        amazon.Login.setClientId(client_id);
+        amazon.Login.setUseCookie(true);
 
         if (billing_agreement_id) {
             reRenderWidgetsWithBillingAgreement(seller_id, billing_agreement_id, wallet_id, onPaymentMethodSelect, callback);
@@ -4362,7 +4365,7 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
 
                     // Set the data on the payment method
                     scope.$apply(function () {
-                        setPaymentMethodData(data.access_token, data.order_reference_id, data.billing_agreement_id);
+                        setPaymentMethodData(data.access_token, data.order_reference_id, data.billing_agreement_id, seller_id);
                     });
 
                     // Determine if a billing agreement is required.
@@ -4392,7 +4395,7 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
 
                         // Set the data on the payment method
                         scope.$apply(function () {
-                            setPaymentMethodData(data.access_token, data.order_reference_id, data.billing_agreement_id);
+                            setPaymentMethodData(data.access_token, data.order_reference_id, data.billing_agreement_id, data.seller_id);
                         });
 
                     });
@@ -4417,13 +4420,13 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
             function logout() {
                 client_id = null;
                 seller_id = null;
-                setPaymentMethodData(null, null, null);
+                setPaymentMethodData(null, null, null, null);
                 amazonPay.logout();
             }
 
-            function setPaymentMethodData(access_token, order_reference_id, billing_agreement_id) {
+            function setPaymentMethodData(access_token, order_reference_id, billing_agreement_id, seller_id) {
 
-                // If all values are null, remove the property
+                // If no access token, order reference or billing agreement, revmove the object to completely reset it.
                 if (!access_token && !order_reference_id && !billing_agreement_id) {
                     if (scope.paymentMethod.data) {
                         delete scope.paymentMethod.data;
@@ -4431,7 +4434,7 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
                     return;
                 }
 
-                scope.paymentMethod.data = { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: billing_agreement_id };
+                scope.paymentMethod.data = { access_token: access_token, order_reference_id: order_reference_id, billing_agreement_id: billing_agreement_id, seller_id: seller_id };
             }
 
             function setError(type, code, message, status) {
@@ -4527,7 +4530,7 @@ app.directive('amazonPayWidgetRefresh', ['gettextCatalog', function (gettextCata
                                 scope.onPaymentMethodSelect(status);
                         }
 
-                        amazonPay.reRenderWidgets(ap.amazon_pay_seller_id, data.order_reference_id, data.billing_agreement_id, attrs.amazonPayWalletId, scope.onPaymentMethodSelect, attrs.amazonPayDesignMode, function (error, data) {
+                        amazonPay.reRenderWidgets(ap.amazon_pay_client_id, ap.amazon_pay_seller_id, data.order_reference_id, data.billing_agreement_id, attrs.amazonPayWalletId, scope.onPaymentMethodSelect, attrs.amazonPayDesignMode, function (error, data) {
 
                             if (error) {
                                 setError("external_server_error", "remote_server_error", error, 502);
