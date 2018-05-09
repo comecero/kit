@@ -4516,13 +4516,6 @@ app.directive('amazonPayWidgetRefresh', ['gettextCatalog', function (gettextCata
                         var ap = _.findWhere(options.payment_methods, { payment_method_type: "amazon_pay" });
                         var recurring = data.billing_agreement_id != null;
 
-                        // Define our own onConsentChange function, and then invoke the caller's function, if provided. This allows us to keep track of the status for use within the directive.
-                        var onConsentChange = function (status) {
-                            scope.$apply(function () {
-                                scope.billingAgreementConsent = status;
-                            });
-                        }
-
                         amazonPay.reRenderWidgets(ap.amazon_pay_client_id, ap.amazon_pay_seller_id, data.order_reference_id, data.billing_agreement_id, attrs.amazonPayWalletId, scope.onPaymentMethodSelect, attrs.amazonPayDesignMode, function (error, data) {
 
                             if (error) {
