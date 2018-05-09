@@ -4278,7 +4278,6 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
     // onLoaded: A function that will be called when the Amazon Pay button has been loaded.
     // onAddressSelect: A function that will be called when the customer selects an address from their Amazon Pay address book.
     // onPaymentMethodSelect: A function that will be called when the customer selects a payment method from their Amazon Pay wallet.
-    // onConsentLoaded: A function that will be called when tne Amazon Pay consent dialogue is loaded. Returns a parameter true / false that indicates if the state of the checkbox is checked when loaded.
     // onConsentChange: A function that will be called when the user toggles the Amazon Pay consent checkbox. Returns the status of the consent checkbox as a parameter.
     // billingAgreementConsent: A flag to indicate if the user has checked the box indicating consent to save and bill the payment method in the future.
     // error: The error object to communicate errors.
@@ -4304,7 +4303,6 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
             onLoaded: '=?',
             onAddressSelect: '=?',
             onPaymentMethodSelect: '=?',
-            onConsentLoaded: '=?',
             onConsentChange: '=?',
             billingAgreementConsent: '=?',
             error: '=?',
@@ -4382,8 +4380,8 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
                         });
 
                         // Fire the user function, if supplied.
-                        if (scope.onPaymentMethodSelect)
-                            scope.onPaymentMethodSelect(status);
+                        if (scope.onConsentChange)
+                            scope.onConsentChange(status);
                     }
 
                     amazonPay.loadWidgets(client_id, seller_id, recurring, attrs.amazonPayAddressId, attrs.amazonPayWalletId, attrs.amazonPayConsentId, scope.onAddressSelect, scope.onPaymentMethodSelect, onConsentChange, attrs.amazonPayDesignMode, "Edit", function (error, data) {
@@ -4520,14 +4518,9 @@ app.directive('amazonPayWidgetRefresh', ['gettextCatalog', function (gettextCata
 
                         // Define our own onConsentChange function, and then invoke the caller's function, if provided. This allows us to keep track of the status for use within the directive.
                         var onConsentChange = function (status) {
-
                             scope.$apply(function () {
                                 scope.billingAgreementConsent = status;
                             });
-
-                            // Fire the user function, if supplied.
-                            if (scope.onPaymentMethodSelect)
-                                scope.onPaymentMethodSelect(status);
                         }
 
                         amazonPay.reRenderWidgets(ap.amazon_pay_client_id, ap.amazon_pay_seller_id, data.order_reference_id, data.billing_agreement_id, attrs.amazonPayWalletId, scope.onPaymentMethodSelect, attrs.amazonPayDesignMode, function (error, data) {
