@@ -1,4 +1,9 @@
-﻿<a name="1.0.7"></a>
+﻿<a name="1.0.8"></a>
+# 1.0.8
+
+- Allow a language parameter to be added to the URL to override the default language selection
+
+<a name="1.0.7"></a>
 # 1.0.7
 
 - Add support for the following languages: Czech, German, Greek, Spanish, Finnish, French, Italian, Japanese, Korean, Dutch, Polish, Portuguese, Russian, Swedish
