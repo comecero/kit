@@ -458,7 +458,7 @@
 
 }]);
 
-app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentService', 'SettingsService', 'HelperService', 'StorageService', function ($http, $q, $rootScope, ApiService, PaymentService, SettingsService, HelperService, StorageService) {
+app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentService', 'SettingsService', 'HelperService', 'StorageService', 'LanguageService', function ($http, $q, $rootScope, ApiService, PaymentService, SettingsService, HelperService, StorageService, LanguageService) {
 
     // Return public API.
     return {
@@ -908,6 +908,11 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
             delete cart.customer;
         }
 
+        if (params.language) {
+            LanguageService.setLanguage(params.language);
+            location.search("language", null);
+        }
+
         // Append any other parameters as meta
         params = location.search();
 
@@ -1099,7 +1104,7 @@ app.service("InvoiceService", ['$http', '$q', '$rootScope', 'ApiService', 'Payme
 
 }]);
 
-app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', 'StorageService', function ($http, $q, ApiService, SettingsService, StorageService) {
+app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', 'StorageService', 'LanguageService', function ($http, $q, ApiService, SettingsService, StorageService, LanguageService) {
 
     // Return public API.
     return {
@@ -1312,6 +1317,11 @@ app.service("PaymentService", ['$http', '$q', 'ApiService', 'SettingsService', '
         if (params.referrer) {
             payment.referrer = params.referrer;
             delete params.referrer;
+        }
+
+        if (params.language) {
+            LanguageService.setLanguage(params.language);
+            location.search("language", null);
         }
 
         // Append any other parameters as meta
