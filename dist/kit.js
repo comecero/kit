@@ -4564,7 +4564,7 @@ app.filter('range', function () {
         return input;
     };
 });
-app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'HelperService', 'StorageService', 'LanguageService', '$rootScope', 'gettextCatalog', function ($http, $q, $location, SettingsService, HelperService, StorageService, LanguageService, $rootScope, gettextCatalog) {
+app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'HelperService', 'StorageService', '$rootScope', 'gettextCatalog', function ($http, $q, $location, SettingsService, HelperService, StorageService, $rootScope, gettextCatalog) {
 
     // Return public API.
     return {
@@ -4650,6 +4650,12 @@ app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'Helpe
 
         var deferred = $q.defer();
 
+        // Pass in the user's language selection.
+        parameters = parameters || {};
+        var lang = StorageService.get("language");
+        if (lang)
+            parameters.user_locale = lang;
+
         getToken().then(function (token) {
 
             if (data == null) {
@@ -4692,7 +4698,7 @@ app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'Helpe
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -4732,7 +4738,7 @@ app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'Helpe
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -4790,7 +4796,7 @@ app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'Helpe
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -4835,7 +4841,7 @@ app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'Helpe
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -4875,7 +4881,7 @@ app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'Helpe
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 

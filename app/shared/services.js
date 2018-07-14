@@ -1,4 +1,4 @@
-﻿app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'HelperService', 'StorageService', 'LanguageService', '$rootScope', 'gettextCatalog', function ($http, $q, $location, SettingsService, HelperService, StorageService, LanguageService, $rootScope, gettextCatalog) {
+﻿app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'HelperService', 'StorageService', '$rootScope', 'gettextCatalog', function ($http, $q, $location, SettingsService, HelperService, StorageService, $rootScope, gettextCatalog) {
 
     // Return public API.
     return {
@@ -84,6 +84,12 @@
 
         var deferred = $q.defer();
 
+        // Pass in the user's language selection.
+        parameters = parameters || {};
+        var lang = StorageService.get("language");
+        if (lang)
+            parameters.user_locale = lang;
+
         getToken().then(function (token) {
 
             if (data == null) {
@@ -126,7 +132,7 @@
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -166,7 +172,7 @@
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -224,7 +230,7 @@
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -269,7 +275,7 @@
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
@@ -309,7 +315,7 @@
 
         // Pass in the user's language selection.
         parameters = parameters || {};
-        var lang = LanguageService.getSelectedLanguage().code;
+        var lang = StorageService.get("language");
         if (lang)
             parameters.user_locale = lang;
 
