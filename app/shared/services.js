@@ -1,4 +1,4 @@
-﻿app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'HelperService', 'StorageService', '$rootScope', 'gettextCatalog', function ($http, $q, $location, SettingsService, HelperService, StorageService, $rootScope, gettextCatalog) {
+﻿app.service("ApiService", ['$http', '$q', '$location', 'SettingsService', 'HelperService', 'StorageService', 'LanguageService', '$rootScope', 'gettextCatalog', function ($http, $q, $location, SettingsService, HelperService, StorageService, LanguageService, $rootScope, gettextCatalog) {
 
     // Return public API.
     return {
@@ -124,6 +124,12 @@
 
         var deferred = $q.defer();
 
+        // Pass in the user's language selection.
+        parameters = parameters || {};
+        var lang = LanguageService.getSelectedLanguage().code;
+        if (lang)
+            parameters.user_locale = lang;
+
         getToken().then(function (token) {
 
             // Get the settings
@@ -157,6 +163,12 @@
     function getList(url, parameters, quiet) {
 
         var deferred = $q.defer();
+
+        // Pass in the user's language selection.
+        parameters = parameters || {};
+        var lang = LanguageService.getSelectedLanguage().code;
+        if (lang)
+            parameters.user_locale = lang;
 
         getToken().then(function (token) {
 
@@ -210,6 +222,12 @@
 
         var deferred = $q.defer();
 
+        // Pass in the user's language selection.
+        parameters = parameters || {};
+        var lang = LanguageService.getSelectedLanguage().code;
+        if (lang)
+            parameters.user_locale = lang;
+
         getToken().then(function (token) {
 
             // Get the settings
@@ -249,6 +267,12 @@
 
         var deferred = $q.defer();
 
+        // Pass in the user's language selection.
+        parameters = parameters || {};
+        var lang = LanguageService.getSelectedLanguage().code;
+        if (lang)
+            parameters.user_locale = lang;
+
         getToken().then(function (token) {
 
             // Get the settings
@@ -282,6 +306,12 @@
     function getItemPdf(url, parameters, quiet) {
 
         var deferred = $q.defer();
+
+        // Pass in the user's language selection.
+        parameters = parameters || {};
+        var lang = LanguageService.getSelectedLanguage().code;
+        if (lang)
+            parameters.user_locale = lang;
 
         getToken().then(function (token) {
 
