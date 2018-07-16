@@ -4623,7 +4623,7 @@ app.service("ApiService", ['$http', '$q', 'SettingsService', 'HelperService', 'S
 
             deferred.resolve(response.data.token);
         }, function (error) {
-            deferred.reject({ type: "internal_server_error", reference: "6lnOOW1", code: "unspecified_error", message: "There was a problem obtaining authorization for this session. Please reload the page to try your request again.", status: error.status });
+            deferred.reject({ type: "internal_server_error", reference: "6lnOOW1", code: "unspecified_error", message: gettextCatalog.getString("There was a problem obtaining authorization for this session. Please reload the page to try your request again."), status: error.status });
         });
 
         return deferred.promise;

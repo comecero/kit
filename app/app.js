@@ -83,6 +83,10 @@ app.run(['$rootScope', function ($rootScope) {
         {
             code: "sv",
             name: "svenska"
+        },
+        {
+            code: "zh",
+            name: "中文"
         }
     ]
 
