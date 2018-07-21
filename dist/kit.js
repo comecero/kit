@@ -501,6 +501,7 @@ String.prototype.replaceAll = function (f, r) {
 }
 
 // The following code needs to run after app.js and after utilities.js are loaded but before any directive, controller, etc. are run. This bootstraps the app at run time with the initial settings and configurations.
+// This is included in kit.js
 
 app.run(['$rootScope', '$http', 'SettingsService', 'StorageService', 'LanguageService', 'ApiService', function ($rootScope, $http, SettingsService, StorageService, LanguageService, ApiService) {
 
@@ -4593,10 +4594,7 @@ app.service("ApiService", ['$http', '$q', 'SettingsService', 'HelperService', 'S
 
         // Pass in the user's language selection.
         parameters.user_locale = LanguageService.getLocale();
-
-        if (settings.account.account_id && settings.config.development == true) {
-            parameters = _.extend(parameters, { account_id: settings.account.account_id });
-        }
+        parameters.account_id = settings.account.account_id;
 
         // Prepare the url
         var endpoint = buildUrl("/auths/limited", settings);
