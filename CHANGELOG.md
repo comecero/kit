@@ -1,4 +1,10 @@
-﻿<a name="1.0.8"></a>
+﻿<a name="1.0.9"></a>
+# 1.0.9
+
+- Send the user's app language selection with API calls so that API response messages match the selected app language.
+- Add support for the following language: Chinese
+
+<a name="1.0.8"></a>
 # 1.0.8
 
 - Allow a language parameter to be added to the URL to override the default language selection

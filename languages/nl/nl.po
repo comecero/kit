@@ -8,67 +8,64 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ./app/pages/cart/cart.html:199
-#: ./app/pages/cart/cart.html:279
+#: ./app/pages/cart/cart.html:186
+#: ./app/pages/cart/cart.html:261
 msgid "Address"
 msgstr "Adres"
 
-#: ./app/pages/cart/cart.html:207
-#: ./app/pages/cart/cart.html:287
+#: ./app/pages/cart/cart.html:194
+#: ./app/pages/cart/cart.html:269
 msgid "Address 2"
 msgstr "Adres 2"
 
-#: ./dist/js/kit.js:4314
+#: ./app/shared/services.js:467
 msgid "An error occured while attempting to process your request. Please try your request again. If the problem persists, please contact support."
 msgstr "Er trad een fout op terwijl we probeerden uw verzoek te verwerken. Probeer uw verzoek alstublieft opnieuw. Als het probleem blijft bestaan, contacteer dan alstublieft ondersteuning."
 
-#: ./app/pages/cart/cart.html:345
-#: ./app/pages/cart/cart.html:89
-#: ./app/pages/payment/review.html:75
-#: ./app/pages/payment/review.html:76
+#: ./app/pages/cart/cart.html:323
+#: ./app/pages/cart/cart.html:88
+#: ./app/pages/payment/review.html:72
+#: ./app/pages/payment/review.html:73
 msgid "Apply"
 msgstr "Toepassen"
 
-#: ./app/pages/cart/cart.html:161
-#: ./app/pages/payment/review.html:28
+#: ./app/pages/cart/cart.html:150
+#: ./app/pages/payment/review.html:27
 msgid "Billing Address"
 msgstr "Factuuradres"
 
-#: ./app/pages/products/products.html:34
+#: ./app/pages/products/products.html:29
 msgid "Buy Now"
 msgstr "Nu kopen"
 
-#: ./app/pages/cart/cart.html:149
+#: ./app/pages/cart/cart.html:137
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: ./app/pages/cart/cart.html:455
-#: ./app/pages/invoice/invoice.html:211
+#: ./app/pages/cart/cart.html:356
 msgid "Card Number"
 msgstr "Kaartnummer"
 
-#: ./app/pages/cart/cart.html:421
-#: ./app/pages/invoice/invoice.html:177
+#: ./app/pages/cart/cart.html:339
 msgid "Choose a Payment Method"
 msgstr "Kies een betaalmethode"
 
-#: ./app/pages/cart/cart.html:217
-#: ./app/pages/cart/cart.html:297
+#: ./app/pages/cart/cart.html:202
+#: ./app/pages/cart/cart.html:277
 msgid "City"
 msgstr "Stad"
 
-#: ./app/pages/cart/cart.html:183
-#: ./app/pages/payment/review.html:56
+#: ./app/pages/cart/cart.html:154
+#: ./app/pages/payment/review.html:53
 msgid "Company Name"
 msgstr "Bedrijfsnaam"
 
-#: ./app/pages/cart/cart.html:105
-#: ./app/pages/cart/cart.html:32
+#: ./app/pages/cart/cart.html:75
 msgid "Continue Shopping"
 msgstr "Doorgaan met winkelen"
 
-#: ./app/pages/cart/cart.html:249
-#: ./app/pages/cart/cart.html:329
+#: ./app/pages/cart/cart.html:232
+#: ./app/pages/cart/cart.html:307
 msgid "Country"
 msgstr "Land"
 
@@ -76,24 +73,15 @@ msgstr "Land"
 msgid "Currency"
 msgstr "Valuta"
 
-#: ./app/pages/cart/cart.html:390
-#: ./app/pages/cart/cart.html:391
-#: ./app/pages/cart/cart.html:78
-#: ./app/pages/cart/cart.html:79
-#: ./app/pages/invoice/invoice.html:138
-#: ./app/pages/invoice/invoice.html:139
-#: ./app/pages/payment/review.html:154
-#: ./app/pages/payment/review.html:155
-#: ./app/pages/receipt/receipt.html:159
-#: ./app/pages/receipt/receipt.html:160
+#: ./app/pages/cart/cart.html:63
 msgid "Discount"
 msgstr "Korting"
 
-#: ./app/pages/cart/cart.html:92
+#: ./app/pages/cart/cart.html:91
 msgid "Discount applied."
 msgstr "Korting toegepast."
 
-#: ./app/pages/cart/cart.html:173
+#: ./app/pages/cart/cart.html:170
 msgid "Email"
 msgstr "E-mailadres"
 
@@ -101,26 +89,24 @@ msgstr "E-mailadres"
 msgid "Enter Promo Code"
 msgstr "Promocode invoeren"
 
-#: ./app/pages/cart/cart.html:468
-#: ./app/pages/invoice/invoice.html:224
+#: ./app/pages/cart/cart.html:364
 msgid "Expiration Month"
 msgstr "Vervalmaand"
 
-#: ./app/pages/cart/cart.html:477
-#: ./app/pages/invoice/invoice.html:233
+#: ./app/pages/cart/cart.html:372
 msgid "Expiration Year"
 msgstr "Vervaljaar"
 
-#: ./app/pages/receipt/receipt.html:85
+#: ./app/pages/receipt/receipt.html:37
 msgid "Expires"
 msgstr "Verloopt"
 
-#: ./app/pages/cart/cart.html:123
+#: ./app/pages/cart/cart.html:117
 msgid "Have an account?"
 msgstr "Heeft u een account?"
 
-#: ./app/pages/cart/cart.html:347
-#: ./app/pages/payment/review.html:78
+#: ./app/pages/cart/cart.html:325
+#: ./app/pages/payment/review.html:75
 msgid "If this order is for a business, please provide your VAT Number."
 msgstr "Als dit een zakelijke order is, geef dan alstublieft uw BTW-nummer."
 
@@ -128,14 +114,11 @@ msgstr "Als dit een zakelijke order is, geef dan alstublieft uw BTW-nummer."
 msgid "Language"
 msgstr "Taal"
 
-#: ./app/pages/cart/cart.html:42
-#: ./app/pages/cart/cart.html:50
-#: ./app/pages/invoice/invoice.html:86
-#: ./app/pages/invoice/invoice.html:94
-#: ./app/pages/payment/review.html:107
-#: ./app/pages/payment/review.html:99
-#: ./app/pages/receipt/receipt.html:107
-#: ./app/pages/receipt/receipt.html:115
+#: ./app/pages/cart/cart.html:162
+#: ./app/pages/cart/cart.html:253
+#: ./app/pages/cart/cart.html:35
+#: ./app/pages/payment/review.html:92
+#: ./app/pages/receipt/receipt.html:51
 msgid "Name"
 msgstr "Naam"
 
@@ -143,18 +126,16 @@ msgstr "Naam"
 msgid "No"
 msgstr "Nee"
 
-#: ./app/pages/cart/cart.html:344
-#: ./app/pages/payment/review.html:74
+#: ./app/pages/cart/cart.html:322
+#: ./app/pages/payment/review.html:71
 msgid "Optional"
 msgstr "Optioneel"
 
-#: ./app/pages/cart/cart.html:140
-#: ./app/pages/receipt/receipt.html:48
+#: ./app/pages/cart/cart.html:131
 msgid "Password"
 msgstr "Wachtwoord"
 
-#: ./app/pages/cart/cart.html:446
-#: ./app/pages/invoice/invoice.html:202
+#: ./app/pages/cart/cart.html:347
 msgid "Pay with a new card"
 msgstr "Betaal met een nieuwe kaart"
 
@@ -162,149 +143,140 @@ msgstr "Betaal met een nieuwe kaart"
 msgid "Payment Information"
 msgstr "Betaalinformatie"
 
-#: ./app/pages/receipt/receipt.html:82
+#: ./app/pages/receipt/receipt.html:34
 msgid "Payment Method"
 msgstr "Betaalmethode"
 
-#: ./app/pages/cart/cart.html:191
-#: ./app/pages/payment/review.html:64
+#: ./app/pages/cart/cart.html:178
+#: ./app/pages/payment/review.html:61
 msgid "Phone"
 msgstr "Telefoon"
 
-#: ./dist/js/kit.js:3725
+#: ./app/shared/directives.js:2826
 msgid "Please confirm"
 msgstr "Alstublieft bevestigen"
 
-#: ./dist/js/kit.js:3720
-#: ./dist/js/kit.js:3756
+#: ./app/shared/directives.js:2821
+#: ./app/shared/directives.js:2857
 msgid "Please make a selection"
 msgstr "Maak alstublieft een keuze"
 
-#: ./app/pages/cart/cart.html:219
-#: ./app/pages/cart/cart.html:299
+#: ./app/pages/cart/cart.html:204
+#: ./app/pages/cart/cart.html:279
 msgid "Please provide a city"
 msgstr "Geef alstublieft een stad op"
 
-#: ./app/pages/cart/cart.html:185
-#: ./app/pages/payment/review.html:58
+#: ./app/pages/cart/cart.html:156
+#: ./app/pages/payment/review.html:55
 msgid "Please provide a company name"
 msgstr "Geef alstublieft een bedrijfsnaam op"
 
-#: ./app/pages/cart/cart.html:251
-#: ./app/pages/cart/cart.html:331
+#: ./app/pages/cart/cart.html:234
+#: ./app/pages/cart/cart.html:309
 msgid "Please provide a country"
 msgstr "Geef alstublieft een land op"
 
-#: ./app/pages/cart/cart.html:167
-#: ./app/pages/cart/cart.html:273
+#: ./app/pages/cart/cart.html:164
+#: ./app/pages/cart/cart.html:255
 msgid "Please provide a name"
 msgstr "Geef alstublieft een neem op"
 
-#: ./app/pages/cart/cart.html:233
-#: ./app/pages/cart/cart.html:313
+#: ./app/pages/cart/cart.html:218
+#: ./app/pages/cart/cart.html:293
 msgid "Please provide a region / province"
 msgstr "Geef alstublieft een regio / provincie op"
 
-#: ./app/pages/cart/cart.html:227
-#: ./app/pages/cart/cart.html:307
+#: ./app/pages/cart/cart.html:212
+#: ./app/pages/cart/cart.html:287
 msgid "Please provide a state / province"
 msgstr "Geef alstublieft een staat / provincie op"
 
-#: ./app/pages/cart/cart.html:460
-#: ./app/pages/invoice/invoice.html:216
+#: ./app/pages/cart/cart.html:358
 msgid "Please provide a valid card number"
 msgstr "Geef alstublieft een geldig kaartnummer op"
 
-#: ./app/pages/cart/cart.html:175
+#: ./app/pages/cart/cart.html:172
 msgid "Please provide a valid email address"
 msgstr "Geef alstublieft een geldig e-mailadres op"
 
-#: ./app/pages/cart/cart.html:471
-#: ./app/pages/invoice/invoice.html:227
+#: ./app/pages/cart/cart.html:366
 msgid "Please provide a valid expiration month"
 msgstr "Geef alstublieft een geldige vervalmaand op"
 
-#: ./app/pages/cart/cart.html:480
-#: ./app/pages/invoice/invoice.html:236
+#: ./app/pages/cart/cart.html:374
 msgid "Please provide a valid expiration year"
 msgstr "Geef alstublieft een geldig vervaljaar op"
 
-#: ./app/pages/payment/review.html:66
+#: ./app/pages/cart/cart.html:180
+#: ./app/pages/payment/review.html:63
 msgid "Please provide a valid phone number"
 msgstr "Geef alstublieft een geldig telefoonnummer op"
 
-#: ./app/pages/cart/cart.html:488
-#: ./app/pages/invoice/invoice.html:244
+#: ./app/pages/cart/cart.html:382
 msgid "Please provide a valid security code"
 msgstr "Geef alstublieft een geldige veiligheidscode op"
 
-#: ./app/pages/cart/cart.html:241
-#: ./app/pages/cart/cart.html:321
+#: ./app/pages/cart/cart.html:226
+#: ./app/pages/cart/cart.html:301
 msgid "Please provide a zip / postal code"
 msgstr "Geef alstublieft een postcode op"
 
-#: ./app/pages/cart/cart.html:201
-#: ./app/pages/cart/cart.html:209
-#: ./app/pages/cart/cart.html:281
-#: ./app/pages/cart/cart.html:289
+#: ./app/pages/cart/cart.html:188
+#: ./app/pages/cart/cart.html:196
+#: ./app/pages/cart/cart.html:263
+#: ./app/pages/cart/cart.html:271
 msgid "Please provide an address"
 msgstr "Geef alstublieft een adres op"
 
-#: ./dist/js/kit.js:1233
+#: ./app/shared/directives.js:285
 msgid "Please provide an amount for your payment."
 msgstr "Geef alstublieft een hoeveelheid op voor uw betaling."
 
-#: ./dist/js/kit.js:3765
+#: ./app/shared/directives.js:2866
 msgid "Please provide one of the available options"
 msgstr "Geef alstublieft één van de beschikbare opties op"
 
-#: ./dist/js/kit.js:3748
+#: ./app/shared/directives.js:2849
 msgid "Please supply a number"
 msgstr "Geef alstublieft een getal op"
 
-#: ./dist/js/kit.js:3741
+#: ./app/shared/directives.js:2842
 msgid "Please supply a number without decimals"
 msgstr "Geef alstublieft een getal op zonder decimalen"
 
-#: ./app/pages/products/products.html:22
+#: ./app/pages/products/products.html:17
 msgid "Products"
 msgstr "Producten"
 
-#: ./app/pages/cart/cart.html:43
-#: ./app/pages/cart/cart.html:51
-#: ./app/pages/invoice/invoice.html:87
-#: ./app/pages/invoice/invoice.html:95
-#: ./app/pages/payment/review.html:100
-#: ./app/pages/payment/review.html:108
-#: ./app/pages/receipt/receipt.html:108
-#: ./app/pages/receipt/receipt.html:116
+#: ./app/pages/cart/cart.html:34
+#: ./app/pages/payment/review.html:91
+#: ./app/pages/receipt/receipt.html:50
 msgid "Quantity"
 msgstr "Hoeveelheid"
 
-#: ./app/pages/receipt/receipt.html:13
+#: ./app/pages/receipt/receipt.html:9
 msgid "Receipt"
 msgstr "Betalingsbewijs"
 
-#: ./app/pages/cart/cart.html:231
-#: ./app/pages/cart/cart.html:311
+#: ./app/pages/cart/cart.html:216
+#: ./app/pages/cart/cart.html:291
 msgid "Region / Province"
 msgstr "Regio / provincie"
 
-#: ./app/pages/payment/review.html:24
+#: ./app/pages/payment/review.html:21
 msgid "Return to PayPal to try your payment again."
 msgstr "Keer terug naar PayPal om uw betaling opnieuw te proberen."
 
-#: ./app/pages/payment/review.html:15
+#: ./app/pages/payment/review.html:11
 msgid "Review Your Order"
 msgstr "Controleer uw bestelling"
 
-#: ./app/pages/cart/cart.html:486
-#: ./app/pages/invoice/invoice.html:242
+#: ./app/pages/cart/cart.html:380
 msgid "Security Code"
 msgstr "Veiligheidscode"
 
-#: ./app/pages/cart/cart.html:260
-#: ./app/pages/payment/review.html:41
+#: ./app/pages/cart/cart.html:243
+#: ./app/pages/payment/review.html:38
 msgid "Shipping Address"
 msgstr "Bezorgadres"
 
@@ -312,100 +284,77 @@ msgstr "Bezorgadres"
 msgid "Shopping Cart"
 msgstr "Winkelwagen"
 
-#: ./app/pages/cart/cart.html:124
-#: ./app/pages/cart/cart.html:150
+#: ./app/pages/cart/cart.html:118
+#: ./app/pages/cart/cart.html:138
 msgid "Sign In"
 msgstr "Aanmelden"
 
-#: ./app/pages/cart/cart.html:156
+#: ./app/pages/cart/cart.html:144
 msgid "Sign out"
 msgstr "Afmelden"
 
-#: ./app/pages/cart/cart.html:225
-#: ./app/pages/cart/cart.html:305
+#: ./app/pages/cart/cart.html:210
+#: ./app/pages/cart/cart.html:285
 msgid "State / Province"
 msgstr "Staat / provincie"
 
-#: ./app/pages/cart/cart.html:377
-#: ./app/pages/cart/cart.html:378
-#: ./app/pages/cart/cart.html:44
-#: ./app/pages/cart/cart.html:67
-#: ./app/pages/invoice/invoice.html:126
-#: ./app/pages/invoice/invoice.html:127
-#: ./app/pages/invoice/invoice.html:88
-#: ./app/pages/invoice/invoice.html:96
-#: ./app/pages/payment/review.html:101
-#: ./app/pages/payment/review.html:109
-#: ./app/pages/payment/review.html:142
-#: ./app/pages/payment/review.html:143
-#: ./app/pages/receipt/receipt.html:109
-#: ./app/pages/receipt/receipt.html:117
-#: ./app/pages/receipt/receipt.html:147
-#: ./app/pages/receipt/receipt.html:148
+#: ./app/pages/cart/cart.html:36
+#: ./app/pages/payment/review.html:93
+#: ./app/pages/receipt/receipt.html:52
 msgid "Subtotal"
 msgstr "Subtotaal"
 
-#: ./app/pages/cart/cart.html:396
-#: ./app/pages/cart/cart.html:397
-#: ./app/pages/invoice/invoice.html:144
-#: ./app/pages/invoice/invoice.html:145
-#: ./app/pages/payment/review.html:160
-#: ./app/pages/payment/review.html:161
-#: ./app/pages/receipt/receipt.html:165
-#: ./app/pages/receipt/receipt.html:166
+#: ./app/pages/cart/cart.html:57
+#: ./app/pages/payment/review.html:113
+#: ./app/pages/receipt/receipt.html:72
 msgid "Tax"
 msgstr "Belasting"
 
-#: ./app/pages/receipt/receipt.html:20
+#: ./app/pages/receipt/receipt.html:17
 msgid "Thank you! Your order is complete."
 msgstr "Bedankt! Uw bestelling is voltooid."
 
-#: ./dist/js/kit.js:4308
+#: ./app/shared/services.js:461
 msgid "The item you are trying to access could not be found."
 msgstr "Het artikel waartoe u toegang probeert te krijgen kon niet gevonden worden."
 
-#: ./dist/js/kit.js:3791
+#: ./app/shared/directives.js:2892
 msgid "The value must be at least one character"
 msgid_plural "The value must be at least {{$count}} characters"
 msgstr[0] "De waarde moet minstens één teken zijn"
 msgstr[1] "De waarde moet minstens {{$count}} tekens zijn"
 
-#: ./dist/js/kit.js:3797
+#: ./app/shared/directives.js:2898
 msgid "The value must be less than one character"
 msgid_plural "The value must be less than {{$count}} characters"
 msgstr[0] "De waarde moet minder dan één teken zijn"
 msgstr[1] "De waarde moet minder dan {{$count}} tekens zijn"
 
-#: ./dist/js/kit.js:3774
+#: ./app/shared/directives.js:2875
 msgid "The value you provide must be greater than {{$count}}"
 msgid_plural "The value you provide must be greater than {{$count}}"
 msgstr[0] "De opgegeven waarde moet groter zijn dan {{$count}}"
 msgstr[1] "De opgegeven waarde moet groter zijn dan {{$count}}"
 
-#: ./dist/js/kit.js:3780
+#: ./app/shared/directives.js:2881
 msgid "The value you provide must be less than {{$count}}"
 msgid_plural "The value you provide must be less than {{$count}}"
 msgstr[0] "De opgegeven waarde moet minder zijn dan {{$count}}"
 msgstr[1] "De opgegeven waarde moet minder zijn dan {{$count}}"
 
-#: ./app/pages/cart/cart.html:31
+#: ./app/pages/cart/cart.html:74
 msgid "There are no items in your cart"
 msgstr "Er zijn geen artikelen in uw winkelwagen"
 
-#: ./dist/js/kit.js:1133
-#: ./dist/js/kit.js:1217
-#: ./dist/js/kit.js:1412
+#: ./app/shared/directives.js:179
+#: ./app/shared/directives.js:273
+#: ./app/shared/directives.js:513
 msgid "There was a problem with some of the information you supplied. Please review for errors and try again."
 msgstr "Er was een probleem met enkele van de gegevens die u opgaf. Controleer alstublieft op fouten en probeer opnieuw."
 
-#: ./app/pages/cart/cart.html:402
-#: ./app/pages/cart/cart.html:403
-#: ./app/pages/invoice/invoice.html:150
-#: ./app/pages/invoice/invoice.html:151
-#: ./app/pages/payment/review.html:166
-#: ./app/pages/payment/review.html:167
-#: ./app/pages/receipt/receipt.html:171
-#: ./app/pages/receipt/receipt.html:172
+#: ./app/pages/cart/cart.html:68
+#: ./app/pages/payment/review.html:119
+#: ./app/pages/receipt/receipt.html:78
 msgid "Total"
 msgstr "Totaal"
 
@@ -413,13 +362,12 @@ msgstr "Totaal"
 msgid "Update Cart"
 msgstr "Winkelwagen bijwerken"
 
-#: ./app/pages/cart/cart.html:130
-#: ./app/pages/receipt/receipt.html:38
+#: ./app/pages/cart/cart.html:124
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: ./app/pages/cart/cart.html:342
-#: ./app/pages/payment/review.html:72
+#: ./app/pages/cart/cart.html:320
+#: ./app/pages/payment/review.html:69
 msgid "VAT Number"
 msgstr "BTW-nummer"
 
@@ -427,12 +375,12 @@ msgstr "BTW-nummer"
 msgid "Yes"
 msgstr "Ja"
 
-#: ./app/pages/cart/cart.html:116
+#: ./app/pages/cart/cart.html:110
 msgid "Your Information"
 msgstr "Uw informatie"
 
-#: ./app/pages/cart/cart.html:239
-#: ./app/pages/cart/cart.html:319
+#: ./app/pages/cart/cart.html:224
+#: ./app/pages/cart/cart.html:299
 msgid "Zip / Postal Code"
 msgstr "Postcode"
 
@@ -440,16 +388,17 @@ msgstr "Postcode"
 msgid "expiration"
 msgstr "vervaltijd"
 
-#: ./app/pages/invoice/invoice.html:51
+#: ./app/pages/invoice/invoice.html:52
 msgid "Billing Information"
 msgstr "Facturatiegegevens"
 
-#: ./app/pages/cart/cart.html:502
-#: ./app/pages/payment/review.html:179
+#: ./app/pages/cart/cart.html:531
+#: ./app/pages/payment/review.html:190
 msgid "Complete Order"
 msgstr "Bestelling voltooien"
 
-#: ./app/pages/invoice/invoice.html:258
+#: ./app/pages/pay/pay.html:351
+#: ./app/pages/review/review.html:137
 msgid "Complete Payment"
 msgstr "Betaling voltooien"
 
@@ -458,94 +407,95 @@ msgstr "Betaling voltooien"
 msgid "Copyright &copy; {{settings.account.year}} {{settings.app.company_name}}. All Rights Reserved."
 msgstr "Copyright en kopieer; {{settings.account.year}} {{settings.app.company_name}}. Alle rechten voorbehouden."
 
-#: ./app/pages/receipt/receipt.html:57
+#: ./app/pages/receipt/receipt.html:58
 msgid "Create Account"
 msgstr "Account aanmaken"
 
-#: ./app/pages/receipt/receipt.html:28
+#: ./app/pages/receipt/receipt.html:29
 msgid "Date"
 msgstr "Datum"
 
-#: ./app/pages/invoice/invoice.html:103
+#: ./app/pages/invoice/invoice.html:104
 #: ./app/pages/receipt/receipt.html:124
 msgid "Download Now"
 msgstr "Nu downloaden"
 
-#: ./app/pages/invoice/invoice.html:39
+#: ./app/pages/invoice/invoice.html:40
 msgid "Due Date"
 msgstr "Vervaldatum"
 
-#: ./app/pages/cart/cart.html:86
+#: ./app/pages/cart/cart.html:89
 msgid "Enter"
 msgstr "Invoeren"
 
-#: ./app/pages/cart/cart.html:165
-#: ./app/pages/cart/cart.html:271
+#: ./app/pages/pay/pay.html:151
 msgid "Full Name"
 msgstr "Volledige naam"
 
-#: ./app/pages/invoice/invoice.html:22
+#: ./app/pages/invoice/invoice.html:23
 msgid "Invoice"
 msgstr "Factuur"
 
-#: ./app/pages/invoice/invoice.html:79
+#: ./app/pages/invoice/invoice.html:80
 msgid "Invoice Details"
 msgstr "Factuurgegevens"
 
-#: ./app/pages/invoice/invoice.html:120
+#: ./app/pages/invoice/invoice.html:121
 msgid "Invoice Summary"
 msgstr "Samenvatting factuur"
 
-#: ./app/pages/cart/cart.html:41
-#: ./app/pages/invoice/invoice.html:85
-#: ./app/pages/payment/review.html:98
+#: ./app/pages/cart/cart.html:42
+#: ./app/pages/invoice/invoice.html:86
+#: ./app/pages/payment/review.html:109
 #: ./app/pages/receipt/receipt.html:106
 msgid "Item"
 msgstr "Item"
 
-#: ./app/pages/payment/review.html:92
+#: ./app/pages/payment/review.html:103
 #: ./app/pages/receipt/receipt.html:95
 msgid "Order Details"
 msgstr "Bestellingsgegevens"
 
-#: ./app/pages/cart/cart.html:371
+#: ./app/pages/cart/cart.html:400
 msgid "Order Summary"
 msgstr "Samenvatting van bestelling"
 
-#: ./app/pages/invoice/invoice.html:30
+#: ./app/pages/invoice/invoice.html:31
 msgid "Paid"
 msgstr "Betaald"
 
-#: ./app/pages/cart/cart.html:416
-#: ./app/pages/invoice/invoice.html:165
+#: ./app/pages/pay/pay.html:248
+#: ./app/pages/receipt/receipt.html:96
 msgid "Payment Details"
 msgstr "Betalingsinformatie"
 
-#: ./app/pages/payment/review.html:136
-#: ./app/pages/receipt/receipt.html:141
+#: ./app/pages/payment/review.html:147
+#: ./app/pages/receipt/receipt.html:142
 msgid "Payment Summary"
 msgstr "Samenvatting van betaling"
 
-#: ./app/pages/cart/cart.html:193
+#: ./app/pages/pay/pay.html:179
 msgid "Please provide a phone"
 msgstr "Voer alstublieft een telefoonnummer in"
 
-#: ./app/pages/cart/cart.html:495
-#: ./app/pages/invoice/invoice.html:251
+#: ./app/pages/pay/pay.html:327
 msgid "Save this card to my account"
 msgstr "Sla deze kaart op in mijn account"
 
-#: ./app/pages/cart/cart.html:357
-#: ./app/pages/cart/cart.html:383
-#: ./app/pages/payment/review.html:121
+#: ./app/pages/pay/pay.html:75
+#: ./app/pages/pay/pay.html:76
+#: ./app/pages/receipt/receipt.html:127
+#: ./app/pages/receipt/receipt.html:128
+#: ./app/pages/review/review.html:118
+#: ./app/pages/review/review.html:119
 msgid "Shipping"
 msgstr "Verzending"
 
-#: ./app/pages/invoice/invoice.html:64
+#: ./app/pages/invoice/invoice.html:65
 msgid "Shipping Information"
 msgstr "Verzendingsinformatie"
 
-#: ./app/pages/cart/cart.html:265
+#: ./app/pages/cart/cart.html:294
 msgid "Shipping is same as billing"
 msgstr "Verzending is hetzelfde als facturatie"
 
@@ -553,11 +503,11 @@ msgstr "Verzending is hetzelfde als facturatie"
 msgid "Sold To"
 msgstr "Verkocht aan"
 
-#: ./app/pages/invoice/invoice.html:267
+#: ./app/pages/invoice/invoice.html:298
 msgid "Thank you for your business"
 msgstr "Bedankt voor uw bedrijf"
 
-#: ./app/pages/receipt/receipt.html:184
+#: ./app/pages/receipt/receipt.html:185
 msgid "Thank you for your order"
 msgstr "Bedankt voor uw bestelling"
 
@@ -565,7 +515,7 @@ msgstr "Bedankt voor uw bestelling"
 msgid "Thank you! Your order has been submitted for processing. You will receive an email soon with additional information regarding your order status."
 msgstr "Bedankt! Uw bestelling is klaar om verwerkt te worden. U zult spoedig een e-mail ontvangen met meer informatie over de status van uw bestelling."
 
-#: ./app/pages/invoice/invoice.html:34
+#: ./app/pages/invoice/invoice.html:35
 msgid "This invoice is closed"
 msgstr "Deze factuur is gesloten"
 
@@ -573,28 +523,27 @@ msgstr "Deze factuur is gesloten"
 msgid "To manage your order online, create an account."
 msgstr "Maak een account aan om uw bestelling online te beheren."
 
-#: ./app/pages/cart/cart.html:22
+#: ./app/pages/cart/cart.html:23
 msgid "Your Order"
 msgstr "Uw bestelling"
 
-#: ./app/pages/invoice/invoice.html:45
-#: ./app/pages/receipt/receipt.html:63
+#: ./app/pages/receipt/receipt.html:64
 msgid "Your account has been created."
 msgstr "Uw account is aangemaakt."
 
-#: ./app/pages/cart/cart.html:406
+#: ./app/pages/cart/cart.html:435
 msgid "Your total includes {{data.cart.formatted.tax}} tax"
 msgstr "Uw totaal bevat {{data.cart.formatted.tax}} belasting"
 
-#: ./app/pages/invoice/invoice.html:154
+#: ./app/pages/invoice/invoice.html:155
 msgid "Your total includes {{data.invoice.formatted.tax}} tax"
 msgstr "Uw totaal bevat {{data.invoice.formatted.tax}} belasting"
 
-#: ./app/pages/receipt/receipt.html:175
+#: ./app/pages/receipt/receipt.html:176
 msgid "Your total includes {{data.payment.order.formatted.tax}} tax"
 msgstr "Uw totaal bevat {{data.payment.order.formatted.tax}} belasting"
 
-#: ./app/pages/payment/review.html:170
+#: ./app/pages/payment/review.html:181
 msgid "Your total includes {{data.sale.formatted.tax}} tax"
 msgstr "Uw totaal bevat {{data.sale.formatted.tax}} belasting"
 
@@ -622,7 +571,7 @@ msgstr "Gemaakt door"
 msgid "Make Another Payment"
 msgstr "Doe een andere betaling"
 
-#: ./dist/js/kit.js:3715
+#: ./app/shared/directives.js:2816
 msgid "Please provide a value"
 msgstr "Voer alstublieft een waarde in"
 
@@ -630,7 +579,6 @@ msgstr "Voer alstublieft een waarde in"
 msgid "Please provide an amount"
 msgstr "Voer alstublieft een bedrag in"
 
-#: ./app/pages/pay/pay.html:334
 #: ./app/pages/review/review.html:87
 msgid "Review & Finish"
 msgstr "Controleren en voltooien"
@@ -656,7 +604,7 @@ msgid "Your Payment"
 msgstr "Uw betaling"
 
 #: ./app/pages/simple/checkout.html:295
-#: ./app/pages/simple/review.html:175
+#: ./app/pages/simple/review.html:176
 msgid "An email has been sent to {{data.payment.order.customer.email}}."
 msgstr "Er is een e-mail gestuurd naar {{data.payment.order.customer.email}}."
 
@@ -665,7 +613,7 @@ msgid "Choose other payment method"
 msgstr "Kies een andere betalingsmethode"
 
 #: ./app/pages/simple/checkout.html:305
-#: ./app/pages/simple/review.html:185
+#: ./app/pages/simple/review.html:186
 msgid "Close"
 msgstr "Sluiten"
 
@@ -674,7 +622,7 @@ msgid "Confirm Payment"
 msgstr "Betaling bevestigen"
 
 #: ./app/pages/simple/checkout.html:303
-#: ./app/pages/simple/review.html:183
+#: ./app/pages/simple/review.html:184
 msgid "Continue"
 msgstr "Doorgaan"
 
@@ -688,7 +636,7 @@ msgid "Enter VAT Number"
 msgstr "BTW-nummer invoeren"
 
 #: ./app/pages/simple/checkout.html:306
-#: ./app/pages/simple/review.html:186
+#: ./app/pages/simple/review.html:187
 msgid "Finish"
 msgstr "Voltooien"
 
@@ -701,7 +649,7 @@ msgid "Postal Code"
 msgstr "Postcode"
 
 #: ./app/pages/simple/checkout.html:313
-#: ./app/pages/simple/review.html:193
+#: ./app/pages/simple/review.html:194
 msgid "Print receipt"
 msgstr "Bon afdrukken"
 
@@ -710,7 +658,7 @@ msgid "Region"
 msgstr "Regio"
 
 #: ./app/pages/simple/checkout.html:304
-#: ./app/pages/simple/review.html:184
+#: ./app/pages/simple/review.html:185
 msgid "Return"
 msgstr "Retourneren"
 
@@ -719,16 +667,43 @@ msgid "Submit Order"
 msgstr "Bestelling plaatsen"
 
 #: ./app/pages/simple/checkout.html:262
-#: ./app/pages/simple/review.html:142
+#: ./app/pages/simple/review.html:143
 msgid "Summary"
 msgstr "Samenvatting"
 
 #: ./app/pages/simple/checkout.html:252
-#: ./app/pages/simple/review.html:132
+#: ./app/pages/simple/review.html:133
 msgid "Thank you for your purchase!"
 msgstr "Bedankt voor uw aankoop!"
 
-#: ./app/pages/cart/cart.html:65
+#: ./app/pages/cart/cart.html:68
 msgid "Remove"
 msgstr "Verwijderen"
+
+#: ./app/shared/directives.js:328
+msgid "Please check the box to provide consent to save your payment method for future payments."
+msgstr "Controleer alsjeblieft de doos om toestemming te geven om je manier van betalen voor toekomstige betalingen op te slaan."
+
+#: ./app/pages/cart/cart.html:128
+#: ./app/pages/invoice/invoice.html:198
+#: ./app/pages/payment/review.html:33
+msgid "Use another payment method"
+msgstr "Gebruik een andere manier van betalen"
+
+#: ./dist/js/kit.js:3715
+msgid "Please provide a value."
+msgstr "Geef een waarde op."
+
+#: ./app/pages/pay/pay.html:338
+msgid "Review &amp; Finish"
+msgstr "Review &amp; Af hebben"
+
+#: ./app/shared/services.js:76
+msgid "There was a problem obtaining authorization for this session. Please reload the page to try your request again."
+msgstr "Er was een probleem met het verkrijgen van autorisatie voor deze sessie. Laad de pagina opnieuw om uw verzoek opnieuw te proberen."
+
+#: ./app/pages/pay/pay.html:32
+#: ./app/pages/review/review.html:30
+msgid "Reference"
+msgstr "Referentie"
 
