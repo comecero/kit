@@ -30,7 +30,7 @@ app.run(['$rootScope', function ($rootScope) {
         },        
         {
             code: "cs",
-            name: "čeština"
+            name: "Čeština"
         },
         {
             code: "de",
@@ -50,11 +50,11 @@ app.run(['$rootScope', function ($rootScope) {
         },
         {
             code: "fr",
-            name: "français"
+            name: "Français"
         },            
         {
             code: "it",
-            name: "italiano"
+            name: "Italiano"
         },
         {
             code: "ja",
@@ -78,14 +78,14 @@ app.run(['$rootScope', function ($rootScope) {
         },
         {
             code: "ru",
-            name: "русский"
+            name: "Русский"
         },            
         {
             code: "sv",
-            name: "svenska"
+            name: "Svenska"
         },
         {
-            code: "zh",
+            code: "zh-CN",
             name: "中文"
         }
     ]
