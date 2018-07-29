@@ -383,6 +383,11 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
                             scope.onSuccess(payment);
                         }
 
+                        // If the cart is expanded, update the cart.
+                        if (payment.cart && payment.cart.url) {
+                            scope.cart = payment.cart;
+                        }
+
                         // Remove the disabled attribute
                         elem.prop("disabled", null);
 
@@ -408,6 +413,11 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
                         // Fire the success event
                         if (scope.onSuccess) {
                             scope.onSuccess(payment);
+                        }
+
+                        // If the invoice is expanded, update the invoice.
+                        if (payment.invoice && payment.invoice.url) {
+                            scope.invoice = payment.invoice;
                         }
 
                         // Remove the disabled attribute

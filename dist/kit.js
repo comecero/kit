@@ -1,5 +1,6 @@
 /*
 Comecero Kit version: ﻿1.0.9
+Build time: 2018-07-29T01:54:24.635Z
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -1696,6 +1697,11 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
                             scope.onSuccess(payment);
                         }
 
+                        // If the cart is expanded, update the cart.
+                        if (payment.cart && payment.cart.url) {
+                            scope.cart = payment.cart;
+                        }
+
                         // Remove the disabled attribute
                         elem.prop("disabled", null);
 
@@ -1721,6 +1727,11 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
                         // Fire the success event
                         if (scope.onSuccess) {
                             scope.onSuccess(payment);
+                        }
+
+                        // If the invoice is expanded, update the invoice.
+                        if (payment.invoice && payment.invoice.url) {
+                            scope.invoice = payment.invoice;
                         }
 
                         // Remove the disabled attribute

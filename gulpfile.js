@@ -44,7 +44,7 @@ gulp.task('dist', function (done) {
         var version = fs.readFileSync("./version.html", "utf8");
 
         // Add headers with the release number to each of the distribution files.
-        gulp.src(['./dist/kit.js', './dist/kit.min.js', './dist/pages.js', './dist/pages.min.js']).pipe(header("/*\nComecero Kit version: " + version + "\nhttps://comecero.com\nhttps://github.com/comecero/kit\nCopyright Comecero and other contributors. Released under MIT license. See LICENSE for details.\n*/\n\n")).pipe(gulp.dest('./dist/'));
+        gulp.src(['./dist/kit.js', './dist/kit.min.js', './dist/pages.js', './dist/pages.min.js']).pipe(header("/*\nComecero Kit version: " + version + "\nBuild time: " + new Date().toISOString() + "\nhttps://comecero.com\nhttps://github.com/comecero/kit\nCopyright Comecero and other contributors. Released under MIT license. See LICENSE for details.\n*/\n\n")).pipe(gulp.dest('./dist/'));
         done();
 
     });
