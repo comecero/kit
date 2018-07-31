@@ -1,4 +1,9 @@
-﻿<a name="1.0.9"></a>
+﻿<a name="1.0.10"></a>
+# 1.0.10
+
+- Update a cart or invoice to the latest version when a payment is made using a submit-payment directive
+
+<a name="1.0.9"></a>
 # 1.0.9
 
 - Send the user's app language selection with API calls so that API response messages match the selected app language.
