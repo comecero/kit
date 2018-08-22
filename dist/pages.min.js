@@ -1,6 +1,6 @@
 /*
 Comecero Kit version: ﻿1.0.10
-Build time: 2018-08-17T21:17:40.715Z
+Build time: 2018-08-22T16:53:51.659Z
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.

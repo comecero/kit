@@ -1,6 +1,6 @@
 /*
 Comecero Kit version: ﻿1.0.10
-Build time: 2018-08-17T21:17:40.715Z
+Build time: 2018-08-22T16:53:51.659Z
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -3915,13 +3915,17 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
         templateUrl: "app/templates/fields.html",
         scope: {
             fieldlist: '=',
-            sale: '='
+            sale: '=',
+            appSettings: '=',
+            appStyle: '='
         },
         link: function (scope, elem, attrs, ctrl) {
 
             // Shared scope:
             // fieldlist: The list of field configurations
             // sale: The cart or invoice
+            // appSettings: The app settings as delivered through settings/app.js (or .json)
+            // appStyle: The app style as delivered through settings/style.js (or .json)
 
             // The fieldlist will be supplied as a JSON string that must be parsed into an object.
             scope.fields = [];

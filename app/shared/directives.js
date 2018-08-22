@@ -2601,13 +2601,17 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
         templateUrl: "app/templates/fields.html",
         scope: {
             fieldlist: '=',
-            sale: '='
+            sale: '=',
+            appSettings: '=',
+            appStyle: '='
         },
         link: function (scope, elem, attrs, ctrl) {
 
             // Shared scope:
             // fieldlist: The list of field configurations
             // sale: The cart or invoice
+            // appSettings: The app settings as delivered through settings/app.js (or .json)
+            // appStyle: The app style as delivered through settings/style.js (or .json)
 
             // The fieldlist will be supplied as a JSON string that must be parsed into an object.
             scope.fields = [];
