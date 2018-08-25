@@ -3243,7 +3243,39 @@ app.directive('hidePlaceholder', function () {
         },
         link: function (scope, elem, attrs, ctrl) {
             if (scope.hidePlaceholder && elem[0].getAttribute("placeholder")) {
+                
                 elem[0].removeAttribute("placeholder");
+
+                arr = elem[0].className.split(" ");
+                var name = "hide-placeholder";
+                if (arr.indexOf(name) == -1) {
+                    elem[0].className += " " + name;
+                }
+
+                // The translation filter can replace the removed placeholder, so we are going to allow the placeholder text to be made invisible by adding a hidden-placeholder class to the element.
+                // The application will need to add the following CSS make use of the hidden-placeholder class:
+
+                //  /* WebKit, Blink, Edge */
+                //  .hide-placeholder.hidden-placeholder::-webkit-input-placeholder { color: transparent; opacity: 0 }
+
+                //  /* Mozilla Firefox 4 to 18 */
+                //  .hide-placeholder:-moz-placeholder { color: transparent; opacity: 0; }
+
+                //  /* Mozilla Firefox 19+ */
+                //  .hide-placeholder::-moz-placeholder { color: transparent; opacity: 0; }
+
+                //  /* Internet Explorer 10-11 */
+                //  .hide-placeholder:-ms-input-placeholder { color: transparent; opacity: 0 }
+
+                //  /* Microsoft Edge */
+                //  .hide-placeholder::-ms-input-placeholder { color: transparent; opacity: 0 }
+
+                //  /* Most modern browsers */
+                //  .hide-placeholder::placeholder { color: transparent; opacity: 0 }
+
+                // The line below is the same as the rules above, just in a single line for easy portability.
+                // .hide-placeholder::-webkit-input-placeholder{color:transparent;opacity:0}.hide-placeholder:-moz-placeholder{color:transparent;opacity:0}.hide-placeholder::-moz-placeholder{color:transparent;opacity:0}.hide-placeholder:-ms-input-placeholder{color:transparent;opacity:0}.hide-placeholder::-ms-input-placeholder{color:transparent;opacity:0}.hide-placeholder::placeholder{color:transparent;opacity:0}
+
             }
         }
     };
