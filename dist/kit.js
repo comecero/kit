@@ -1,6 +1,6 @@
 /*
 Comecero Kit version: ﻿1.0.10
-Build time: 2018-08-22T16:53:51.659Z
+Build time: 2018-08-25T01:02:10.840Z
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -2476,27 +2476,40 @@ app.directive('customerCountries', ['GeoService', '$timeout', function (GeoServi
     return {
         restrict: 'A',
         require: "ngModel",
+        scope: {
+            customerCountries: '=?'
+        },
         link: function (scope, elem, attrs, ctrl) {
 
             // Attributes
             // customerCountries: A list of allowed customer countries
+            // placeholderName: A value to display as the "empty" option, rather than leaving blank.
 
-            scope.$watch(attrs.customerCountries, function (customerCountries, oldValue) {
+            scope.$watch("customerCountries", function (customerCountries, oldValue) {
 
                 if (customerCountries) {
 
                     var elemNg = angular.element(elem[0]);
 
-                    // Clear any previous options
-                    elemNg.html("");
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1 ; i >= 0 ; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
+
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
 
                     // Get the entire list of countries
                     var countries = GeoService.getData().countries;
 
                     countries = _.filter(countries, function (country) { return customerCountries.indexOf(country.code) > -1; });
-
-                    // Insert a blank at the top
-                    elemNg.append("<option></option>");
 
                     // Get the value
                     var value = ctrl.$viewValue || ctrl.$modelValue;
@@ -2506,7 +2519,7 @@ app.directive('customerCountries', ['GeoService', '$timeout', function (GeoServi
 
                     _.each(countries, function (item) {
 
-                        var option = '<option value="' + item.code + '"';
+                        var option = '<option class="select-options-color" value="' + item.code + '"';
                         if (item.code == value) {
                             option += " selected";
                             match = true;
@@ -4536,6 +4549,20 @@ app.directive('amazonPayWidgetRefresh', ['gettextCatalog', function (gettextCata
     };
 }]);
 
+app.directive('hidePlaceholder', function () {
+    return {
+        restrict: 'A',
+        scope: {
+            hidePlaceholder: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+            if (scope.hidePlaceholder && elem[0].getAttribute("placeholder")) {
+                elem[0].removeAttribute("placeholder");
+            }
+        }
+    };
+});
+
 
 app.factory('appCache', ['$cacheFactory', function ($cacheFactory) {
         return $cacheFactory('appCache');
@@ -6407,8 +6434,22 @@ app.service("SettingsService", [function ($http, $q) {
             return appSettings;
         };
 
+        // Get style settings
+        var getStyleSettings = function () {
+
+            var styleSettings = {};
+
+            if (window.__settings) {
+                if (window.__settings.style) {
+                    styleSettings = window.__settings.style;
+                }
+            }
+
+            return styleSettings;
+        };
+
         // Build and return the settings object
-        var settings = { account: getAccountSettings(), app: getAppSettings(), config: {} };
+        var settings = { account: getAccountSettings(), app: getAppSettings(), style: getStyleSettings(), config: {} };
 
         // Define the api prefix
         settings.config.apiPrefix = "/api/v1";
@@ -6416,7 +6457,7 @@ app.service("SettingsService", [function ($http, $q) {
         settings.config.development = false;
 
         // For convenience, if you place a development flag in either one of the settings stubs (during local development), the app will be marked as running in development mode.
-        if (settings.account.development || settings.app.development) {
+        if (settings.account.development || settings.app.development || settings.style.development) {
 
             settings.config.development = true;
 

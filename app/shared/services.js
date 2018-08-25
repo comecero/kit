@@ -1841,8 +1841,22 @@ app.service("SettingsService", [function ($http, $q) {
             return appSettings;
         };
 
+        // Get style settings
+        var getStyleSettings = function () {
+
+            var styleSettings = {};
+
+            if (window.__settings) {
+                if (window.__settings.style) {
+                    styleSettings = window.__settings.style;
+                }
+            }
+
+            return styleSettings;
+        };
+
         // Build and return the settings object
-        var settings = { account: getAccountSettings(), app: getAppSettings(), config: {} };
+        var settings = { account: getAccountSettings(), app: getAppSettings(), style: getStyleSettings(), config: {} };
 
         // Define the api prefix
         settings.config.apiPrefix = "/api/v1";
@@ -1850,7 +1864,7 @@ app.service("SettingsService", [function ($http, $q) {
         settings.config.development = false;
 
         // For convenience, if you place a development flag in either one of the settings stubs (during local development), the app will be marked as running in development mode.
-        if (settings.account.development || settings.app.development) {
+        if (settings.account.development || settings.app.development || settings.style.development) {
 
             settings.config.development = true;
 
