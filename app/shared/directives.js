@@ -2326,17 +2326,26 @@ app.directive('selectStateProv', ['GeoService', '$timeout', function (GeoService
 
                     var elemNg = angular.element(elem[0]);
 
-                    // Clear any previous options
-                    elemNg.html("");
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1; i >= 0; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
 
-                    // Add a blank
-                    elemNg.append("<option></option>");
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
 
                     var value = ctrl.$viewValue || ctrl.$modelValue;
                     var hasSelected = false;
 
                     _.each(statesProvs, function (stateProv) {
-                        var option = '<option value="' + stateProv.code + '"';
+                        var option = '<option class="select-options-color" value="' + stateProv.code + '"';
                         if (value == stateProv.code) {
                             option += " selected";
                             hasSelected = true;
@@ -3280,4 +3289,55 @@ app.directive('hidePlaceholder', function () {
         }
     };
 });
+
+app.directive('selectNumbers', ['GeoService', '$timeout', function (GeoService, $timeout) {
+
+    return {
+        restrict: 'A',
+        scope: {
+            start: '=?',
+            end: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+
+            // Attributes
+            // start: The starting number in the range
+            // end: The ending number in the range
+            // minLength: If less than this length, the number will be padded with leading zeros.
+
+            scope.$watchGroup(['start', 'end'], function (newValues, oldValues) {
+
+                if (newValues[0] && newValues[1]) {
+
+                    var elemNg = angular.element(elem[0]);
+
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1 ; i >= 0 ; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
+
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
+
+                    for (var i = newValues[0]; i < newValues[1]; i++) {
+                        var display = i;
+                        if (attrs.minLength && String(i).length < Number(attrs.minLength)) {
+                            display = utils.right(("0" + i), 2);
+                        }
+                        var option = '<option class="select-options-color" value="' + i + '">' + display + '</option>';
+                        elemNg.append(option);
+                    }
+                }
+
+            });
+        }
+    };
+}]);
 

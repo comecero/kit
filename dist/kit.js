@@ -1,6 +1,6 @@
 /*
 Comecero Kit version: ﻿1.0.10
-Build time: 2018-08-25T15:51:10.573Z
+Build time: 2018-08-25T23:11:22.032Z
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -1939,12 +1939,347 @@ angular.module('gettext').factory('gettextUtil', function gettextUtil() {
 var duScrollDefaultEasing = function (e) { "use strict"; return .5 > e ? Math.pow(2 * e, 2) / 2 : 1 - Math.pow(2 * (1 - e), 2) / 2 }; angular.module("duScroll", ["duScroll.scrollspy", "duScroll.smoothScroll", "duScroll.scrollContainer", "duScroll.spyContext", "duScroll.scrollHelpers"]).value("duScrollDuration", 350).value("duScrollSpyWait", 100).value("duScrollGreedy", !1).value("duScrollOffset", 0).value("duScrollEasing", duScrollDefaultEasing).value("duScrollCancelOnEvents", "scroll mousedown mousewheel touchmove keydown").value("duScrollBottomSpy", !1).value("duScrollActiveClass", "active"), angular.module("duScroll.scrollHelpers", ["duScroll.requestAnimation"]).run(["$window", "$q", "cancelAnimation", "requestAnimation", "duScrollEasing", "duScrollDuration", "duScrollOffset", "duScrollCancelOnEvents", function (e, t, n, r, o, l, u, i) { "use strict"; var c = {}, a = function (e) { return "undefined" != typeof HTMLDocument && e instanceof HTMLDocument || e.nodeType && e.nodeType === e.DOCUMENT_NODE }, s = function (e) { return "undefined" != typeof HTMLElement && e instanceof HTMLElement || e.nodeType && e.nodeType === e.ELEMENT_NODE }, d = function (e) { return s(e) || a(e) ? e : e[0] }; c.duScrollTo = function (t, n, r, o) { var l; if (angular.isElement(t) ? l = this.duScrollToElement : angular.isDefined(r) && (l = this.duScrollToAnimated), l) return l.apply(this, arguments); var u = d(this); return a(u) ? e.scrollTo(t, n) : (u.scrollLeft = t, void (u.scrollTop = n)) }; var f, p; c.duScrollToAnimated = function (e, l, u, c) { u && !c && (c = o); var a = this.duScrollLeft(), s = this.duScrollTop(), d = Math.round(e - a), m = Math.round(l - s), S = null, g = 0, h = this, v = function (e) { (!e || g && e.which > 0) && (i && h.unbind(i, v), n(f), p.reject(), f = null) }; if (f && v(), p = t.defer(), 0 === u || !d && !m) return 0 === u && h.duScrollTo(e, l), p.resolve(), p.promise; var y = function (e) { null === S && (S = e), g = e - S; var t = g >= u ? 1 : c(g / u); h.scrollTo(a + Math.ceil(d * t), s + Math.ceil(m * t)), 1 > t ? f = r(y) : (i && h.unbind(i, v), f = null, p.resolve()) }; return h.duScrollTo(a, s), i && h.bind(i, v), f = r(y), p.promise }, c.duScrollToElement = function (e, t, n, r) { var o = d(this); (!angular.isNumber(t) || isNaN(t)) && (t = u); var l = this.duScrollTop() + d(e).getBoundingClientRect().top - t; return s(o) && (l -= o.getBoundingClientRect().top), this.duScrollTo(0, l, n, r) }, c.duScrollLeft = function (t, n, r) { if (angular.isNumber(t)) return this.duScrollTo(t, this.duScrollTop(), n, r); var o = d(this); return a(o) ? e.scrollX || document.documentElement.scrollLeft || document.body.scrollLeft : o.scrollLeft }, c.duScrollTop = function (t, n, r) { if (angular.isNumber(t)) return this.duScrollTo(this.duScrollLeft(), t, n, r); var o = d(this); return a(o) ? e.scrollY || document.documentElement.scrollTop || document.body.scrollTop : o.scrollTop }, c.duScrollToElementAnimated = function (e, t, n, r) { return this.duScrollToElement(e, t, n || l, r) }, c.duScrollTopAnimated = function (e, t, n) { return this.duScrollTop(e, t || l, n) }, c.duScrollLeftAnimated = function (e, t, n) { return this.duScrollLeft(e, t || l, n) }, angular.forEach(c, function (e, t) { angular.element.prototype[t] = e; var n = t.replace(/^duScroll/, "scroll"); angular.isUndefined(angular.element.prototype[n]) && (angular.element.prototype[n] = e) }) }]), angular.module("duScroll.polyfill", []).factory("polyfill", ["$window", function (e) { "use strict"; var t = ["webkit", "moz", "o", "ms"]; return function (n, r) { if (e[n]) return e[n]; for (var o, l = n.substr(0, 1).toUpperCase() + n.substr(1), u = 0; u < t.length; u++) if (o = t[u] + l, e[o]) return e[o]; return r } }]), angular.module("duScroll.requestAnimation", ["duScroll.polyfill"]).factory("requestAnimation", ["polyfill", "$timeout", function (e, t) { "use strict"; var n = 0, r = function (e, r) { var o = (new Date).getTime(), l = Math.max(0, 16 - (o - n)), u = t(function () { e(o + l) }, l); return n = o + l, u }; return e("requestAnimationFrame", r) }]).factory("cancelAnimation", ["polyfill", "$timeout", function (e, t) { "use strict"; var n = function (e) { t.cancel(e) }; return e("cancelAnimationFrame", n) }]), angular.module("duScroll.spyAPI", ["duScroll.scrollContainerAPI"]).factory("spyAPI", ["$rootScope", "$timeout", "$window", "$document", "scrollContainerAPI", "duScrollGreedy", "duScrollSpyWait", "duScrollBottomSpy", "duScrollActiveClass", function (e, t, n, r, o, l, u, i, c) { "use strict"; var a = function (o) { var a = !1, s = !1, d = function () { s = !1; var t, u = o.container, a = u[0], d = 0; "undefined" != typeof HTMLElement && a instanceof HTMLElement || a.nodeType && a.nodeType === a.ELEMENT_NODE ? (d = a.getBoundingClientRect().top, t = Math.round(a.scrollTop + a.clientHeight) >= a.scrollHeight) : t = Math.round(n.pageYOffset + n.innerHeight) >= r[0].body.scrollHeight; var f, p, m, S, g, h, v = i && t ? "bottom" : "top"; for (S = o.spies, p = o.currentlyActive, m = void 0, f = 0; f < S.length; f++) g = S[f], h = g.getTargetPosition(), h && (i && t || h.top + g.offset - d < 20 && (l || -1 * h.top + d) < h.height) && (!m || m[v] < h[v]) && (m = { spy: g }, m[v] = h[v]); m && (m = m.spy), p === m || l && !m || (p && (p.$element.removeClass(c), e.$broadcast("duScrollspy:becameInactive", p.$element, angular.element(p.getTargetElement()))), m && (m.$element.addClass(c), e.$broadcast("duScrollspy:becameActive", m.$element, angular.element(m.getTargetElement()))), o.currentlyActive = m) }; return u ? function () { a ? s = !0 : (d(), a = t(function () { a = !1, s && d() }, u, !1)) } : d }, s = {}, d = function (e) { var t = e.$id, n = { spies: [] }; return n.handler = a(n), s[t] = n, e.$on("$destroy", function () { f(e) }), t }, f = function (e) { var t = e.$id, n = s[t], r = n.container; r && r.off("scroll", n.handler), delete s[t] }, p = d(e), m = function (e) { return s[e.$id] ? s[e.$id] : e.$parent ? m(e.$parent) : s[p] }, S = function (e) { var t, n, r = e.$scope; if (r) return m(r); for (n in s) if (t = s[n], -1 !== t.spies.indexOf(e)) return t }, g = function (e) { for (; e.parentNode;) if (e = e.parentNode, e === document) return !0; return !1 }, h = function (e) { var t = S(e); t && (t.spies.push(e), t.container && g(t.container) || (t.container && t.container.off("scroll", t.handler), t.container = o.getContainer(e.$scope), t.container.on("scroll", t.handler).triggerHandler("scroll"))) }, v = function (e) { var t = S(e); e === t.currentlyActive && (t.currentlyActive = null); var n = t.spies.indexOf(e); -1 !== n && t.spies.splice(n, 1), e.$element = null }; return { addSpy: h, removeSpy: v, createContext: d, destroyContext: f, getContextForScope: m } }]), angular.module("duScroll.scrollContainerAPI", []).factory("scrollContainerAPI", ["$document", function (e) { "use strict"; var t = {}, n = function (e, n) { var r = e.$id; return t[r] = n, r }, r = function (e) { return t[e.$id] ? e.$id : e.$parent ? r(e.$parent) : void 0 }, o = function (n) { var o = r(n); return o ? t[o] : e }, l = function (e) { var n = r(e); n && delete t[n] }; return { getContainerId: r, getContainer: o, setContainer: n, removeContainer: l } }]), angular.module("duScroll.smoothScroll", ["duScroll.scrollHelpers", "duScroll.scrollContainerAPI"]).directive("duSmoothScroll", ["duScrollDuration", "duScrollOffset", "scrollContainerAPI", function (e, t, n) { "use strict"; return { link: function (r, o, l) { o.on("click", function (o) { if (l.href && -1 !== l.href.indexOf("#") || "" !== l.duSmoothScroll) { var u = l.href ? l.href.replace(/.*(?=#[^\s]+$)/, "").substring(1) : l.duSmoothScroll, i = document.getElementById(u) || document.getElementsByName(u)[0]; if (i && i.getBoundingClientRect) { o.stopPropagation && o.stopPropagation(), o.preventDefault && o.preventDefault(); var c = l.offset ? parseInt(l.offset, 10) : t, a = l.duration ? parseInt(l.duration, 10) : e, s = n.getContainer(r); s.duScrollToElement(angular.element(i), isNaN(c) ? 0 : c, isNaN(a) ? 0 : a) } } }) } } }]), angular.module("duScroll.spyContext", ["duScroll.spyAPI"]).directive("duSpyContext", ["spyAPI", function (e) { "use strict"; return { restrict: "A", scope: !0, compile: function (t, n, r) { return { pre: function (t, n, r, o) { e.createContext(t) } } } } }]), angular.module("duScroll.scrollContainer", ["duScroll.scrollContainerAPI"]).directive("duScrollContainer", ["scrollContainerAPI", function (e) { "use strict"; return { restrict: "A", scope: !0, compile: function (t, n, r) { return { pre: function (t, n, r, o) { r.$observe("duScrollContainer", function (r) { angular.isString(r) && (r = document.getElementById(r)), r = angular.isElement(r) ? angular.element(r) : n, e.setContainer(t, r), t.$on("$destroy", function () { e.removeContainer(t) }) }) } } } } }]), angular.module("duScroll.scrollspy", ["duScroll.spyAPI"]).directive("duScrollspy", ["spyAPI", "duScrollOffset", "$timeout", "$rootScope", function (e, t, n, r) { "use strict"; var o = function (e, t, n, r) { angular.isElement(e) ? this.target = e : angular.isString(e) && (this.targetId = e), this.$scope = t, this.$element = n, this.offset = r }; return o.prototype.getTargetElement = function () { return !this.target && this.targetId && (this.target = document.getElementById(this.targetId) || document.getElementsByName(this.targetId)[0]), this.target }, o.prototype.getTargetPosition = function () { var e = this.getTargetElement(); return e ? e.getBoundingClientRect() : void 0 }, o.prototype.flushTargetCache = function () { this.targetId && (this.target = void 0) }, { link: function (l, u, i) { var c, a = i.ngHref || i.href; if (a && -1 !== a.indexOf("#") ? c = a.replace(/.*(?=#[^\s]+$)/, "").substring(1) : i.duScrollspy ? c = i.duScrollspy : i.duSmoothScroll && (c = i.duSmoothScroll), c) { var s = n(function () { var n = new o(c, l, u, -(i.offset ? parseInt(i.offset, 10) : t)); e.addSpy(n), l.$on("$locationChangeSuccess", n.flushTargetCache.bind(n)); var a = r.$on("$stateChangeSuccess", n.flushTargetCache.bind(n)); l.$on("$destroy", function () { e.removeSpy(n), a() }) }, 0, !1); l.$on("$destroy", function () { n.cancel(s) }) } } } }]);
 //# sourceMappingURL=angular-scroll.min.js.map
 /*! 
- * angular-loading-bar v0.8.0
+ * angular-loading-bar v0.9.0
  * https://chieffancypants.github.io/angular-loading-bar
- * Copyright (c) 2015 Wes Cruver
+ * Copyright (c) 2016 Wes Cruver
  * License: MIT
  */
-!function(){"use strict";angular.module("angular-loading-bar",["cfp.loadingBarInterceptor"]),angular.module("chieffancypants.loadingBar",["cfp.loadingBarInterceptor"]),angular.module("cfp.loadingBarInterceptor",["cfp.loadingBar"]).config(["$httpProvider",function(a){var b=["$q","$cacheFactory","$timeout","$rootScope","$log","cfpLoadingBar",function(b,c,d,e,f,g){function h(){d.cancel(j),g.complete(),l=0,k=0}function i(b){var d,e=c.get("$http"),f=a.defaults;!b.cache&&!f.cache||b.cache===!1||"GET"!==b.method&&"JSONP"!==b.method||(d=angular.isObject(b.cache)?b.cache:angular.isObject(f.cache)?f.cache:e);var g=void 0!==d?void 0!==d.get(b.url):!1;return void 0!==b.cached&&g!==b.cached?b.cached:(b.cached=g,g)}var j,k=0,l=0,m=g.latencyThreshold;return{request:function(a){return a.ignoreLoadingBar||i(a)||(e.$broadcast("cfpLoadingBar:loading",{url:a.url}),0===k&&(j=d(function(){g.start()},m)),k++,g.set(l/k)),a},response:function(a){return a&&a.config?(a.config.ignoreLoadingBar||i(a.config)||(l++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url,result:a}),l>=k?h():g.set(l/k)),a):(f.error("Broken interceptor detected: Config object not supplied in response:\n https://github.com/chieffancypants/angular-loading-bar/pull/50"),a)},responseError:function(a){return a&&a.config?(a.config.ignoreLoadingBar||i(a.config)||(l++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url,result:a}),l>=k?h():g.set(l/k)),b.reject(a)):(f.error("Broken interceptor detected: Config object not supplied in rejection:\n https://github.com/chieffancypants/angular-loading-bar/pull/50"),b.reject(a))}}}];a.interceptors.push(b)}]),angular.module("cfp.loadingBar",[]).provider("cfpLoadingBar",function(){this.autoIncrement=!0,this.includeSpinner=!0,this.includeBar=!0,this.latencyThreshold=100,this.startSize=.02,this.parentSelector="body",this.spinnerTemplate='<div id="loading-bar-spinner"><div class="spinner-icon"></div></div>',this.loadingBarTemplate='<div id="loading-bar"><div class="bar"><div class="peg"></div></div></div>',this.$get=["$injector","$document","$timeout","$rootScope",function(a,b,c,d){function e(){k||(k=a.get("$animate"));var e=b.find(n).eq(0);c.cancel(m),r||(d.$broadcast("cfpLoadingBar:started"),r=!0,v&&k.enter(o,e,angular.element(e[0].lastChild)),u&&k.enter(q,e,angular.element(e[0].lastChild)),f(w))}function f(a){if(r){var b=100*a+"%";p.css("width",b),s=a,t&&(c.cancel(l),l=c(function(){g()},250))}}function g(){if(!(h()>=1)){var a=0,b=h();a=b>=0&&.25>b?(3*Math.random()+3)/100:b>=.25&&.65>b?3*Math.random()/100:b>=.65&&.9>b?2*Math.random()/100:b>=.9&&.99>b?.005:0;var c=h()+a;f(c)}}function h(){return s}function i(){s=0,r=!1}function j(){k||(k=a.get("$animate")),d.$broadcast("cfpLoadingBar:completed"),f(1),c.cancel(m),m=c(function(){var a=k.leave(o,i);a&&a.then&&a.then(i),k.leave(q)},500)}var k,l,m,n=this.parentSelector,o=angular.element(this.loadingBarTemplate),p=o.find("div").eq(0),q=angular.element(this.spinnerTemplate),r=!1,s=0,t=this.autoIncrement,u=this.includeSpinner,v=this.includeBar,w=this.startSize;return{start:e,set:f,status:h,inc:g,complete:j,autoIncrement:this.autoIncrement,includeSpinner:this.includeSpinner,latencyThreshold:this.latencyThreshold,parentSelector:this.parentSelector,startSize:this.startSize}}]})}();
+/*
+ * angular-loading-bar
+ *
+ * intercepts XHR requests and creates a loading bar.
+ * Based on the excellent nprogress work by rstacruz (more info in readme)
+ *
+ * (c) 2013 Wes Cruver
+ * License: MIT
+ */
+
+
+(function() {
+
+'use strict';
+
+// Alias the loading bar for various backwards compatibilities since the project has matured:
+angular.module('angular-loading-bar', ['cfp.loadingBarInterceptor']);
+angular.module('chieffancypants.loadingBar', ['cfp.loadingBarInterceptor']);
+
+
+/**
+ * loadingBarInterceptor service
+ *
+ * Registers itself as an Angular interceptor and listens for XHR requests.
+ */
+angular.module('cfp.loadingBarInterceptor', ['cfp.loadingBar'])
+  .config(['$httpProvider', function ($httpProvider) {
+
+    var interceptor = ['$q', '$cacheFactory', '$timeout', '$rootScope', '$log', 'cfpLoadingBar', function ($q, $cacheFactory, $timeout, $rootScope, $log, cfpLoadingBar) {
+
+      /**
+       * The total number of requests made
+       */
+      var reqsTotal = 0;
+
+      /**
+       * The number of requests completed (either successfully or not)
+       */
+      var reqsCompleted = 0;
+
+      /**
+       * The amount of time spent fetching before showing the loading bar
+       */
+      var latencyThreshold = cfpLoadingBar.latencyThreshold;
+
+      /**
+       * $timeout handle for latencyThreshold
+       */
+      var startTimeout;
+
+
+      /**
+       * calls cfpLoadingBar.complete() which removes the
+       * loading bar from the DOM.
+       */
+      function setComplete() {
+        $timeout.cancel(startTimeout);
+        cfpLoadingBar.complete();
+        reqsCompleted = 0;
+        reqsTotal = 0;
+      }
+
+      /**
+       * Determine if the response has already been cached
+       * @param  {Object}  config the config option from the request
+       * @return {Boolean} retrns true if cached, otherwise false
+       */
+      function isCached(config) {
+        var cache;
+        var defaultCache = $cacheFactory.get('$http');
+        var defaults = $httpProvider.defaults;
+
+        // Choose the proper cache source. Borrowed from angular: $http service
+        if ((config.cache || defaults.cache) && config.cache !== false &&
+          (config.method === 'GET' || config.method === 'JSONP')) {
+            cache = angular.isObject(config.cache) ? config.cache
+              : angular.isObject(defaults.cache) ? defaults.cache
+              : defaultCache;
+        }
+
+        var cached = cache !== undefined ?
+          cache.get(config.url) !== undefined : false;
+
+        if (config.cached !== undefined && cached !== config.cached) {
+          return config.cached;
+        }
+        config.cached = cached;
+        return cached;
+      }
+
+
+      return {
+        'request': function(config) {
+          // Check to make sure this request hasn't already been cached and that
+          // the requester didn't explicitly ask us to ignore this request:
+          if (!config.ignoreLoadingBar && !isCached(config)) {
+            $rootScope.$broadcast('cfpLoadingBar:loading', {url: config.url});
+            if (reqsTotal === 0) {
+              startTimeout = $timeout(function() {
+                cfpLoadingBar.start();
+              }, latencyThreshold);
+            }
+            reqsTotal++;
+            cfpLoadingBar.set(reqsCompleted / reqsTotal);
+          }
+          return config;
+        },
+
+        'response': function(response) {
+          if (!response || !response.config) {
+            $log.error('Broken interceptor detected: Config object not supplied in response:\n https://github.com/chieffancypants/angular-loading-bar/pull/50');
+            return response;
+          }
+
+          if (!response.config.ignoreLoadingBar && !isCached(response.config)) {
+            reqsCompleted++;
+            $rootScope.$broadcast('cfpLoadingBar:loaded', {url: response.config.url, result: response});
+            if (reqsCompleted >= reqsTotal) {
+              setComplete();
+            } else {
+              cfpLoadingBar.set(reqsCompleted / reqsTotal);
+            }
+          }
+          return response;
+        },
+
+        'responseError': function(rejection) {
+          if (!rejection || !rejection.config) {
+            $log.error('Broken interceptor detected: Config object not supplied in rejection:\n https://github.com/chieffancypants/angular-loading-bar/pull/50');
+            return $q.reject(rejection);
+          }
+
+          if (!rejection.config.ignoreLoadingBar && !isCached(rejection.config)) {
+            reqsCompleted++;
+            $rootScope.$broadcast('cfpLoadingBar:loaded', {url: rejection.config.url, result: rejection});
+            if (reqsCompleted >= reqsTotal) {
+              setComplete();
+            } else {
+              cfpLoadingBar.set(reqsCompleted / reqsTotal);
+            }
+          }
+          return $q.reject(rejection);
+        }
+      };
+    }];
+
+    $httpProvider.interceptors.push(interceptor);
+  }]);
+
+
+/**
+ * Loading Bar
+ *
+ * This service handles adding and removing the actual element in the DOM.
+ * Generally, best practices for DOM manipulation is to take place in a
+ * directive, but because the element itself is injected in the DOM only upon
+ * XHR requests, and it's likely needed on every view, the best option is to
+ * use a service.
+ */
+angular.module('cfp.loadingBar', [])
+  .provider('cfpLoadingBar', function() {
+
+    this.autoIncrement = true;
+    this.includeSpinner = true;
+    this.includeBar = true;
+    this.latencyThreshold = 100;
+    this.startSize = 0.02;
+    this.parentSelector = 'body';
+    this.spinnerTemplate = '<div id="loading-bar-spinner"><div class="spinner-icon"></div></div>';
+    this.loadingBarTemplate = '<div id="loading-bar"><div class="bar"><div class="peg"></div></div></div>';
+
+    this.$get = ['$injector', '$document', '$timeout', '$rootScope', function ($injector, $document, $timeout, $rootScope) {
+      var $animate;
+      var $parentSelector = this.parentSelector,
+        loadingBarContainer = angular.element(this.loadingBarTemplate),
+        loadingBar = loadingBarContainer.find('div').eq(0),
+        spinner = angular.element(this.spinnerTemplate);
+
+      var incTimeout,
+        completeTimeout,
+        started = false,
+        status = 0;
+
+      var autoIncrement = this.autoIncrement;
+      var includeSpinner = this.includeSpinner;
+      var includeBar = this.includeBar;
+      var startSize = this.startSize;
+
+      /**
+       * Inserts the loading bar element into the dom, and sets it to 2%
+       */
+      function _start() {
+        if (!$animate) {
+          $animate = $injector.get('$animate');
+        }
+
+        $timeout.cancel(completeTimeout);
+
+        // do not continually broadcast the started event:
+        if (started) {
+          return;
+        }
+
+        var document = $document[0];
+        var parent = document.querySelector ?
+          document.querySelector($parentSelector)
+          : $document.find($parentSelector)[0]
+        ;
+
+        if (! parent) {
+          parent = document.getElementsByTagName('body')[0];
+        }
+
+        var $parent = angular.element(parent);
+        var $after = parent.lastChild && angular.element(parent.lastChild);
+
+        $rootScope.$broadcast('cfpLoadingBar:started');
+        started = true;
+
+        if (includeBar) {
+          $animate.enter(loadingBarContainer, $parent, $after);
+        }
+
+        if (includeSpinner) {
+          $animate.enter(spinner, $parent, loadingBarContainer);
+        }
+
+        _set(startSize);
+      }
+
+      /**
+       * Set the loading bar's width to a certain percent.
+       *
+       * @param n any value between 0 and 1
+       */
+      function _set(n) {
+        if (!started) {
+          return;
+        }
+        var pct = (n * 100) + '%';
+        loadingBar.css('width', pct);
+        status = n;
+
+        // increment loadingbar to give the illusion that there is always
+        // progress but make sure to cancel the previous timeouts so we don't
+        // have multiple incs running at the same time.
+        if (autoIncrement) {
+          $timeout.cancel(incTimeout);
+          incTimeout = $timeout(function() {
+            _inc();
+          }, 250);
+        }
+      }
+
+      /**
+       * Increments the loading bar by a random amount
+       * but slows down as it progresses
+       */
+      function _inc() {
+        if (_status() >= 1) {
+          return;
+        }
+
+        var rnd = 0;
+
+        // TODO: do this mathmatically instead of through conditions
+
+        var stat = _status();
+        if (stat >= 0 && stat < 0.25) {
+          // Start out between 3 - 6% increments
+          rnd = (Math.random() * (5 - 3 + 1) + 3) / 100;
+        } else if (stat >= 0.25 && stat < 0.65) {
+          // increment between 0 - 3%
+          rnd = (Math.random() * 3) / 100;
+        } else if (stat >= 0.65 && stat < 0.9) {
+          // increment between 0 - 2%
+          rnd = (Math.random() * 2) / 100;
+        } else if (stat >= 0.9 && stat < 0.99) {
+          // finally, increment it .5 %
+          rnd = 0.005;
+        } else {
+          // after 99%, don't increment:
+          rnd = 0;
+        }
+
+        var pct = _status() + rnd;
+        _set(pct);
+      }
+
+      function _status() {
+        return status;
+      }
+
+      function _completeAnimation() {
+        status = 0;
+        started = false;
+      }
+
+      function _complete() {
+        if (!$animate) {
+          $animate = $injector.get('$animate');
+        }
+
+        $rootScope.$broadcast('cfpLoadingBar:completed');
+        _set(1);
+
+        $timeout.cancel(completeTimeout);
+
+        // Attempt to aggregate any start/complete calls within 500ms:
+        completeTimeout = $timeout(function() {
+          var promise = $animate.leave(loadingBarContainer, _completeAnimation);
+          if (promise && promise.then) {
+            promise.then(_completeAnimation);
+          }
+          $animate.leave(spinner);
+        }, 500);
+      }
+
+      return {
+        start            : _start,
+        set              : _set,
+        status           : _status,
+        inc              : _inc,
+        complete         : _complete,
+        autoIncrement    : this.autoIncrement,
+        includeSpinner   : this.includeSpinner,
+        latencyThreshold : this.latencyThreshold,
+        parentSelector   : this.parentSelector,
+        startSize        : this.startSize
+      };
+
+
+    }];     //
+  });       // wtf javascript. srsly
+})();       //
+
 (function (window) {
     'use strict';
     angular.module('tmh.dynamicLocale', []).provider('tmhDynamicLocale', function () {
@@ -4467,17 +4802,26 @@ app.directive('selectStateProv', ['GeoService', '$timeout', function (GeoService
 
                     var elemNg = angular.element(elem[0]);
 
-                    // Clear any previous options
-                    elemNg.html("");
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1; i >= 0; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
 
-                    // Add a blank
-                    elemNg.append("<option></option>");
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
 
                     var value = ctrl.$viewValue || ctrl.$modelValue;
                     var hasSelected = false;
 
                     _.each(statesProvs, function (stateProv) {
-                        var option = '<option value="' + stateProv.code + '"';
+                        var option = '<option class="select-options-color" value="' + stateProv.code + '"';
                         if (value == stateProv.code) {
                             option += " selected";
                             hasSelected = true;
@@ -5421,6 +5765,57 @@ app.directive('hidePlaceholder', function () {
         }
     };
 });
+
+app.directive('selectNumbers', ['GeoService', '$timeout', function (GeoService, $timeout) {
+
+    return {
+        restrict: 'A',
+        scope: {
+            start: '=?',
+            end: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+
+            // Attributes
+            // start: The starting number in the range
+            // end: The ending number in the range
+            // minLength: If less than this length, the number will be padded with leading zeros.
+
+            scope.$watchGroup(['start', 'end'], function (newValues, oldValues) {
+
+                if (newValues[0] && newValues[1]) {
+
+                    var elemNg = angular.element(elem[0]);
+
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1 ; i >= 0 ; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
+
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
+
+                    for (var i = newValues[0]; i < newValues[1]; i++) {
+                        var display = i;
+                        if (attrs.minLength && String(i).length < Number(attrs.minLength)) {
+                            display = utils.right(("0" + i), 2);
+                        }
+                        var option = '<option class="select-options-color" value="' + i + '">' + display + '</option>';
+                        elemNg.append(option);
+                    }
+                }
+
+            });
+        }
+    };
+}]);
 
 
 app.factory('appCache', ['$cacheFactory', function ($cacheFactory) {
