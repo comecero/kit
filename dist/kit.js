@@ -1,6 +1,7 @@
 /*
 Comecero Kit version: ﻿1.0.10
-Build time: 2018-08-25T23:11:22.032Z
+Build time: 2018-09-10T21:43:48.626Z
+Checksum (SHA256): aab51dfa8e5a4b5cb79db934f7dfb9bec7bb6289b97699848ac92c59e431ef58
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -3639,7 +3640,7 @@ app.directive('customerCountries', ['GeoService', '$timeout', function (GeoServi
         restrict: 'A',
         require: "ngModel",
         scope: {
-            customerCountries: '=?'
+            customerCountries: '=?' 
         },
         link: function (scope, elem, attrs, ctrl) {
 
@@ -7715,8 +7716,11 @@ app.service("SettingsService", [function ($http, $q) {
 
             settings.config.development = true;
 
+            var apiHost = settings.account.api_host || settings.app.api_host || settings.style.api_host || "api.comecero.com";
+            apiHost = "https://" + apiHost;
+
             // Make the apiPrefix a fully qualified url since requests in development mode don't have access to the reverse proxy.
-            settings.config.apiPrefix = "https://api.comecero.com" + settings.config.apiPrefix;
+            settings.config.apiPrefix = apiHost + settings.config.apiPrefix;
         }
 
         return settings;

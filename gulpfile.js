@@ -7,6 +7,7 @@ var sequence = require("run-sequence");
 var header = require('gulp-header');
 var zip = require('gulp-zip');
 var fs = require("fs");
+var crypto = require('crypto');
 
 // It is important that you include utilities.js first, run.js second and libraries/*.js third. After that, the order is not important.
 gulp.task("concat", function () {
@@ -43,9 +44,22 @@ gulp.task('dist', function (done) {
         // Read the version number
         var version = fs.readFileSync("./version.html", "utf8");
 
-        // Add headers with the release number to each of the distribution files.
-        gulp.src(['./dist/kit.js', './dist/kit.min.js', './dist/pages.js', './dist/pages.min.js']).pipe(header("/*\nComecero Kit version: " + version + "\nBuild time: " + new Date().toISOString() + "\nhttps://comecero.com\nhttps://github.com/comecero/kit\nCopyright Comecero and other contributors. Released under MIT license. See LICENSE for details.\n*/\n\n")).pipe(gulp.dest('./dist/'));
+        var files = ['./dist/kit.js', './dist/kit.min.js', './dist/pages.js', './dist/pages.min.js'];
+
+        files.forEach(function (file) {
+
+            // Get the contents of each file so you can calculate a checksum. This is useful to know for certain if two copies of the file contain the same contents.
+            const sign = crypto.createSign('SHA256');
+            var contents = fs.readFileSync(file, 'utf8');
+            var sha256 = crypto.createHash('sha256').update(contents).digest("hex");
+
+            // Add headers with the release number to each of the distribution files.
+            gulp.src([file]).pipe(header("/*\nComecero Kit version: " + version + "\nBuild time: " + new Date().toISOString() + "\nChecksum (SHA256): " + sha256 + "\nhttps://comecero.com\nhttps://github.com/comecero/kit\nCopyright Comecero and other contributors. Released under MIT license. See LICENSE for details.\n*/\n\n")).pipe(gulp.dest('./dist/'));
+
+        });
+
         done();
+
 
     });
 });
