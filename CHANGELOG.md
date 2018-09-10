@@ -1,4 +1,12 @@
-﻿<a name="1.0.10"></a>
+﻿<a name="1.0.11"></a>
+# 1.0.11
+
+- Expose user style selections through SettingsService so they can be passed into consuming apps.
+- Add directive to support form entry labels as placeholders, including the option to hide them, based on user input settings.
+- Update angular-loading-bar to latest version, expose CSS to allow user override of default colors.
+- Translation updates
+
+<a name="1.0.10"></a>
 # 1.0.10
 
 - Update a cart or invoice to the latest version when a payment is made using a submit-payment directive
