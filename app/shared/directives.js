@@ -1162,27 +1162,40 @@ app.directive('customerCountries', ['GeoService', '$timeout', function (GeoServi
     return {
         restrict: 'A',
         require: "ngModel",
+        scope: {
+            customerCountries: '=?'
+        },
         link: function (scope, elem, attrs, ctrl) {
 
             // Attributes
             // customerCountries: A list of allowed customer countries
+            // placeholderName: A value to display as the "empty" option, rather than leaving blank.
 
-            scope.$watch(attrs.customerCountries, function (customerCountries, oldValue) {
+            scope.$watch("customerCountries", function (customerCountries, oldValue) {
 
                 if (customerCountries) {
 
                     var elemNg = angular.element(elem[0]);
 
-                    // Clear any previous options
-                    elemNg.html("");
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1 ; i >= 0 ; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
+
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
 
                     // Get the entire list of countries
                     var countries = GeoService.getData().countries;
 
                     countries = _.filter(countries, function (country) { return customerCountries.indexOf(country.code) > -1; });
-
-                    // Insert a blank at the top
-                    elemNg.append("<option></option>");
 
                     // Get the value
                     var value = ctrl.$viewValue || ctrl.$modelValue;
@@ -1192,7 +1205,7 @@ app.directive('customerCountries', ['GeoService', '$timeout', function (GeoServi
 
                     _.each(countries, function (item) {
 
-                        var option = '<option value="' + item.code + '"';
+                        var option = '<option class="select-options-color" value="' + item.code + '"';
                         if (item.code == value) {
                             option += " selected";
                             match = true;
@@ -2313,17 +2326,26 @@ app.directive('selectStateProv', ['GeoService', '$timeout', function (GeoService
 
                     var elemNg = angular.element(elem[0]);
 
-                    // Clear any previous options
-                    elemNg.html("");
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1; i >= 0; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
 
-                    // Add a blank
-                    elemNg.append("<option></option>");
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
 
                     var value = ctrl.$viewValue || ctrl.$modelValue;
                     var hasSelected = false;
 
                     _.each(statesProvs, function (stateProv) {
-                        var option = '<option value="' + stateProv.code + '"';
+                        var option = '<option class="select-options-color" value="' + stateProv.code + '"';
                         if (value == stateProv.code) {
                             option += " selected";
                             hasSelected = true;
@@ -2601,13 +2623,17 @@ app.directive('fields', ['CartService', 'InvoiceService', '$timeout', '$rootScop
         templateUrl: "app/templates/fields.html",
         scope: {
             fieldlist: '=',
-            sale: '='
+            sale: '=',
+            appSettings: '=',
+            appStyle: '='
         },
         link: function (scope, elem, attrs, ctrl) {
 
             // Shared scope:
             // fieldlist: The list of field configurations
             // sale: The cart or invoice
+            // appSettings: The app settings as delivered through settings/app.js (or .json)
+            // appStyle: The app style as delivered through settings/style.js (or .json)
 
             // The fieldlist will be supplied as a JSON string that must be parsed into an object.
             scope.fields = [];
@@ -3214,6 +3240,103 @@ app.directive('amazonPayWidgetRefresh', ['gettextCatalog', function (gettextCata
                 });
             }
 
+        }
+    };
+}]);
+
+app.directive('hidePlaceholder', function () {
+    return {
+        restrict: 'A',
+        scope: {
+            hidePlaceholder: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+            if (scope.hidePlaceholder && elem[0].getAttribute("placeholder")) {
+                
+                elem[0].removeAttribute("placeholder");
+
+                arr = elem[0].className.split(" ");
+                var name = "hide-placeholder";
+                if (arr.indexOf(name) == -1) {
+                    elem[0].className += " " + name;
+                }
+
+                // The translation filter can replace the removed placeholder, so we are going to allow the placeholder text to be made invisible by adding a hidden-placeholder class to the element.
+                // The application will need to add the following CSS make use of the hidden-placeholder class:
+
+                //  /* WebKit, Blink, Edge */
+                //  .hide-placeholder.hidden-placeholder::-webkit-input-placeholder { color: transparent; opacity: 0 }
+
+                //  /* Mozilla Firefox 4 to 18 */
+                //  .hide-placeholder:-moz-placeholder { color: transparent; opacity: 0; }
+
+                //  /* Mozilla Firefox 19+ */
+                //  .hide-placeholder::-moz-placeholder { color: transparent; opacity: 0; }
+
+                //  /* Internet Explorer 10-11 */
+                //  .hide-placeholder:-ms-input-placeholder { color: transparent; opacity: 0 }
+
+                //  /* Microsoft Edge */
+                //  .hide-placeholder::-ms-input-placeholder { color: transparent; opacity: 0 }
+
+                //  /* Most modern browsers */
+                //  .hide-placeholder::placeholder { color: transparent; opacity: 0 }
+
+                // The line below is the same as the rules above, just in a single line for easy portability.
+                // .hide-placeholder::-webkit-input-placeholder{color:transparent;opacity:0}.hide-placeholder:-moz-placeholder{color:transparent;opacity:0}.hide-placeholder::-moz-placeholder{color:transparent;opacity:0}.hide-placeholder:-ms-input-placeholder{color:transparent;opacity:0}.hide-placeholder::-ms-input-placeholder{color:transparent;opacity:0}.hide-placeholder::placeholder{color:transparent;opacity:0}
+
+            }
+        }
+    };
+});
+
+app.directive('selectNumbers', ['GeoService', '$timeout', function (GeoService, $timeout) {
+
+    return {
+        restrict: 'A',
+        scope: {
+            start: '=?',
+            end: '=?'
+        },
+        link: function (scope, elem, attrs, ctrl) {
+
+            // Attributes
+            // start: The starting number in the range
+            // end: The ending number in the range
+            // minLength: If less than this length, the number will be padded with leading zeros.
+
+            scope.$watchGroup(['start', 'end'], function (newValues, oldValues) {
+
+                if (newValues[0] && newValues[1]) {
+
+                    var elemNg = angular.element(elem[0]);
+
+                    // Reset the existing options. If the value is empty, leave in place, this is the "blank" option in the list.
+                    var hasEmpty = false;
+                    for (var i = elemNg[0].options.length - 1 ; i >= 0 ; i--) {
+                        if (elemNg[0].options[i].value) {
+                            elemNg[0].remove(i);
+                        } else {
+                            hasEmpty = true;
+                        }
+                    }
+
+                    // If it doesn't have an empty value, add it.
+                    if (!hasEmpty) {
+                        elemNg[0].appendChild(document.createElement("option"));
+                    }
+
+                    for (var i = newValues[0]; i < newValues[1]; i++) {
+                        var display = i;
+                        if (attrs.minLength && String(i).length < Number(attrs.minLength)) {
+                            display = utils.right(("0" + i), 2);
+                        }
+                        var option = '<option class="select-options-color" value="' + i + '">' + display + '</option>';
+                        elemNg.append(option);
+                    }
+                }
+
+            });
         }
     };
 }]);
