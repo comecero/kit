@@ -3325,7 +3325,7 @@ app.directive('selectNumbers', ['GeoService', '$timeout', function (GeoService, 
                         elemNg[0].appendChild(document.createElement("option"));
                     }
 
-                    for (var i = newValues[0]; i < newValues[1]; i++) {
+                    for (var i = newValues[0]; i < newValues[1] + 1; i++) {
                         var display = i;
                         if (attrs.minLength && String(i).length < Number(attrs.minLength)) {
                             display = utils.right(("0" + i), 2);
