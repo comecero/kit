@@ -2467,7 +2467,7 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
                                 });
                             }
                         }
-                    }, 250); // Timeout set to a value that prevents sending every value if user presses and holds down arrow on country select.
+                    }, 25); // Timeout set to a value that prevents sending every value if user presses and holds down arrow on country select.
                 });
             });
 
