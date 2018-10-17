@@ -1,4 +1,10 @@
-﻿<a name="1.0.11"></a>
+﻿<a name="1.0.12"></a>
+# 1.0.12
+
+- Add support for cross-sells in the shopping cart
+- Updated translations
+
+<a name="1.0.11"></a>
 # 1.0.11
 
 - Expose user style selections through SettingsService so they can be passed into consuming apps.
