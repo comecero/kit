@@ -3272,8 +3272,8 @@ app.directive('hidePlaceholder', function () {
                 //  /* Mozilla Firefox 19+ */
                 //  .hide-placeholder::-moz-placeholder { color: transparent; opacity: 0; }
 
-                //  /* Internet Explorer 10-11 */
-                //  .hide-placeholder:-ms-input-placeholder { color: transparent; opacity: 0 }
+                //  /* Internet Explorer 10-11, don't include opacity with IE or it will hide input borders */
+                //  .hide-placeholder:-ms-input-placeholder { color: transparent; }
 
                 //  /* Microsoft Edge */
                 //  .hide-placeholder::-ms-input-placeholder { color: transparent; opacity: 0 }
