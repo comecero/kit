@@ -322,13 +322,13 @@
         var consentWidget = document.getElementById(consent_id);
 
         if (addressWidget)
-            addressWidget.style.display = null;
+            addressWidget.style.removeProperty("display");
 
         if (walletWidget)
-            walletWidget.style.display = null;
+            walletWidget.style.removeProperty("display");
 
         if (consentWidget && recurring)
-            consentWidget.style.display = null;
+            consentWidget.style.removeProperty("display");
     }
 
     function hideWidgets(address_id, wallet_id, consent_id) {
