@@ -3023,7 +3023,7 @@ app.directive('amazonPayButton', ['gettextCatalog', function (gettextCatalog) {
             // Watch options and set Amazon Pay parameters if provided.
             scope.$watch("options", function (newValue, oldValue) {
 
-                if (newValue && newValue != oldValue) {
+                if (newValue) {
 
                     // Check if it has Amazon Pay
                     var ap = _.findWhere(newValue.payment_methods, { payment_method_type: "amazon_pay" });
