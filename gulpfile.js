@@ -85,7 +85,7 @@ gulp.task('dist', function (done) {
 gulp.task('dist-copy', function (done) {
 
     if (!dest) {
-        console.log("ERROR: You must supply an option --dest that provides the path the files should be copied to upon completion of dist. For example: gulp dist-copy --dest /data/temp");
+        console.log("ERROR: You must supply an option --dest that provides the path the files should be copied to upon completion of dist. For example: gulp dist-copy --dest /Comecero/Git/public/cart/dist/js");
         return;
     }
 

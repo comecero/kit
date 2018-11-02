@@ -3151,19 +3151,27 @@ app.directive('amazonPayReset', ['gettextCatalog', function (gettextCatalog) {
 
     // Shared scope:
     // paymentMethod: Provide the payment method object that will hold the Amazon Pay settings that are returned from the Amazon Pay button and widgets.
+    // onComplete: A function that is called after the reset is complete
 
     return {
         restrict: 'A',
         scope: {
-            paymentMethod: '=?'
-        },
+            paymentMethod: '=?',
+            onComplete: '=?',
+    },
         link: function (scope, elem, attrs, ctrl) {
 
             elem.bind("click", function () {
 
                 // Reset the payment method data
                 scope.$apply(function () {
+                    amazonPay.logout();
+
+                    if (scope.paymentMethod && scope.paymentMethod.data)
                     delete scope.paymentMethod.data;
+
+                    if (scope.onComplete)
+                        scope.onComplete();
                 });
 
                 // Hide the widgets
