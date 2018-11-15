@@ -6,3 +6,8 @@
 /.vscode
 *.zip
 /node_modules
+/settings/style.js
+/settings/style.css
+/settings/script.js
+/settings/app.js
+/settings/account.js

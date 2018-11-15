@@ -184,3 +184,9 @@ gulp.task('copy-settings', function (done) {
     });
 
 });
+
+function removeHeaderLines(text, numberOfLines) {
+    var lines = text.split('\n');
+    lines.splice(0, numberOfLines);
+    return lines.join('\n');
+}
