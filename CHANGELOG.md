@@ -1,4 +1,11 @@
-﻿<a name="1.0.12"></a>
+﻿<a name="1.0.13"></a>
+# 1.0.13
+
+- Add "on complete" callback for Amazon Pay logout
+- Update settings samples
+- Bug fix javascript references on index page
+
+<a name="1.0.12"></a>
 # 1.0.12
 
 - Add support for cross-sells in the shopping cart
