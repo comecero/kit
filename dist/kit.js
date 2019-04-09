@@ -1,7 +1,7 @@
 /*
 Comecero Kit version: ﻿1.0.13
-Build time: 2019-01-30T09:54:36.428Z
-Checksum (SHA256): 2fddfeb5af4dde04d6078d691cdd41bbaaf850ca8d4dbd990b4359e197a12528
+Build time: 2019-04-09T04:51:31.036Z
+Checksum (SHA256): 1045e473ca810c9a5dd7de2a67168f379d01596d754cd2af74d62f05c61c608a
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -7895,6 +7895,7 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
         isRequiredCustomerField: isRequiredCustomerField,
         isOptionalCustomerField: isOptionalCustomerField,
         isCustomerField: isCustomerField,
+        hasRequiredFields: hasRequiredFields,
         hasShippingAddress: hasShippingAddress,
         newSessionRedirect: newSessionRedirect,
         getShoppingUrl: getShoppingUrl,
@@ -7987,6 +7988,24 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
         }
 
         return false;
+
+    }
+
+    function hasRequiredFields(customer, options) {
+
+        for (i = 0; i < options.customer_required_fields.length; i++) {
+            if (options.customer_required_fields[i].substring(0, 16) == "billing_address.") {
+                if (!customer.billing_address[options.customer_required_fields[i].substring(16)]) {
+                    return false;
+                }
+            } else {
+                if (!customer[options.customer_required_fields[i]]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
 
     }
 

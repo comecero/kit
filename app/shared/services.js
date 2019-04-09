@@ -1888,6 +1888,7 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
         isRequiredCustomerField: isRequiredCustomerField,
         isOptionalCustomerField: isOptionalCustomerField,
         isCustomerField: isCustomerField,
+        hasRequiredFields: hasRequiredFields,
         hasShippingAddress: hasShippingAddress,
         newSessionRedirect: newSessionRedirect,
         getShoppingUrl: getShoppingUrl,
@@ -1980,6 +1981,24 @@ app.service("HelperService", ['SettingsService', 'StorageService', '$location', 
         }
 
         return false;
+
+    }
+
+    function hasRequiredFields(customer, options) {
+
+        for (i = 0; i < options.customer_required_fields.length; i++) {
+            if (options.customer_required_fields[i].substring(0, 16) == "billing_address.") {
+                if (!customer.billing_address[options.customer_required_fields[i].substring(16)]) {
+                    return false;
+                }
+            } else {
+                if (!customer[options.customer_required_fields[i]]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
 
     }
 
