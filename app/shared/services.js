@@ -802,7 +802,7 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
 
     }
 
-    function pay(cart, payment_method, parameters, quiet) {
+    function pay(cart, payment_method, parameters, cartParameters, quiet) {
 
         var deferred = $q.defer();
         parameters = setDefaultParameters(parameters);
@@ -828,18 +828,28 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
             });
         };
 
+        var copyObject = function (cart, newCart) {
+            for (var property in newCart) {
+                if (newCart.hasOwnProperty(property)) {
+                    cart[property] = newCart[property];
+                }
+            }
+        }
+
         // If there currently is no cart, create it. Otherwise, update the existing cart.
-        if (cart.cart_id == null) {
-            create(cart, parameters, quiet).then(function (cart) {
+        if (!cart || cart.cart_id == null) {
+            create(cart, cartParameters, quiet).then(function (data) {
+                copyObject(cart, data);
                 sendPayment(cart.cart_id, payment_method);
             }, function (error) {
                 deferred.reject(error);
             });
-
         } else {
-            update(cart, parameters, quiet).then(function (cart) {
+            update(cart, cartParameters, quiet).then(function (data) {
+                copyObject(cart, data);
                 sendPayment(cart.cart_id, payment_method);
             }, function (error) {
+                copyObject(cart, data);
                 deferred.reject(error);
             });
         }
