@@ -1720,6 +1720,10 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
         }
 
         StorageService.set("language", language);
+
+        var languages = getLanguages();
+        $rootScope.language = _.find(languages, function (l) { return l.code == language });
+
         gettextCatalog.setCurrentLanguage(language);
 
         // Emit the change

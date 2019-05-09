@@ -1,7 +1,7 @@
 /*
 Comecero Kit version: ﻿1.0.14
-Build time: 2019-04-19T17:52:28.747Z
-Checksum (SHA256): 6646bb11c39b9d9783b952940f918c598149ef9220a500ccbbd5ac23966d9868
+Build time: 2019-05-09T12:08:03.278Z
+Checksum (SHA256): 877884d6d2fa9e129a37c0c7298d68e769b724973936d6b0ba8e969e883058dd
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -7778,6 +7778,10 @@ app.service("LanguageService", ['$q', '$rootScope', 'SettingsService', 'StorageS
         }
 
         StorageService.set("language", language);
+
+        var languages = getLanguages();
+        $rootScope.language = _.find(languages, function (l) { return l.code == language });
+
         gettextCatalog.setCurrentLanguage(language);
 
         // Emit the change
