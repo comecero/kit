@@ -3512,14 +3512,14 @@ app.directive('crossSell', ['CartService', function (CartService) {
 
                     var cartCopy = angular.copy(scope.cart);
                     if (scope.commit) {
-                        cartCopy.items.push({ product_id: scope.commit.product_id, cross_sell_id: scope.commit.cross_sell_id });
+                        cartCopy.items.push({ product_id: scope.commit.product_id, cross_sell_id: scope.commit.cross_sell_id, quantity: scope.commit.quantity || 1 });
                     } else {
 
                         if (scope.commitQueued.length == 0)
                             return;
 
                         _.each(scope.commitQueued, function (item) {
-                            cartCopy.items.push({ product_id: item.product_id, cross_sell_id: item.cross_sell_id });
+                            cartCopy.items.push({ product_id: item.product_id, cross_sell_id: item.cross_sell_id, quantity: item.quantity || 1 });
                         });
                     }
 

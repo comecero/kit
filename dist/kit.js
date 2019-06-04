@@ -1,7 +1,7 @@
 /*
 Comecero Kit version: ﻿1.0.14
-Build time: 2019-05-09T12:08:03.278Z
-Checksum (SHA256): 877884d6d2fa9e129a37c0c7298d68e769b724973936d6b0ba8e969e883058dd
+Build time: 2019-05-29T23:57:27.707Z
+Checksum (SHA256): c062baf5f6e6fc8479497b508feec13d23c6914745e72b414209c52b723a8232
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -5991,14 +5991,14 @@ app.directive('crossSell', ['CartService', function (CartService) {
 
                     var cartCopy = angular.copy(scope.cart);
                     if (scope.commit) {
-                        cartCopy.items.push({ product_id: scope.commit.product_id, cross_sell_id: scope.commit.cross_sell_id });
+                        cartCopy.items.push({ product_id: scope.commit.product_id, cross_sell_id: scope.commit.cross_sell_id, quantity: scope.commit.quantity || 1 });
                     } else {
 
                         if (scope.commitQueued.length == 0)
                             return;
 
                         _.each(scope.commitQueued, function (item) {
-                            cartCopy.items.push({ product_id: item.product_id, cross_sell_id: item.cross_sell_id });
+                            cartCopy.items.push({ product_id: item.product_id, cross_sell_id: item.cross_sell_id, quantity: item.quantity || 1 });
                         });
                     }
 
