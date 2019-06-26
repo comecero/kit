@@ -2419,6 +2419,7 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
     // Shared scope:
     // cart: The updated cart to save. If an existing cart does not exist, one will be created and returned.
     // error: The error object to communicate errors.
+    // onSuccess: A function that will be called from scope when the save is successfully completed. Includes the cart as a parameter.
 
     // Attributes
     // params: An object that supplies a list of parameters to send to the api, such as show, hide, formatted, etc. Used to customize the response object.
@@ -2430,8 +2431,9 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
             cart: '=customerBackgroundSave',
             shippingIsBilling: '=?',
             params: '=?',
-            error: '=?'
-        },
+            error: '=?',
+            onSuccess: '=?',
+    },
         link: function (scope, elem, attrs, ctrl) {
 
             // Find all inputs that have the attribute of customer-field
@@ -2512,6 +2514,11 @@ app.directive('customerBackgroundSave', ['CartService', '$timeout', function (Ca
 
                                     // Sync the scope to the response.
                                     scope.cart = cart;
+
+                                    // Fire the success event
+                                    if (scope.onSuccess) {
+                                        scope.onSuccess(cart);
+                                    }
 
                                 }, function (error) {
                                     scope.error = error;

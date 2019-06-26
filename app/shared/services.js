@@ -43,7 +43,14 @@
 
         // Pass in the user's language selection.
         parameters.user_locale = LanguageService.getLocale();
+
+        // Pass in the account_id, which is required when asking for a token.
         parameters.account_id = settings.account.account_id;
+
+        // If this is a test app, send a test flag to request a test token.
+        if (settings.account.test) {
+            parameters.test = true;
+        }
 
         // Prepare the url
         var endpoint = buildUrl("/auths/limited", settings);
@@ -70,7 +77,15 @@
 
             deferred.resolve(response.data.token);
         }, function (error) {
-            deferred.reject({ type: "internal_server_error", reference: "6lnOOW1", code: "unspecified_error", message: gettextCatalog.getString("There was a problem obtaining authorization for this session. Please reload the page to try your request again."), status: error.status });
+
+            var msg = gettextCatalog.getString("There was a problem obtaining authorization for this session. Please reload the page to try your request again.");
+
+            // If this is a 403 error and you are in test mode, add a note to the error message about test orders.
+            if (settings.account.test && error.data.error.status == 403 && error.data.error.code == "insufficient_permissions") {
+                msg = "This app is installed in test mode and can only be run by authorized test users. To run this app, launch it from within your account while in test mode. If you would like to allow unauthenticated users to run apps in test mode, sign into your account, and enable 'Allow Public Test Orders' under Settings> Technical.";
+            }
+
+            deferred.reject({ type: "internal_server_error", reference: "6lnOOW1", code: "unspecified_error", message: msg, status: error.status });
         });
 
         return deferred.promise;
