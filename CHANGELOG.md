@@ -1,4 +1,10 @@
-﻿<a name="1.0.13"></a>
+﻿<a name="1.0.14"></a>
+# 1.0.14
+
+- Add helper function to determine if all required customer fields have been provided
+- Add popover module for from Anuglar-UI
+
+<a name="1.0.13"></a>
 # 1.0.13
 
 - Add "on complete" callback for Amazon Pay logout
