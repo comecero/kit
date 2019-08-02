@@ -864,7 +864,6 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
                 copyObject(cart, data);
                 sendPayment(cart.cart_id, payment_method);
             }, function (error) {
-                copyObject(cart, data);
                 deferred.reject(error);
             });
         }

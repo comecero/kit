@@ -1,7 +1,7 @@
 /*
 Comecero Kit version: ﻿1.0.14
-Build time: 2019-06-26T16:53:14.439Z
-Checksum (SHA256): 28c008d98a1749d69f2c3b21a3bedea5615e052e3cbc4fd07dfd71471d299d38
+Build time: 2019-08-02T20:01:02.240Z
+Checksum (SHA256): 96d729eb734f41739686a868ee98af9cde8a0eab02c5024c7ddf1b0731ecf049
 https://comecero.com
 https://github.com/comecero/kit
 Copyright Comecero and other contributors. Released under MIT license. See LICENSE for details.
@@ -6929,7 +6929,6 @@ app.service("CartService", ['$http', '$q', '$rootScope', 'ApiService', 'PaymentS
                 copyObject(cart, data);
                 sendPayment(cart.cart_id, payment_method);
             }, function (error) {
-                copyObject(cart, data);
                 deferred.reject(error);
             });
         }
