@@ -454,7 +454,7 @@ app.directive('submitPayment', ['CartService', 'InvoiceService', 'PaymentService
 
                 if (scope.invoice) {
 
-                    InvoiceService.pay(scope.invoice, scope.paymentMethod, params, saleParams).then(function (payment) {
+                    InvoiceService.pay(scope.invoice, scope.paymentMethod, params).then(function (payment) {
 
                         // Fire the success event
                         if (scope.onSuccess) {
