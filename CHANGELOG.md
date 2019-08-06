@@ -1,4 +1,9 @@
-﻿<a name="1.0.14"></a>
+﻿<a name="1.0.15"></a>
+# 1.0.15
+
+- Bug fix cart and invoice payment directives
+
+<a name="1.0.14"></a>
 # 1.0.14
 
 - Add helper function to determine if all required customer fields have been provided
