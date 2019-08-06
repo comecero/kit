@@ -1,6 +1,6 @@
 /*
 Comecero Kit version: ﻿1.0.15
-Build time: 2019-08-06T22:05:15.036Z
+Build time: 2019-08-06T22:14:11.394Z
 Checksum (SHA256): a94e64783fcf4d6cb67ef1ec0ffc2090eb23e7cf0d91afa9ee331ba6732ce438
 https://comecero.com
 https://github.com/comecero/kit
